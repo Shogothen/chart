@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0C0442">
+<title>Chartrechner | Flow your Design</title>
+<meta name="description" content="Berechne Deine Human Design Chart – astronomisch exakt, mit Typ, Autorität, Profil, Variablen und liebevoller Deutung auf Deutsch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Radley:ital@0;1&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nacht:#0C0442;--nacht-tief:#080130;--indigo:#120650;--indigo-hell:#1A0D5A;
+  --nav:#0D033F;--dunkel:#131311;
+  --violett:#7A62E8;--gold:#FFB489;--rose:#F6A9D0;
+  --licht:#FFFFFF;--licht-weich:rgba(255,255,255,.72);--licht-leise:rgba(255,255,255,.5);
+  --glas:rgba(255,255,255,.06);--glas-rand:rgba(255,255,255,.14);
+  --serif:'Marcellus','Radley',Georgia,serif;--sans:'Jost',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--nacht);color:var(--licht);font-family:var(--sans);font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+#sternenfeld{position:fixed;inset:0;z-index:0;pointer-events:none}
+.himmel{position:fixed;inset:0;z-index:-1;background:#0C0442}
+.himmel-bild{position:fixed;inset:-6%;z-index:-1;background-size:cover;background-position:center;
+  filter:blur(26px) saturate(1.12);opacity:.95;transform:scale(1.06)}
+.himmel-tiefe{position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(120% 80% at 50% 120%,rgba(8,1,44,.85),transparent 62%)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px 110px;position:relative;z-index:2}
+
+/* Kopfleiste */
+.leiste{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:rgba(13,3,63,.72);border-bottom:1px solid rgba(255,255,255,.07)}
+.leiste-innen{max-width:1240px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:34px}
+.marke{font-family:var(--serif);font-size:20px;letter-spacing:.01em;white-space:nowrap}
+.marke span{color:var(--gold)}
+.navi{display:flex;gap:26px;flex:1;justify-content:center}
+.navi a{color:rgba(255,255,255,.88);text-decoration:none;font-size:14.5px;letter-spacing:.01em;padding-bottom:3px;border-bottom:1px solid transparent;transition:border-color .2s,color .2s}
+.navi a:hover{border-color:rgba(255,255,255,.6)}
+.navi a.hier{border-color:#fff}
+@media(max-width:900px){.navi{display:none}}
+.leiste-fakten{display:none;gap:20px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--licht-leise)}
+.leiste-fakten.an{display:flex}
+.leiste-fakten b{color:var(--licht);font-weight:500}
+
+/* Hero */
+header{padding:86px 0 24px;display:grid;grid-template-columns:1.06fr .94fr;gap:52px;align-items:center}
+.eyebrow{font-size:10.5px;letter-spacing:.46em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:24px}
+h1{font-family:var(--serif);font-weight:300;font-size:clamp(46px,7.4vw,86px);line-height:1.02;letter-spacing:-.012em}
+h1 em{font-style:italic;color:#EBD9FF}
+.lede{margin-top:22px;max-width:46ch;color:var(--licht-weich);font-size:16.5px}
+.hero-bogen{position:relative;aspect-ratio:1/1.2;border-radius:50% 50% 14px 14px / 38% 38% 3% 3%;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 12%,rgba(122,98,232,.55),rgba(18,10,56,.9) 68%);
+  border:1px solid rgba(255,255,255,.16)}
+.hero-foto{position:absolute;inset:0;background-size:cover;background-position:52% 30%}
+.hero-schleier{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,4,66,0) 45%,rgba(12,4,66,.55) 100%)}
+.hero-bogen .hd-mandala{position:absolute;inset:-14%;width:128%;height:auto;opacity:.4;z-index:2;pointer-events:none}
+.hd-ring{transform-origin:200px 200px;animation:drehen 140s linear infinite}
+.hd-ring-gegen{transform-origin:200px 200px;animation:drehen 90s linear infinite reverse}
+@keyframes drehen{to{transform:rotate(360deg)}}
+
+/* Formular */
+.formular{margin:44px auto 0;background:var(--glas);border:1px solid var(--glas-rand);border-radius:26px;padding:26px;
+  display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:16px;align-items:end;backdrop-filter:blur(18px);
+  box-shadow:0 40px 90px -50px rgba(0,0,0,.9)}
+.feld label{display:block;font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--licht-leise);font-weight:500;margin-bottom:9px}
+.feld input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:14px;color:var(--licht);
+  font-family:var(--sans);font-size:16px;font-weight:300;padding:15px 16px;color-scheme:dark}
+.feld input::placeholder{color:rgba(255,255,255,.38)}
+.feld input:focus{outline:none;border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.11);box-shadow:0 0 0 4px rgba(122,98,232,.22)}
+.ort-feld{position:relative}
+.vorschlaege{position:absolute;left:0;right:0;top:calc(100% + 9px);background:#221667;border:1px solid var(--glas-rand);border-radius:18px;
+  overflow:hidden;z-index:50;display:none;max-height:290px;overflow-y:auto;box-shadow:0 34px 70px -30px rgba(0,0,0,.95)}
+.vorschlaege.an{display:block}
+.vorschlag{padding:13px 18px;cursor:pointer;font-size:15px;display:flex;justify-content:space-between;gap:14px}
+.vorschlag:hover,.vorschlag.aktiv{background:rgba(255,255,255,.1)}
+.vorschlag .vs-land{color:var(--licht-leise);font-size:12.5px;white-space:nowrap}
+.btn{grid-column:1/-1;font-family:var(--sans);font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;
+  color:#1B1150;background:var(--licht);border:none;border-radius:999px;padding:18px 30px;cursor:pointer;
+  transition:transform .18s ease,box-shadow .3s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px rgba(255,255,255,.5)}
+.btn:disabled{opacity:.6;cursor:progress;transform:none}
+.form-fehler{grid-column:1/-1;color:#FFC2B8;font-size:14px;display:none}
+.form-fehler.an{display:block}
+.hinweis{grid-column:1/-1;color:rgba(255,255,255,.42);font-size:12.5px;text-align:center}
+
+/* Ergebnis */
+.ergebnis{display:none;margin-top:64px}
+.ergebnis.an{display:block}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.da{opacity:1;transform:none}
+.kopfdaten{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px}
+.kd{background:var(--glas);border:1px solid var(--glas-rand);border-radius:20px;padding:20px 16px 17px;text-align:center;backdrop-filter:blur(12px)}
+.kd .kd-l{font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--licht-leise);font-weight:500}
+.kd .kd-w{font-family:var(--serif);font-size:23px;font-weight:300;margin-top:7px;line-height:1.24}
+.kd.kd-gold{background:linear-gradient(165deg,rgba(255,180,137,.24),rgba(122,98,232,.16));border-color:rgba(255,180,137,.38)}
+.kd.kd-gold .kd-w{color:var(--gold)}
+.zeiten{margin-top:14px;font-size:12.5px;color:rgba(255,255,255,.4);text-align:center}
+
+.sprungnav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px 0 6px}
+.sprungnav a{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--licht-weich);text-decoration:none;
+  border:1px solid var(--glas-rand);border-radius:999px;padding:9px 16px;transition:background .2s,border-color .2s}
+.sprungnav a:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.32)}
+
+.haupt{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,1fr);gap:36px;margin-top:26px;align-items:start}
+.graph-karte{position:sticky;top:78px;padding:0}
+.graph-karte svg.hd-chart{width:100%;height:auto;display:block}
+.chart-aktionen{display:flex;gap:9px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.btn-leise{font-family:var(--sans);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;color:var(--licht-weich);
+  background:transparent;border:1px solid var(--glas-rand);border-radius:999px;padding:11px 18px;cursor:pointer;transition:background .2s,color .2s}
+.btn-leise:hover{background:rgba(255,255,255,.12);color:var(--licht)}
+.btn-leise:disabled{opacity:.5;cursor:progress}
+.legende{display:flex;gap:18px;justify-content:center;margin-top:14px;font-size:11px;color:var(--licht-leise);flex-wrap:wrap}
+.legende span{display:inline-flex;align-items:center;gap:7px}
+.lg{width:16px;height:6px;border-radius:4px;display:inline-block}
+
+.abschnitt{margin-bottom:26px;background:var(--glas);border:1px solid var(--glas-rand);border-radius:24px;padding:26px 28px;backdrop-filter:blur(12px)}
+.abschnitt h2{font-family:var(--serif);font-weight:300;font-size:30px;margin-bottom:6px;line-height:1.18}
+.abschnitt h2 small{font-family:var(--sans);font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:10px;font-weight:500}
+.abschnitt p{color:var(--licht-weich);font-size:15.5px;max-width:60ch}
+.abschnitt .meta{color:rgba(255,255,255,.55);font-family:var(--serif);font-style:italic;font-size:17px;margin-bottom:12px}
+
+.tabelle{width:100%;border-collapse:collapse;font-size:13.5px}
+.tabelle th{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--licht-leise);text-align:left;padding:8px;border-bottom:1px solid rgba(255,255,255,.12);font-weight:500}
+.tabelle td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);color:var(--licht-weich)}
+.tabelle .tor{font-weight:500}
+.pers .tor{color:#FFFFFF}
+.des .tor{color:var(--gold)}
+.tab-doppel{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.spalten-titel{font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:9px;font-weight:500}
+.spalten-titel.p{color:#FFFFFF}
+.spalten-titel.d{color:var(--gold)}
+
+.liste-def{list-style:none}
+.liste-def li{padding:13px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.liste-def li:last-child{border-bottom:none}
+.liste-def b{font-weight:500}
+.liste-def .ld-sub{font-size:13px;color:var(--licht-leise);margin-top:3px}
+.zentren-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.z-karte{border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px 18px;background:rgba(255,255,255,.04)}
+.z-karte .z-name{font-weight:500;font-size:14.5px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.z-karte .z-status{font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+.z-karte.def{background:linear-gradient(165deg,rgba(255,180,137,.16),rgba(122,98,232,.12));border-color:rgba(255,180,137,.3)}
+.z-karte.def .z-status{color:var(--gold)}
+.z-karte.off .z-status{color:rgba(255,255,255,.42)}
+.z-karte p{font-size:13.4px;margin-top:7px;color:var(--licht-weich)}
+
+.pfeil-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pfeil-karte{border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:18px 20px;background:rgba(255,255,255,.04)}
+.pfeil-karte.design{background:linear-gradient(165deg,rgba(255,180,137,.15),rgba(255,180,137,.05));border-color:rgba(255,180,137,.26)}
+.pfeil-kopf{display:flex;align-items:center;gap:10px}
+.pfeil-icon{font-size:17px;line-height:1;color:var(--gold)}
+.pfeil-karte.pers .pfeil-icon{color:#FFFFFF}
+.pfeil-titel{font-weight:500;font-size:14.5px}
+.pfeil-wert{font-family:var(--serif);font-size:28px;font-weight:300;margin:6px 0 2px}
+.pfeil-meta{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--licht-leise);font-weight:500}
+.pfeil-karte p{font-size:13.4px;margin-top:10px;color:var(--licht-weich)}
+.pfeil-seite{font-size:13px;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.1);color:var(--licht-leise)}
+.substruktur{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.quad{text-align:center;font-family:var(--serif);font-style:italic;font-size:20px;margin-top:18px;color:var(--gold)}
+
+.transit-kopf{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.transit-kachel{background:linear-gradient(165deg,rgba(122,98,232,.24),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:16px;text-align:center}
+.transit-kachel .tk-l{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--licht-leise);font-weight:500}
+.transit-kachel .tk-w{font-family:var(--serif);font-size:27px;font-weight:300;margin-top:4px}
+.transit-liste{list-style:none;margin-top:8px}
+.transit-liste li{padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px;color:var(--licht-weich)}
+.transit-liste li:last-child{border-bottom:none}
+.tag{display:inline-block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;border-radius:999px;padding:3px 9px;margin-left:7px}
+.tag.du{background:rgba(255,255,255,.16);color:#FFF}
+.tag.transit{background:rgba(255,180,137,.24);color:var(--gold)}
+.puls{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:8px;animation:pulsen 2.4s ease-in-out infinite}
+@keyframes pulsen{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+
+.zitat{margin-top:80px;display:block;text-align:center;
+  background:rgba(19,19,17,.62);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:30px;backdrop-filter:blur(10px)}
+.zitat-gross{font-family:var(--serif);font-size:clamp(26px,3.4vw,38px);line-height:1.15;margin-bottom:14px}
+.zitat-text p{color:var(--licht-weich);font-size:15.5px;max-width:52ch;margin:0 auto}
+.btn-hell{display:inline-block;margin-top:20px;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;
+  color:#0C0442;background:#fff;border-radius:999px;padding:15px 26px;text-decoration:none}
+@media(max-width:780px){.zitat{padding:24px 20px}}
+footer{margin-top:64px;padding-top:26px;border-top:1px solid rgba(255,255,255,.1);font-size:11.5px;color:rgba(255,255,255,.42);line-height:2;text-align:center}
+footer a{color:var(--gold);text-decoration:none}
+
+@media(max-width:960px){
+  header{grid-template-columns:1fr;gap:34px;padding-top:56px}
+  .hero-bogen{max-width:360px;margin:0 auto}
+  .haupt{grid-template-columns:1fr}
+  .graph-karte{position:static;max-width:560px;margin:0 auto}
+}
+@media(max-width:780px){
+  .formular{grid-template-columns:1fr 1fr;padding:20px}
+  .ort-feld{grid-column:1/-1}
+  .abschnitt{padding:22px 20px}
+  .zentren-grid,.pfeil-grid,.substruktur,.transit-kopf,.tab-doppel{grid-template-columns:1fr}
+  .kopfdaten{grid-template-columns:1fr 1fr}
+  .leiste-fakten{display:none!important}
+}
+@media(max-width:560px){
+  .wrap{padding:0 16px 80px}
+  .formular{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .himmel,#sternenfeld,.leiste,.formular,.sprungnav,.chart-aktionen,footer{display:none!important}
+  body{background:#fff;color:#000}
+  .abschnitt,.kd,.graph-karte{border-color:#ccc;background:#fff;backdrop-filter:none}
+}
+</style>
+</head>
+<body>
+<div class="himmel"></div>
+<div class="himmel-bild" id="himmel-bild"></div>
+<div class="himmel-tiefe"></div>
+<canvas id="sternenfeld"></canvas>
+
+<div class="leiste">
+  <div class="leiste-innen">
+    <div class="marke">Flow your <span>Design</span></div>
+    <nav class="navi">
+      <a href="https://flowyourdesign.com/">Startseite</a>
+      <a href="https://flowyourdesign.com/human-design">Human Design</a>
+      <a href="https://flowyourdesign.com/uber-mich">Über mich</a>
+      <a href="https://flowyourdesign.com/mein-angebot">Mein Angebot</a>
+      <a href="#" class="hier">Chartrechner</a>
+    </nav>
+    <div class="leiste-fakten" id="leiste-fakten"></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="eyebrow">Flow your Design · Chartrechner</div>
+    <h1>Flow into<br><em>your Light</em></h1>
+    <p class="lede">Hier darfst du dich erinnern, wer du wirklich bist. In deinem Design steckt die Weisheit deiner Seele – dieser Rechner macht sie sichtbar, auf die Bogensekunde genau. Deine Geburtsdaten bleiben dabei ganz bei dir, sie verlassen deinen Browser nicht.</p>
+  </div>
+  <div class="hero-bogen" id="hero-bogen">
+    <div class="hero-foto" id="hero-foto"></div>
+    <div class="hero-schleier"></div>
+  </div>
+</header>
+
+<form class="formular" id="formular" onsubmit="return false">
+  <div class="feld ort-feld">
+    <label for="ort">Geburtsort</label>
+    <input id="ort" type="text" placeholder="Wo bist du geboren?" autocomplete="off">
+    <div class="vorschlaege" id="vorschlaege"></div>
+  </div>
+  <div class="feld">
+    <label for="datum">Geburtsdatum</label>
+    <input id="datum" type="date">
+  </div>
+  <div class="feld">
+    <label for="zeit">Geburtszeit</label>
+    <input id="zeit" type="time">
+  </div>
+  <button class="btn" id="btn-rechnen" type="button">Meine Chart entdecken</button>
+  <div class="form-fehler" id="form-fehler"></div>
+  <div class="hinweis">Die Geburtszeit bestimmt deinen Mond, dein Profil und oft auch Typ und Autorität. Nimm sie so genau, wie du sie hast – und sei sanft mit dir, wenn du sie nicht kennst.</div>
+</form>
+
+<section class="ergebnis" id="ergebnis">
+  <div class="kopfdaten reveal" id="kopfdaten"></div>
+  <div class="zeiten reveal" id="zeiten"></div>
+
+  <nav class="sprungnav reveal">
+    <a href="#txt-typ">Typ</a><a href="#variablen-block">Variablen</a>
+    <a href="#transit-block">Heute</a><a href="#planeten-block">Planeten</a>
+    <a href="#kanaele-block">Kanäle</a><a href="#zentren-block">Zentren</a>
+  </nav>
+
+  <div class="haupt">
+    <div class="graph-karte reveal">
+      <div id="graph"></div>
+      <div class="chart-aktionen">
+        <button class="btn-leise" id="btn-poster" type="button">Poster speichern</button>
+        <button class="btn-leise" id="btn-svg" type="button">Chart als SVG</button>
+        <button class="btn-leise" id="btn-link" type="button">Link kopieren</button>
+      </div>
+      <div class="legende">
+        <span><span class="lg" style="background:#1A1A1A;border:1px solid rgba(255,255,255,.35)"></span>Persönlichkeit</span>
+        <span><span class="lg" style="background:#D8453C"></span>Design</span>
+        <span><span class="lg" style="background:repeating-linear-gradient(45deg,#1A1A1A 0 3px,#D8453C 3px 6px)"></span>beides</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="abschnitt reveal" id="txt-typ"></div>
+      <div class="abschnitt reveal" id="txt-autoritaet"></div>
+      <div class="abschnitt reveal" id="txt-profil"></div>
+      <div class="abschnitt reveal" id="txt-definition"></div>
+      <div class="abschnitt reveal" id="txt-kreuz"></div>
+    </div>
+  </div>
+
+  <div class="abschnitt reveal" id="variablen-block" style="margin-top:34px">
+    <h2><small>Die vier Pfeile</small>Deine Variablen</h2>
+    <div class="meta">Die tiefste Schicht deiner Chart: wie dein Körper Nahrung aufnimmt, welche Umgebung dich trägt, in welcher Frequenz dein Geist arbeitet. Diese Ebene reagiert auf Minuten – geh liebevoll mit ihr um.</div>
+    <div class="pfeil-grid" id="pfeile"></div>
+    <div class="substruktur" id="substruktur"></div>
+    <div class="quad" id="quad"></div>
+  </div>
+
+  <div class="abschnitt reveal" id="transit-block">
+    <h2><small>Gerade jetzt</small><span class="puls"></span>Was heute auf dich wirkt</h2>
+    <div class="meta" id="transit-meta"></div>
+    <div class="transit-kopf" id="transit-kopf"></div>
+    <div id="transit-inhalt"></div>
+  </div>
+
+  <div class="abschnitt reveal" id="planeten-block">
+    <h2><small>Die 26 Aktivierungen</small>Deine Planeten</h2>
+    <div class="tab-doppel" id="planeten"></div>
+  </div>
+
+  <div class="abschnitt reveal" id="kanaele-block">
+    <h2><small>Deine Lebensadern</small>Definierte Kanäle</h2>
+    <ul class="liste-def" id="kanaele"></ul>
+  </div>
+
+  <div class="abschnitt reveal" id="zentren-block">
+    <h2><small>Die neun Zentren</small>Definiert und offen</h2>
+    <div class="zentren-grid" id="zentren"></div>
+  </div>
+</section>
+
+<section class="zitat reveal">
+  <div class="zitat-text">
+    <p class="zitat-gross">Du musst nicht alles sofort verstehen.</p>
+    <p>Deine Chart mag auf den ersten Blick komplex wirken, vielleicht sogar widersprüchlich. Genau darin liegt ihre Magie – denn auch du bist kein gerader Weg, sondern ein lebendiges Zusammenspiel aus Licht und Schatten.</p>
+    <a class="btn-hell" href="https://flowyourdesign.com/mein-angebot">Zu meinem Angebot</a>
+  </div>
+</section>
+
+<footer>
+  Ein Chartrechner für <a href="https://flowyourdesign.com">Flow your Design</a><br>
+  Alle Berechnungen laufen lokal in deinem Browser – es werden keine Geburtsdaten übertragen oder gespeichert.<br>
+  Ephemeriden: astronomy-engine (MIT) · Orte: GeoNames.org (CC-BY 4.0) · Zeitzonen: IANA
+</footer>
+
+</div>
+
+<script src="himmel.js"></script>
+<script src="bilder.js"></script>
+<script src="astronomy.browser.min.js"></script>
+<script src="staedte.js"></script>
+<script src="hd-engine.js"></script>
+<script src="inhalte.js"></script>
+<script src="bodygraph.js"></script>
+<script src="variablen.js"></script>
+<script src="transit.js"></script>
+<script>
+"use strict";
+var $=function(id){return document.getElementById(id)};
+var E=window.HDEngine,I=window.HDInhalte,BG=window.HDBodygraph;
+var VAR=window.HDVariablen,TR=window.HDTransit;
+var letzteChart=null,letzteVariablen=null;
+var sanft=(typeof matchMedia==="function")&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Sternenfeld: echte Sternpositionen der Originalseite ---------- */
+(function(){
+  if(typeof HD_HIMMEL!=="undefined"&&HD_HIMMEL.verlauf){
+    var el=$("himmel-bild");
+    if(el)el.style.backgroundImage="url(data:image/png;base64,"+HD_HIMMEL.verlauf+")";
+  }
+  var c=$("sternenfeld"),ctx=c&&c.getContext&&c.getContext("2d");
+  if(!ctx)return;
+  var quelle=(typeof HD_HIMMEL!=="undefined"&&HD_HIMMEL.sterne)?HD_HIMMEL.sterne:[];
+  var sterne=[],schweif=null,B=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2);
+  function neu(){
+    B=window.innerWidth;H=window.innerHeight;
+    c.width=B*dpr;c.height=H*dpr;c.style.width=B+"px";c.style.height=H+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    /* Originaldichte beibehalten und über die Fläche kacheln */
+    var soll=Math.min(1400,Math.round(B*H/1e6*1855));
+    sterne=[];
+    for(var i=0;i<soll;i++){
+      var s=quelle.length?quelle[i%quelle.length]:[Math.random(),Math.random(),1,.6];
+      var kachel=Math.floor(i/Math.max(1,quelle.length));
+      sterne.push({
+        x:((s[0]+kachel*0.37)%1)*B,
+        y:((s[1]+kachel*0.61)%1)*H,
+        r:s[2],hell:s[3],
+        t:Math.random()*6.28,v:.3+Math.random()*.7,drift:.015+Math.random()*.05
+      });
+    }
+  }
+  function zeichne(zeit){
+    ctx.clearRect(0,0,B,H);
+    for(var i=0;i<sterne.length;i++){
+      var s=sterne[i];
+      var a=sanft?s.hell*0.75:(s.hell*(0.55+0.45*Math.sin(zeit/1000*s.v+s.t)));
+      ctx.globalAlpha=Math.max(0.04,Math.min(1,a));
+      ctx.fillStyle="#fff";
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.283);ctx.fill();
+      if(s.r>1.5){
+        ctx.globalAlpha=Math.max(0,a*0.18);
+        ctx.beginPath();ctx.arc(s.x,s.y,s.r*2.6,0,6.283);ctx.fill();
+      }
+      if(!sanft){s.y+=s.drift;if(s.y>H+2)s.y=-2}
+    }
+    if(!sanft){
+      if(!schweif&&Math.random()<0.0014)schweif={x:Math.random()*B*.7,y:Math.random()*H*.35,l:0};
+      if(schweif){
+        schweif.l+=9;schweif.x+=7;schweif.y+=3.4;
+        ctx.globalAlpha=Math.max(0,.65-schweif.l/280);
+        ctx.strokeStyle="#fff";ctx.lineWidth=1.3;
+        ctx.beginPath();ctx.moveTo(schweif.x,schweif.y);ctx.lineTo(schweif.x-56,schweif.y-27);ctx.stroke();
+        if(schweif.l>320)schweif=null;
+      }
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(zeichne);
+  }
+  neu();window.addEventListener("resize",neu);
+  requestAnimationFrame(zeichne);
+})();
+
+/* Bilder aus der Originalseite */
+if(typeof HD_BILDER!=="undefined"){
+  var hf=$("hero-foto");
+  if(hf)hf.style.backgroundImage="url(data:image/jpeg;base64,"+HD_BILDER.hero+")";
+}
+if(BG&&BG.mandala)$("hero-bogen").insertAdjacentHTML("beforeend",BG.mandala());
+
+/* Sanftes Einblenden beim Scrollen */
+var beobachter=(typeof IntersectionObserver==="function")?new IntersectionObserver(function(eintraege){
+  eintraege.forEach(function(e){if(e.isIntersecting){e.target.classList.add("da");beobachter.unobserve(e.target)}});
+},{threshold:.12}):null;
+function beobachte(){
+  var el=document.querySelectorAll(".reveal:not(.da)");
+  if(!beobachter){Array.prototype.forEach.call(el,function(e){e.classList.add("da")});return}
+  Array.prototype.forEach.call(el,function(e){beobachter.observe(e)});
+}
+
+/* ---------- Städtesuche ---------- */
+function norm(s){return s.toLowerCase().replace(/ä/g,"a").replace(/ö/g,"o").replace(/ü/g,"u").replace(/ß/g,"ss").normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+var LANDNAMEN={DE:"Deutschland",AT:"Österreich",CH:"Schweiz",US:"USA",GB:"Großbritannien",FR:"Frankreich",IT:"Italien",ES:"Spanien",NL:"Niederlande",BE:"Belgien",PL:"Polen",CA:"Kanada",CZ:"Tschechien",DK:"Dänemark",TR:"Türkei",PT:"Portugal",GR:"Griechenland",SE:"Schweden",NO:"Norwegen",FI:"Finnland",HU:"Ungarn",RO:"Rumänien",RU:"Russland",UA:"Ukraine",AU:"Australien",BR:"Brasilien",MX:"Mexiko",JP:"Japan",CN:"China",IN:"Indien",LU:"Luxemburg",HR:"Kroatien",RS:"Serbien",BA:"Bosnien",SK:"Slowakei",SI:"Slowenien",IE:"Irland",TH:"Thailand"};
+function land(cc){return LANDNAMEN[cc]||cc}
+var gewaehlt=null;
+function suche(q){
+  q=norm(q.trim());
+  if(q.length<2)return [];
+  var kandidaten=[q];
+  if(HD_EXONYME[q]&&HD_EXONYME[q]!==q)kandidaten.push(HD_EXONYME[q]);
+  var exakt=[],praefix=[];
+  for(var i=0;i<HD_STAEDTE.length&&(exakt.length+praefix.length)<40;i++){
+    var n=norm(HD_STAEDTE[i][0]);
+    if(kandidaten.indexOf(n)>=0)exakt.push(HD_STAEDTE[i]);
+    else if(kandidaten.some(function(k){return n.indexOf(k)===0}))praefix.push(HD_STAEDTE[i]);
+  }
+  return exakt.concat(praefix).slice(0,8);
+}
+var vsAktiv=-1,vsListe=[];
+function zeigeVorschlaege(liste){
+  vsListe=liste;vsAktiv=-1;
+  var v=$("vorschlaege");
+  if(!liste.length){v.classList.remove("an");return}
+  v.innerHTML=liste.map(function(c,i){
+    return '<div class="vorschlag" data-i="'+i+'">'+c[0]+'<span class="vs-land">'+land(c[1])+" · "+c[4]+"</span></div>";
+  }).join("");
+  v.classList.add("an");
+  Array.prototype.forEach.call(v.children,function(el){
+    el.addEventListener("mousedown",function(ev){ev.preventDefault();waehle(+el.dataset.i)});
+  });
+}
+function waehle(i){
+  gewaehlt=vsListe[i];
+  $("ort").value=gewaehlt[0]+", "+land(gewaehlt[1]);
+  $("vorschlaege").classList.remove("an");
+}
+$("ort").addEventListener("input",function(){gewaehlt=null;zeigeVorschlaege(suche(this.value))});
+$("ort").addEventListener("keydown",function(ev){
+  var v=$("vorschlaege");
+  if(!v.classList.contains("an"))return;
+  if(ev.key==="ArrowDown"||ev.key==="ArrowUp"){
+    ev.preventDefault();
+    vsAktiv=(vsAktiv+(ev.key==="ArrowDown"?1:vsListe.length-1))%vsListe.length;
+    Array.prototype.forEach.call(v.children,function(el,i){el.classList.toggle("aktiv",i===vsAktiv)});
+  }else if(ev.key==="Enter"&&vsAktiv>=0){ev.preventDefault();waehle(vsAktiv)}
+  else if(ev.key==="Escape")v.classList.remove("an");
+});
+document.addEventListener("click",function(ev){
+  if(!ev.target.closest||!ev.target.closest(".ort-feld"))$("vorschlaege").classList.remove("an");
+});
+
+/* ---------- Berechnung ---------- */
+function fehler(t){var f=$("form-fehler");f.textContent=t;f.classList.add("an")}
+function grad(g){
+  var z=["Widder","Stier","Zwillinge","Krebs","Löwe","Jungfrau","Waage","Skorpion","Schütze","Steinbock","Wassermann","Fische"];
+  var i=Math.floor(g/30),r=g%30,d=Math.floor(r),m=Math.floor((r-d)*60);
+  return d+"°"+String(m).padStart(2,"0")+"' "+z[i];
+}
+function rechne(sofort){
+  $("form-fehler").classList.remove("an");
+  var d=$("datum").value,z=$("zeit").value;
+  if(!gewaehlt){fehler("Magst du deinen Geburtsort aus der Liste wählen?");return}
+  if(!d){fehler("Dein Geburtsdatum fehlt noch.");return}
+  if(!z){fehler("Deine Geburtszeit fehlt noch – sie entscheidet über Mond, Profil und oft den Typ.");return}
+  var b=$("btn-rechnen");b.disabled=true;b.textContent="Dein Himmel wird gelesen …";
+  var dd=d.split("-").map(Number),zz=z.split(":").map(Number);
+  var lauf=function(){
+    try{
+      var utc=E.localToUtc(dd[0],dd[1],dd[2],zz[0],zz[1],gewaehlt[4]);
+      var chart=E.berechneChart(utc);
+      zeige(chart,utc);
+    }catch(e){fehler("Da ist etwas schiefgelaufen: "+(e.message||e))}
+    b.disabled=false;b.textContent="Meine Chart berechnen";
+  };
+  if(sofort||sanft)lauf(); else setTimeout(lauf,60);
+}
+
+function planetenTabelle(akt,klasse,titel){
+  var reihen=E.PLANETEN.map(function(p){
+    var name=p[0],a=akt[name];
+    return "<tr><td>"+I.PLANET_SYMBOL[name]+" "+I.PLANET_LABELS[name]
+      +'</td><td class="tor">'+a.tor+"."+a.linie+"</td><td>"+grad(a.grad)+"</td></tr>";
+  }).join("");
+  return '<div class="'+klasse+'"><div class="spalten-titel '+(klasse==="pers"?"p":"d")+'">'+titel
+    +'</div><table class="tabelle"><tr><th>Planet</th><th>Tor.Linie</th><th>Position</th></tr>'+reihen+"</table></div>";
+}
+function abschnitt(id,klein,titel,meta,text){
+  $(id).innerHTML="<h2><small>"+klein+"</small>"+titel+"</h2>"
+    +(meta?'<div class="meta">'+meta+"</div>":"")+"<p>"+text+"</p>";
+}
+
+function zeige(chart,utc){
+  var v=VAR.berechne(chart);
+  letzteChart=chart;letzteVariablen=v;
+  var kd=[["Typ",chart.typ,1],["Strategie",chart.strategie],["Autorität",chart.autoritaet],
+    ["Profil",chart.profil+" – "+(I.PROFILE[chart.profil]?I.PROFILE[chart.profil][0]:"")],
+    ["Definition",chart.definition],["Signatur",chart.signatur],["Nicht-Selbst",chart.nichtSelbst],
+    ["Inkarnationskreuz",chart.winkel.replace("-Kreuz","")+" "+chart.kreuzTore.persSonne+"/"+chart.kreuzTore.persErde+" | "+chart.kreuzTore.desSonne+"/"+chart.kreuzTore.desErde]];
+  $("kopfdaten").innerHTML=kd.map(function(x){
+    return '<div class="kd'+(x[2]?" kd-gold":"")+'"><div class="kd-l">'+x[0]+'</div><div class="kd-w">'+x[1]+"</div></div>";
+  }).join("");
+  $("zeiten").textContent="Geburt (UTC): "+chart.geburtUTC.replace("T"," ").slice(0,16)
+    +" · Design (UTC): "+chart.designUTC.replace("T"," ").slice(0,16)
+    +(gewaehlt?" · "+gewaehlt[0]+" ("+gewaehlt[4]+")":"");
+  $("leiste-fakten").innerHTML="<span><b>"+chart.typ+"</b></span><span><b>"+chart.profil+"</b></span><span><b>"+chart.autoritaet.split(" ")[0]+"</b></span>";
+  $("leiste-fakten").classList.add("an");
+
+  $("graph").innerHTML=BG.render(chart,v,{animiert:!sanft});
+  zeigeVariablen(v);
+  zeigeTransit(chart);
+
+  var typ=I.TYPEN[chart.typ];
+  abschnitt("txt-typ","Dein Typ",chart.typ,typ.anteil+" · "+typ.kurz,typ.text);
+  abschnitt("txt-autoritaet","Deine innere Autorität",chart.autoritaet,"So triffst du stimmige Entscheidungen",I.AUTORITAETEN[chart.autoritaet]||"");
+  var prof=I.PROFILE[chart.profil];
+  abschnitt("txt-profil","Dein Profil",chart.profil+" – "+prof[0],"Deine Rolle im Leben",prof[1]);
+  abschnitt("txt-definition","Deine Definition",chart.definition,"",I.DEFINITION_TEXTE[chart.definition]||"");
+  abschnitt("txt-kreuz","Dein Inkarnationskreuz",chart.winkel,
+    "Tore "+chart.kreuzTore.persSonne+"/"+chart.kreuzTore.persErde+" | "+chart.kreuzTore.desSonne+"/"+chart.kreuzTore.desErde,
+    I.WINKEL_TEXTE[chart.winkel]||"");
+
+  $("planeten").innerHTML=planetenTabelle(chart.personality,"pers","Persönlichkeit · Geburt")
+    +planetenTabelle(chart.design,"des","Design · 88° zuvor");
+
+  $("kanaele").innerHTML=chart.definierteKanaele.map(function(k){
+    var s=Math.min(k[0],k[1])+"-"+Math.max(k[0],k[1]);
+    return "<li><b>Kanal "+s+"</b> · "+(I.KANAL_NAMEN[s]||"")
+      +'<div class="ld-sub">Tor '+k[0]+": "+I.TOR_NAMEN[k[0]]+" &nbsp;·&nbsp; Tor "+k[1]+": "+I.TOR_NAMEN[k[1]]+"</div></li>";
+  }).join("")||"<li>Keine definierten Kanäle – du bist ein Spiegel.</li>";
+
+  var reihenfolge=["kopf","ajna","kehle","g","herz","sakral","milz","solarplexus","wurzel"];
+  var defZ={};chart.definierteZentren.forEach(function(z){defZ[z]=1});
+  $("zentren").innerHTML=reihenfolge.map(function(zk){
+    var zt=I.ZENTREN_TEXTE[zk],def=!!defZ[zk];
+    return '<div class="z-karte '+(def?"def":"off")+'"><div class="z-name">'+zt.name
+      +'<span class="z-status">'+(def?"Definiert":"Offen")+"</span></div><p>"+(def?zt.def:zt.off)+"</p></div>";
+  }).join("");
+
+  $("ergebnis").classList.add("an");
+  beobachte();
+  if(!window.__HD_TEST)setTimeout(function(){$("ergebnis").scrollIntoView({behavior:sanft?"auto":"smooth",block:"start"})},60);
+  merkeInUrl();
+}
+
+/* ---------- Variablen ---------- */
+function zeigeVariablen(v){
+  var karten=[
+    {k:"determination",titel:"Determination",quelle:"Design-Sonne",seite:"design"},
+    {k:"umgebung",titel:"Umgebung",quelle:"Design-Nordknoten",seite:"design"},
+    {k:"motivation",titel:"Motivation",quelle:"Persönlichkeits-Sonne",seite:"pers"},
+    {k:"perspektive",titel:"Perspektive",quelle:"Persönlichkeits-Nordknoten",seite:"pers"}
+  ];
+  $("pfeile").innerHTML=karten.map(function(c){
+    var d=v[c.k],e=d.eintrag;
+    var pfeil=d.richtung==="links"?"&#9666;":"&#9656;";
+    var seite=e.seiten?("<div class='pfeil-seite'>"+(d.richtung==="links"?e.links:e.rechts)+"</div>"):"";
+    var transfer=e.transfer?("<div class='pfeil-seite'>"+e.transfer+"</div>"):"";
+    return "<div class='pfeil-karte "+(c.seite==="design"?"design":"pers")+"'>"
+      +"<div class='pfeil-kopf'><span class='pfeil-icon'>"+pfeil+"</span><span class='pfeil-titel'>"+c.titel+"</span></div>"
+      +"<div class='pfeil-wert'>"+e.name+"</div>"
+      +"<div class='pfeil-meta'>"+(d.richtung==="links"?"Links · aktiv":"Rechts · rezeptiv")
+      +" &nbsp;·&nbsp; Farbe "+d.farbe+" · Ton "+d.ton+"</div>"
+      +"<p>"+e.text+"</p>"+seite+transfer
+      +"<div class='pfeil-meta' style='margin-top:10px'>Quelle: "+c.quelle+"</div></div>";
+  }).join("");
+  $("substruktur").innerHTML=[
+    ["Kognition","Dein schärfster Sinn",v.kognition],
+    ["Sinn","Wie dein Geist die Welt abtastet",v.sinn]
+  ].map(function(x){
+    return "<div class='pfeil-karte'><div class='pfeil-titel'>"+x[0]+"</div>"
+      +"<div class='pfeil-wert'>"+x[2].eintrag.name+"</div>"
+      +"<div class='pfeil-meta'>"+x[1]+" · Farbe "+x[2].farbe+"</div>"
+      +"<p>"+x[2].eintrag.text+"</p></div>";
+  }).join("");
+  $("quad").textContent="Deine Pfeilkombination: "+v.quad;
+}
+
+/* ---------- Transit ---------- */
+function zeigeTransit(chart){
+  var t;
+  try{t=TR.berechne(E,chart,new Date())}
+  catch(e){if(window.__HD_DEBUG)console.error("Transit:",e);$("transit-block").style.display="none";return}
+  $("transit-block").style.display="";
+  var jetzt=new Date();
+  $("transit-meta").textContent="Stand: "+jetzt.toLocaleDateString("de-DE",{day:"2-digit",month:"long",year:"numeric"})
+    +", "+jetzt.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})+" Uhr – der Himmel von jetzt, gelegt über deine Karte.";
+  $("transit-kopf").innerHTML=
+    "<div class='transit-kachel'><div class='tk-l'>Sonne heute</div><div class='tk-w'>"+t.sonne.tor+"."+t.sonne.linie+"</div>"
+    +"<div class='tk-l' style='letter-spacing:0;text-transform:none;margin-top:5px'>"+(I.TOR_NAMEN[t.sonne.tor]||"")+"</div></div>"
+    +"<div class='transit-kachel'><div class='tk-l'>Mond heute</div><div class='tk-w'>"+t.mond.tor+"."+t.mond.linie+"</div>"
+    +"<div class='tk-l' style='letter-spacing:0;text-transform:none;margin-top:5px'>"+(I.TOR_NAMEN[t.mond.tor]||"")+"</div></div>";
+  var html="";
+  if(t.neueKanaele.length){
+    html+="<div class='pfeil-meta'>Kanäle, die gerade vorübergehend geschlossen werden</div><ul class='transit-liste'>"
+      +t.neueKanaele.map(function(n){
+        return "<li><b>"+n.kanal+"</b> · "+(I.KANAL_NAMEN[n.kanal]||"")+"<br>"
+          +"<span style='opacity:.7;font-size:12.8px'>Tor "+n.torA+"<span class='tag "+(n.quelleA==="du"?"du":"transit")+"'>"+(n.quelleA==="du"?"Deins":"Transit")+"</span>"
+          +" &nbsp;+&nbsp; Tor "+n.torB+"<span class='tag "+(n.quelleB==="du"?"du":"transit")+"'>"+(n.quelleB==="du"?"Deins":"Transit")+"</span></span></li>";
+      }).join("")+"</ul>";
+  }else{
+    html+="<p>Gerade schließt der Himmel keinen zusätzlichen Kanal in deiner Karte – heute bist du ganz bei dir.</p>";
+  }
+  if(t.neueZentren.length){
+    html+="<p style='margin-top:12px'><b>Vorübergehend definiert:</b> "
+      +t.neueZentren.map(function(z){return I.ZENTREN_TEXTE[z].name}).join(", ")
+      +". Diese Zentren fühlen sich heute anders an als sonst – geliehene Energie, kein neues Ich.</p>";
+  }
+  if(t.resonanz.length){
+    html+="<p style='margin-top:12px'><b>"+t.resonanz.length+" Resonanzen:</b> Der Himmel steht heute auf Toren, die du selbst trägst ("
+      +t.resonanz.slice(0,6).map(function(r){return r.tor+"."+r.linie}).join(", ")
+      +(t.resonanz.length>6?" …":"")+"). Diese Themen wirken heute lauter.</p>";
+  }
+  $("transit-inhalt").innerHTML=html;
+}
+
+/* ---------- Teilen & Downloads ---------- */
+function merkeInUrl(){
+  if(!gewaehlt)return;
+  try{
+    var teile=[$("datum").value,$("zeit").value,gewaehlt[0],gewaehlt[1],gewaehlt[4]].join("|");
+    history.replaceState(null,"","#c="+encodeURIComponent(teile));
+  }catch(e){}
+}
+function ausUrl(){
+  var h=(location.hash||"").replace(/^#c=/,"");
+  if(!h)return;
+  try{
+    var t=decodeURIComponent(h).split("|");
+    if(t.length<5)return;
+    $("datum").value=t[0];$("zeit").value=t[1];
+    gewaehlt=[t[2],t[3],0,0,t[4]];
+    $("ort").value=t[2]+", "+land(t[3]);
+    rechne();
+  }catch(e){}
+}
+function dateiName(e){return "human-design-"+($("datum").value||"chart")+"."+e}
+function ladeHerunter(blob,name){
+  var url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);a.remove()},400);
+}
+$("btn-svg").addEventListener("click",function(){
+  if(!letzteChart)return;
+  ladeHerunter(new Blob([BG.render(letzteChart,letzteVariablen,{animiert:false})],{type:"image/svg+xml"}),dateiName("svg"));
+});
+$("btn-link").addEventListener("click",function(){
+  merkeInUrl();
+  var b=this;
+  var fertig=function(){b.textContent="Link kopiert";setTimeout(function(){b.textContent="Link kopieren"},2200)};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(location.href).then(fertig,fertig);
+  else fertig();
+});
+$("btn-poster").addEventListener("click",function(){
+  if(!letzteChart)return;
+  var b=this;b.disabled=true;b.textContent="Poster entsteht …";
+  var svg=BG.poster(letzteChart,letzteVariablen,"",I);
+  var blobSvg=new Blob([svg],{type:"image/svg+xml;charset=utf-8"});
+  var url=URL.createObjectURL(blobSvg),img=new Image();
+  img.onload=function(){
+    var s=2,c=document.createElement("canvas");
+    c.width=1240*s;c.height=1754*s;
+    var ctx=c.getContext("2d");
+    ctx.fillStyle="#1B1150";ctx.fillRect(0,0,c.width,c.height);
+    ctx.drawImage(img,0,0,c.width,c.height);
+    URL.revokeObjectURL(url);
+    c.toBlob(function(blob){
+      if(blob)ladeHerunter(blob,dateiName("png"));
+      b.disabled=false;b.textContent="Poster speichern";
+    },"image/png");
+  };
+  img.onerror=function(){
+    URL.revokeObjectURL(url);ladeHerunter(blobSvg,dateiName("svg"));
+    b.disabled=false;b.textContent="Poster speichern";
+  };
+  img.src=url;
+});
+
+$("btn-rechnen").addEventListener("click",rechne);
+["datum","zeit"].forEach(function(id){
+  $(id).addEventListener("keydown",function(ev){if(ev.key==="Enter")rechne()});
+});
+beobachte();
+ausUrl();
+
+window.__HD_APP={suche:suche,rechne:function(){return rechne(true)},zeige:zeige,setzeOrt:function(c){gewaehlt=c},
+  zeigeVariablen:zeigeVariablen,zeigeTransit:zeigeTransit,
+  holeChart:function(){return letzteChart},holeVariablen:function(){return letzteVariablen}};
+</script>
+</body>
+</html>
