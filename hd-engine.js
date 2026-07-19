@@ -171,7 +171,7 @@ function profilUndKreuz(pers,des){
   else if(LINKS.indexOf(profil)>=0)winkel="Linkswinkel-Kreuz";
   else if(profil==="4/1")winkel="Juxtapositions-Kreuz";
   else winkel="(ungültiges Profil)";
-  return {profil:profil,winkel:winkel,
+  return {profil:profil,winkel:winkel,sonnentor:pers.sonne.tor,
     kreuzTore:{persSonne:pers.sonne.tor,persErde:pers.erde.tor,
       desSonne:des.sonne.tor,desErde:des.erde.tor}};
 }

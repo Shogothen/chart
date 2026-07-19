@@ -19,8 +19,8 @@ var FARBEN={
 };
 /* Zentrumsfarben: warme, gedämpfte Töne, die auf Indigo ruhig leuchten */
 var ZFARBEN={
-  kopf:"#F3E6C6", ajna:"#D9E4D4", kehle:"#EAD7BD", g:"#F6E9C8", herz:"#F2CFC4",
-  sakral:"#F2CFC4", milz:"#DEE0D2", solarplexus:"#F0DCC4", wurzel:"#E4D6C4"
+  kopf:"#F0DFA8", ajna:"#B8D9C8", kehle:"#F3C99A", g:"#FBEEB8", herz:"#F2A9A1",
+  sakral:"#F5B08C", milz:"#AFC4E8", solarplexus:"#EBA9CE", wurzel:"#C4AEE8"
 };
 
 var ZFORM={
@@ -285,11 +285,11 @@ function render(chart,variablen,opt){
     var def=defZ.has(z),d=rundPfad(ZFORM[z],7);
     s+='<g class="hd-zentrum" data-zentrum="'+z+'" data-status="'+(def?"definiert":"offen")+'" style="--i:'+(zi++)+'">';
     if(def){
-      s+='<path d="'+d+'" fill="'+FARBEN.des+'" opacity="0.20" filter="url(#hd-glut-zentrum)"/>';
-      s+='<path d="'+d+'" fill="'+ZFARBEN[z]+'" fill-opacity="0.96" stroke="rgba(255,255,255,0.65)" stroke-width="1.2"/>';
+      s+='<path d="'+d+'" fill="'+ZFARBEN[z]+'" opacity="0.42" filter="url(#hd-glut-zentrum)"/>';
+      s+='<path d="'+d+'" fill="'+ZFARBEN[z]+'" fill-opacity="1" stroke="#FFFFFF" stroke-opacity="0.92" stroke-width="2.2"/>';
       s+='<path d="'+d+'" fill="url(#hd-tiefe)" stroke="none"/>';
     }else{
-      s+='<path d="'+d+'" fill="'+FARBEN.zentrumAus+'" fill-opacity="0.85" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>';
+      s+='<path d="'+d+'" fill="#0A0233" fill-opacity="0.92" stroke="rgba(255,255,255,0.30)" stroke-width="1.1" stroke-dasharray="5 4"/>';
     }
     s+='</g>';
   });
@@ -316,7 +316,7 @@ function render(chart,variablen,opt){
       }
       s+='<text x="'+p[0]+'" y="'+(p[1]+3.4)+'" font-size="9.4" font-weight="700" text-anchor="middle" fill="'+FARBEN.zahl+'" pointer-events="none">'+tor+"</text>";
     }else{
-      s+='<text x="'+p[0]+'" y="'+(p[1]+3.2)+'" font-size="8.8" text-anchor="middle" fill="rgba(255,255,255,'+(zDef?'0.5':'0.32')+')">'+tor+"</text>";
+      s+='<text x="'+p[0]+'" y="'+(p[1]+3.2)+'" font-size="8.8" text-anchor="middle" fill="rgba(255,255,255,'+(zDef?'0.55':'0.5')+')">'+tor+"</text>";
     }
     s+='<title>'+titel+'</title></g>';
   });

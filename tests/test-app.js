@@ -24,6 +24,9 @@ w.HD_HIMMEL=require("/home/claude/hd/himmel.js");
 w.HD_BILDER=require("/home/claude/hd/bilder.js");
 w.HDTransit=require("/home/claude/hd/transit.js");
 w.HDRat=require("/home/claude/hd/rat.js");
+w.HDKreuze=require("/home/claude/hd/kreuze.js");
+w.HDEssenz=require("/home/claude/hd/essenz.js");
+w.HDStabil=require("/home/claude/hd/stabil.js");
 w.URL.createObjectURL=function(){return "blob:test"};
 w.URL.revokeObjectURL=function(){};
 const inline=html.match(/<script>([\s\S]*?)<\/script>\s*<\/body>/)[1];
@@ -115,7 +118,8 @@ const kopf=$("kopfdaten").textContent;
 check("Typ Manifestor",kopf.includes("Manifestor")&&!kopf.includes("Manifestierender Generator"),kopf.slice(0,80));
 check("Profil 5/1 Häretiker/Forscher",kopf.includes("5/1"));
 check("Autorität Milz",kopf.includes("Milz"));
-check("Kreuz 51/57 | 61/62",kopf.includes("51/57 | 61/62"));
+check("Kreuz 51/57 | 61/62 im Abschnitt",$("txt-kreuz").textContent.includes("51/57 | 61/62"));
+check("Kachel nennt den Kreuznamen",kopf.includes("Kreuz"));
 check("Einfache Definition",kopf.includes("Einfache Definition"));
 check("Zeiten-Zeile mit Design-Datum Jan 1948",$("zeiten").textContent.includes("1948-01-12"));
 check("Typ-Text geladen",$("txt-typ").textContent.includes("Informier")||$("txt-typ").textContent.includes("informier"));
@@ -138,7 +142,7 @@ check("Persönlichkeits-Färbung vorhanden",persFarbe>4,persFarbe);
 check("Design-Färbung vorhanden",desFarbe>4,desFarbe);
 check("Doppelaktivierung markiert",svg.includes('data-status="beides"'));
 // Definierte Zentren gefüllt: Milz (#C9B18F) und G/Ajna
-check("Definierte Zentren als warme Farbflächen",(svg.match(/opacity="0.20" filter="url\(#hd-glut-zentrum\)"/g)||[]).length===w.HDEngine.berechneChart(w.HDEngine.localToUtc(1948,4,9,0,5,"America/Toronto")).definierteZentren.length);
+check("Definierte Zentren als kräftige Farbflächen",(svg.match(/stroke-width="2.2"/g)||[]).length===w.HDEngine.berechneChart(w.HDEngine.localToUtc(1948,4,9,0,5,"America/Toronto")).definierteZentren.length);
 // Undefinierte Zentren weiß: Sakral/SP/Wurzel/Kopf offen bei Ra
 check("Vier offene Zentren weiß",(svg.match(/data-status="offen"/g)||[]).length===4);
 check("Weiche Rundungen im Chart",(svg.match(/ Q/g)||[]).length>20);
@@ -176,7 +180,7 @@ check("Originalhimmel eingebunden (3726 Sterne)",w.HD_HIMMEL&&w.HD_HIMMEL.sterne
 check("Nebelverlauf als Hintergrundbild gesetzt",($("himmel-bild").style.backgroundImage||"").indexOf("data:image/png;base64")>=0);
 check("Keine eigene Kopfleiste (wird eingebettet)",!w.document.querySelector(".leiste"));
 check("Gemessene Originalfarbe im Stylesheet",w.document.documentElement.innerHTML.includes("#0C0442"));
-check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===7);
+check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===8);
 check("Kernwerte als Kacheln sichtbar",$("kopfdaten").querySelectorAll(".kd").length===8);
 check("Link-Teilen-Knopf vorhanden",!!$("btn-link"));
 
@@ -281,10 +285,68 @@ check("Teilen-Text enthält flowyourdesign",rat1.teilen.includes("flowyourdesign
 check("Rat kleines du",!/[a-zß,;]\s(Du|Dich|Dir|Dein)\b/.test(rat1.text));
 
 
+const htmlNav=w.document.documentElement.innerHTML;
+
+console.log("— Zentren, Kreuz, Essenz, Navigation —");
+const ZT=w.HDInhalte.ZENTREN_TEXTE;
+const alleZ=["kopf","ajna","kehle","g","herz","sakral","milz","solarplexus","wurzel"];
+check("Kronenzentrum statt Kopfzentrum",ZT.kopf.name.indexOf("Kronenzentrum")===0&&!JSON.stringify(ZT).includes("Kopfzentrum"));
+check("Wachstum und Schatten in beiden Zuständen",alleZ.every(z=>ZT[z].defWachstum&&ZT[z].defSchatten&&ZT[z].offWachstum&&ZT[z].offSchatten));
+check("Zentrums-Texte ohne Gedankenstriche",!JSON.stringify(ZT).includes("\u2013"));
+const chartE=APP.holeChart();
+const anzDef=chartE.definierteZentren.length;
+check("Wachstumszeile in allen 9 Zentrumskarten",$("zentren").querySelectorAll(".z-wachstum").length===9);
+check("Schattenzeile in allen 9 Zentrumskarten",$("zentren").querySelectorAll(".z-schatten").length===9);
+
+const KZ=w.HDKreuze;
+check("192 Kreuze in der Tabelle",Object.keys(KZ.TABELLE).length===64&&[1,32,64].every(g=>KZ.info(g,"Rechtswinkel-Kreuz")&&KZ.info(g,"Linkswinkel-Kreuz")&&KZ.info(g,"Juxtapositions-Kreuz")));
+let kreuzOk=0;
+for(let g=1;g<=64;g++)for(const wk of ["Rechtswinkel-Kreuz","Juxtapositions-Kreuz","Linkswinkel-Kreuz"]){
+  const i=KZ.info(g,wk);
+  if(i&&i.name&&i.uebertitel&&i.artText&&i.sonnenthemaText&&!/ der der |Kreuz der des /.test(i.name))kreuzOk++;
+}
+check("Alle 192 Kreuznamen sauber gebildet",kreuzOk===192);
+check("Kreuzname im Abschnitt",$("txt-kreuz").textContent.includes("Kreuz"));
+check("Kreuz-Übertitel sichtbar",/Persönliches Schicksal|Transpersonales Schicksal|Festes Schicksal/.test($("txt-kreuz").textContent));
+check("Sonnenthema als Zusatzblock",$("txt-kreuz").querySelector(".pfeil-anwendung")!==null);
+// Gegenprobe der 88-Grad-Rechnung gegen die externe Kreuztabelle
+let treffer=0,gesamt=0;
+for(let i=0;i<60;i++){
+  const c=w.HDEngine.berechneChart(w.HDEngine.localToUtc(1950+i%70,1+i%12,1+i%28,i%24,(i*7)%60,"Europe/Berlin"));
+  const inf=KZ.info(c.kreuzTore.persSonne,c.winkel);
+  gesamt++; if(inf&&inf.erwarteteDesignSonne===c.kreuzTore.desSonne)treffer++;
+}
+check("Design-Sonne stimmt mit der Kreuzreferenz",treffer===gesamt);
+
+const ess=w.HDEssenz.erzeuge(chartE,w.HDVariablen.berechne(chartE),w.HDInhalte,KZ.info(chartE.kreuzTore.persSonne,chartE.winkel));
+check("Essenz hat drei gefüllte Blöcke",ess.einzig.length>=3&&ess.staerke.length>=3&&ess.achtung.length>=3);
+check("Essenz nennt Typ und Autorität",ess.einzig[0].includes(chartE.typ)&&ess.einzig[0].includes(chartE.autoritaet));
+check("Essenz nennt das Nicht-Selbst",ess.achtung[0].includes(chartE.nichtSelbst));
+check("Essenz-Karten gerendert",$("essenz").querySelectorAll(".essenz-karte").length===3);
+check("Essenz-Signatur gefüllt",$("essenz-signatur").textContent.includes(chartE.signatur));
+check("Essenz vor dem Chart",htmlNav.indexOf('id="essenz-block"')<htmlNav.indexOf('id="zentren-block"'));
+
+check("Kacheln sind Sprunglinks",$("kopfdaten").querySelectorAll("a.kd").length===8);
+check("Jede Kachel zeigt auf ein vorhandenes Ziel",
+  [].every.call($("kopfdaten").querySelectorAll("a.kd"),function(a){return !!w.document.getElementById(a.getAttribute("href").slice(1))}));
+check("Sprungnavigation mit 8 Zielen",w.document.querySelectorAll("#sprungnav a").length===8);
+check("Navigation klebt oben",htmlNav.includes("position:sticky"));
+check("Alle Navi-Ziele existieren",
+  [].every.call(w.document.querySelectorAll("#sprungnav a"),function(a){return !!w.document.getElementById(a.getAttribute("href").slice(1))}));
+
+const S=w.HDStabil;
+const utcS=w.HDEngine.localToUtc(1975,6,4,9,9,"America/Los_Angeles");
+const stab=S.berechne(w.HDEngine,utcS.getTime(),-420);
+check("Stabilität liefert Zeitfenster",typeof stab.von==="string"&&typeof stab.bis==="string"&&stab.spanneMin>0);
+check("Stabilität stuft Sicherheit ein",["hoch","mittel","knapp"].includes(stab.sicherheit));
+check("Stabilität nennt Änderung mit Uhrzeit",!stab.vorigeAenderung||/^\d\d:\d\d$/.test(stab.vorigeAenderung.zeit));
+check("Stabilitätssatz ohne Platzhalter",S.satz(stab).length>60&&!S.satz(stab).includes("undefined"));
+check("Stabilitätskarte im Markup",htmlNav.includes('id="stabil"'));
+
 console.log("— Feedback-Umbau —");
 check("36 Kanaltexte vorhanden",Object.keys(w.HDInhalte.KANAL_TEXTE).length===36);
 check("Zentrum-Wetter für alle 9 Zentren",Object.keys(w.HDInhalte.ZENTRUM_WETTER).length===9&&Object.values(w.HDInhalte.ZENTRUM_WETTER).every(z=>z.heisst&&z.chance&&z.achtung&&z.umgang));
-check("Wachstumszeilen für alle 9 Zentren",["kopf","ajna","kehle","g","herz","sakral","milz","solarplexus","wurzel"].every(z=>w.HDInhalte.ZENTREN_TEXTE[z].wachstum));
+check("Wachstumszeilen für alle 9 Zentren",["kopf","ajna","kehle","g","herz","sakral","milz","solarplexus","wurzel"].every(z=>w.HDInhalte.ZENTREN_TEXTE[z].offWachstum&&w.HDInhalte.ZENTREN_TEXTE[z].defWachstum));
 check("48 Anwendungstexte vollständig",[1,2,3,4,5,6].every(f=>
   w.HDVariablen.DETERMINATION[f].anwLinks&&w.HDVariablen.DETERMINATION[f].anwRechts&&
   w.HDVariablen.UMGEBUNG[f].anwLinks&&w.HDVariablen.UMGEBUNG[f].anwRechts&&
@@ -299,7 +361,7 @@ check("Zentren-Intro definiert/offen",htmlQ.includes("fest in dir verdrahtet")&&
 check("Anwendungsblöcke gerendert",$("pfeile").querySelectorAll(".pfeil-anwendung").length===4);
 check("Lernstil-Karte gefüllt",$("lernstil").textContent.includes("Lerntyp"));
 check("Kanäle aufklappbar mit Text",$("kanaele").querySelectorAll("details").length===APP.holeChart().definierteKanaele.length&&$("kanaele").querySelector(".kanal-erster"));
-check("Wachstum in offenen Zentrums-Karten",$("zentren").querySelectorAll(".z-wachstum").length===9-APP.holeChart().definierteZentren.length);
+check("Wachstum unabhängig vom Zustand",$("zentren").querySelectorAll(".z-wachstum").length===9);
 check("Sonnen-Dauer im Wetter",$("transit-kopf").textContent.includes("noch bis"));
 const tD=w.HDTransit.berechne(w.HDEngine,APP.holeChart(),new Date());
 check("Torwechsel Sonne in der Zukunft",tD.sonneEnde instanceof w.Date===false?tD.sonneEnde>new Date():tD.sonneEnde>new Date());

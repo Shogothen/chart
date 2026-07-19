@@ -40,15 +40,77 @@ var PROFILE={
 };
 
 var ZENTREN_TEXTE={
-kopf:{name:"Kopfzentrum",def:"Du erzeugst einen konstanten eigenen Strom aus Fragen und Inspiration. Du inspirierst andere, ohne es zu versuchen.",off:"Du verstärkst die Fragen und Zweifel deiner Umgebung. Weisheit: erkennen, welche Fragen es wert sind, gedacht zu werden, und welche nur Druck von außen sind.",wachstum:"In der Offenheit lernst du, wessen Fragen dich wirklich angehen. Mit den Jahren erkennst du Inspiration, ohne ihrem Druck zu gehorchen."},
-ajna:{name:"Ajna (Verstand)",def:"Deine Art zu denken und zu begreifen ist beständig. Du hast eine feste Denkstruktur, auf die du dich verlassen kannst.",off:"Du kannst viele Denkweisen aufnehmen und flexibel bleiben. Weisheit: Konzepte müssen bei dir nicht endgültig sein. Nicht-fest-Wissen ist deine Stärke, kein Mangel.",wachstum:"Deine offene Ajna kann jede Denkweise nachvollziehen. Weisheit heißt hier: Gewissheiten wechseln zu dürfen, ohne dich zu verlieren."},
-kehle:{name:"Kehlzentrum",def:"Dein Ausdruck und Handeln haben eine feste, verlässliche Art. Deine Stimme trägt ein konsistentes Thema.",off:"Deine Stimme passt sich der Umgebung an, und du spürst Druck, aufzufallen und zu reden. Weisheit: Wer im richtigen Moment spricht, dem hört man zu.",wachstum:"Offen lernst du, wann Sprechen wirkt und wann es verpufft. Deine Stimme wird kostbar, weil sie den richtigen Moment kennt."},
-g:{name:"G-Zentrum (Identität & Richtung)",def:"Dein Gefühl für Identität, Liebe und Richtung ist stabil. Du weißt, wer du bist, auch wenn sich alles andere ändert.",off:"Identität und Richtung sind bei dir fließend. Du nimmst sie über Orte und Menschen auf. Weisheit: Der richtige Ort und die richtigen Menschen sind für dich Lebensentscheidungen.",wachstum:"Deine offene Mitte kann überall andocken. Mit der Zeit weißt du besser als jeder andere, welche Orte und Menschen gut tun."},
-herz:{name:"Herz-/Egozentrum (Wille)",def:"Du hast verlässliche Willenskraft und kannst Versprechen halten, wenn dein Ego wirklich dahintersteht.",off:"Dein Wille kommt in Wellen von außen. Weisheit: Du musst niemandem etwas beweisen. Versprechen unter Beweisdruck sind deine größte Falle.",wachstum:"Offen musst du nichts beweisen. Das ist die Lektion, und wer sie lernt, verhandelt gelassener als jeder Wollende."},
-sakral:{name:"Sakralzentrum",def:"Deine Lebens- und Arbeitskraft erneuert sich, wenn du auf das Richtige reagierst. Dein Bauch kennt die Antwort.",off:"Du hast keinen eigenen nachwachsenden Motor und weißt oft nicht, wann genug ist. Weisheit: Grenzen setzen, bevor der geliehene Schwung dich verbrennt.",wachstum:"Offen spürst du fremde Arbeitsenergie und lernst, wann genug ist. Deine Weisheit: Ausdauer ist nicht dein Maßstab."},
-milz:{name:"Milzzentrum",def:"Dein Immunsystem, dein Zeitgefühl und deine spontane Intuition sind stabil. Du strahlst Sicherheit aus.",off:"Du nimmst Ängste und Unwohlsein der Umgebung auf und hältst Ungesundes zu lange fest. Weisheit: Angst ist bei dir meist geliehen, prüfe, wem sie gehört.",wachstum:"Offen nimmst du Ängste und Befindlichkeiten anderer wahr. Mit den Jahren wirst du zur feinsten Antenne für Gesundheit im Raum."},
-solarplexus:{name:"Solarplexus (Emotionen)",def:"Du erzeugst eine eigene emotionale Welle mit Hochs und Tiefs, sie ist dein Motor und deine Tiefe, kein Fehler.",off:"Du verstärkst die Gefühle anderer und tust viel, um Konflikte zu vermeiden. Weisheit: Nicht jede Emotion im Raum ist deine, gib zurück, was dir nicht gehört.",wachstum:"Offen fühlst du die Emotionen aller. Die Reife liegt darin, Wellen durchziehen zu lassen, ohne sie zu besitzen."},
-wurzel:{name:"Wurzelzentrum",def:"Du hast einen eigenen, pulsierenden Antriebsdruck. Stress ist für dich Treibstoff mit Rhythmus.",off:"Du spürst den Druck der Welt, alles schnell erledigen zu müssen. Weisheit: Der Druck hört nie auf, egal wie viel du abarbeitest. Eile ist keine Pflicht.",wachstum:"Offen spürst du jeden Druck im Raum. Weisheit heißt hier: erledigen, was ansteht, ohne vom Druck getrieben zu werden."}
+kopf:{name:"Kronenzentrum (Kopf)",
+ def:"Du erzeugst einen eigenen, konstanten Strom aus Fragen und Inspiration. Du inspirierst andere, ohne es zu versuchen.",
+ defWachstum:"Deine Inspiration ist verlässlich. Wachstum heißt hier: sie zu teilen, statt sie im Kopf zu behalten, und zu akzeptieren, dass nicht jede Frage von dir beantwortet werden muss.",
+ defSchatten:"Du kannst dich in deinem eigenen Gedankendruck verlieren und Nächte an Fragen verlieren, die keine Antwort brauchen.",
+ off:"Du verstärkst die Fragen und Zweifel deiner Umgebung. Weisheit: erkennen, welche Fragen es wert sind, gedacht zu werden, und welche nur Druck von außen sind.",
+ offWachstum:"In der Offenheit lernst du, wessen Fragen dich wirklich angehen. Mit den Jahren erkennst du Inspiration, ohne ihrem Druck zu gehorchen.",
+ offSchatten:"Du versuchst, Fragen zu beantworten, die gar nicht deine sind, und verwechselst fremde Rastlosigkeit mit eigener Neugier."},
+
+ajna:{name:"Ajna-Zentrum (Verstand)",
+ def:"Deine Art zu denken und zu begreifen ist beständig. Du hast eine feste Denkstruktur, auf die du dich verlassen kannst.",
+ defWachstum:"Dein Denken ist ein Werkzeug, das andere gerne nutzen. Wachstum heißt: es anzubieten, ohne es zur einzigen Wahrheit zu erklären.",
+ defSchatten:"Weil deine Meinung sich sicher anfühlt, verteidigst du sie manchmal länger, als sie es verdient.",
+ off:"Du kannst viele Denkweisen aufnehmen und flexibel bleiben. Weisheit: Konzepte müssen bei dir nicht endgültig sein. Nicht-fest-Wissen ist deine Stärke, kein Mangel.",
+ offWachstum:"Deine offene Ajna kann jede Denkweise nachvollziehen. Weisheit heißt hier: Gewissheiten wechseln zu dürfen, ohne dich zu verlieren.",
+ offSchatten:"Du tust so, als wärst du dir sicher, um dazuzugehören, und übernimmst dabei Überzeugungen, die dir nicht gehören."},
+
+kehle:{name:"Kehlzentrum",
+ def:"Dein Ausdruck und Handeln haben eine feste, verlässliche Art. Deine Stimme trägt ein konsistentes Thema.",
+ defWachstum:"Du kannst zuverlässig aussprechen, was andere nur ahnen. Wachstum heißt: den richtigen Moment abzuwarten, statt jeden Raum zu füllen.",
+ defSchatten:"Weil Reden dir leichtfällt, redest du manchmal über Dinge hinweg, die erst noch reifen müssten.",
+ off:"Deine Stimme passt sich der Umgebung an, und du spürst Druck, aufzufallen und zu reden. Weisheit: Wer im richtigen Moment spricht, dem hört man zu.",
+ offWachstum:"Offen lernst du, wann Sprechen wirkt und wann es verpufft. Deine Stimme wird kostbar, weil sie den richtigen Moment kennt.",
+ offSchatten:"Du redest, um wahrgenommen zu werden, und drängst dich in Aufmerksamkeit, die dich danach leer zurücklässt."},
+
+g:{name:"G-Zentrum (Identität und Richtung)",
+ def:"Dein Gefühl für Identität, Liebe und Richtung ist stabil. Du weißt, wer du bist, auch wenn sich alles andere ändert.",
+ defWachstum:"Deine Richtung trägt auch andere. Wachstum heißt: ihr zu folgen, selbst wenn niemand sie versteht.",
+ defSchatten:"Du hältst an einer Richtung fest, die längst nicht mehr deine ist, weil Festhalten sich sicherer anfühlt als Umdrehen.",
+ off:"Identität und Richtung sind bei dir fließend. Du nimmst sie über Orte und Menschen auf. Weisheit: Der richtige Ort und die richtigen Menschen sind für dich Lebensentscheidungen.",
+ offWachstum:"Deine offene Mitte kann überall andocken. Mit der Zeit weißt du besser als jeder andere, welche Orte und Menschen gut tun.",
+ offSchatten:"Du suchst deine Identität in anderen und verlierst dich in Beziehungen oder Rollen, die dich nicht meinen."},
+
+herz:{name:"Herz-/Egozentrum (Wille)",
+ def:"Du hast verlässliche Willenskraft und kannst Versprechen halten, wenn dein Ego wirklich dahintersteht.",
+ defWachstum:"Dein Wille ist eine echte Ressource. Wachstum heißt: ihn nur einzusetzen, wo dein Herz mitgeht, und Erholung genauso ernst zu nehmen wie den Einsatz.",
+ defSchatten:"Du versprichst zu viel, weil du weißt, dass du es schaffen könntest, und zahlst mit Erschöpfung.",
+ off:"Dein Wille kommt in Wellen von außen. Weisheit: Du musst niemandem etwas beweisen. Versprechen unter Beweisdruck sind deine größte Falle.",
+ offWachstum:"Offen musst du nichts beweisen. Das ist die Lektion, und wer sie lernt, verhandelt gelassener als jeder Wollende.",
+ offSchatten:"Du beweist dich immer wieder neu und sagst Dinge zu, die dein Körper nicht halten kann."},
+
+sakral:{name:"Sakralzentrum",
+ def:"Deine Lebens- und Arbeitskraft erneuert sich, wenn du auf das Richtige reagierst. Dein Bauch kennt die Antwort.",
+ defWachstum:"Du hast Energie im Überfluss, solange sie ins Richtige fließt. Wachstum heißt: auf die Bauchantwort zu hören, bevor der Kopf zusagt.",
+ defSchatten:"Du arbeitest dich in Dingen fest, die dich nicht nähren, und merkst erst an der Frustration, dass es das falsche Ja war.",
+ off:"Du hast keinen eigenen nachwachsenden Motor und weißt oft nicht, wann genug ist. Weisheit: Grenzen setzen, bevor der geliehene Schwung dich verbrennt.",
+ offWachstum:"Offen spürst du fremde Arbeitsenergie und lernst, wann genug ist. Deine Weisheit: Ausdauer ist nicht dein Maßstab.",
+ offSchatten:"Du hältst mit Menschen mit, die mehr Motor haben als du, und zahlst es mit Erschöpfung, die tagelang nachhallt."},
+
+milz:{name:"Milzzentrum",
+ def:"Dein Immunsystem, dein Zeitgefühl und deine spontane Intuition sind stabil. Du strahlst Sicherheit aus.",
+ defWachstum:"Deine Intuition spricht leise und nur einmal. Wachstum heißt: ihr zu folgen, auch wenn sie unlogisch klingt.",
+ defSchatten:"Du hältst an dem fest, was dir sicher erscheint, und nennst Vorsicht manchmal Weisheit, obwohl es Angst ist.",
+ off:"Du nimmst Ängste und Unwohlsein der Umgebung auf und hältst Ungesundes zu lange fest. Weisheit: Angst ist bei dir meist geliehen, prüfe, wem sie gehört.",
+ offWachstum:"Offen nimmst du Ängste und Befindlichkeiten anderer wahr. Mit den Jahren wirst du zur feinsten Antenne für Gesundheit im Raum.",
+ offSchatten:"Du bleibst zu lange in Situationen, Jobs oder Beziehungen, die dir nicht guttun, weil Loslassen sich wie Gefahr anfühlt."},
+
+solarplexus:{name:"Solarplexus (Emotionen)",
+ def:"Du erzeugst eine eigene emotionale Welle mit Hochs und Tiefs, sie ist dein Motor und deine Tiefe, kein Fehler.",
+ defWachstum:"Deine Welle ist deine Autorität. Wachstum heißt: Klarheit über Zeit entstehen zu lassen, statt im Gefühl zu entscheiden.",
+ defSchatten:"Du entscheidest im Hoch oder im Tief und reißt Menschen in eine Stimmung hinein, die morgen schon wieder anders ist.",
+ off:"Du verstärkst die Gefühle anderer und tust viel, um Konflikte zu vermeiden. Weisheit: Nicht jede Emotion im Raum ist deine, gib zurück, was dir nicht gehört.",
+ offWachstum:"Offen fühlst du die Emotionen aller. Die Reife liegt darin, Wellen durchziehen zu lassen, ohne sie zu besitzen.",
+ offSchatten:"Du vermeidest Wahrheiten, um niemanden zu verstimmen, und sammelst dabei Unausgesprochenes, das irgendwann bricht."},
+
+wurzel:{name:"Wurzelzentrum",
+ def:"Du hast einen eigenen, pulsierenden Antriebsdruck. Stress ist für dich Treibstoff mit Rhythmus.",
+ defWachstum:"Dein Druck kommt in Wellen und will genutzt werden. Wachstum heißt: im Schub zu arbeiten und in der Pause wirklich zu ruhen.",
+ defSchatten:"Du hältst dich selbst unter Dauerdruck und verwechselst Getriebensein mit Lebendigkeit.",
+ off:"Du spürst den Druck der Welt, alles schnell erledigen zu müssen. Weisheit: Der Druck hört nie auf, egal wie viel du abarbeitest. Eile ist keine Pflicht.",
+ offWachstum:"Offen spürst du jeden Druck im Raum. Weisheit heißt hier: erledigen, was ansteht, ohne vom Druck getrieben zu werden.",
+ offSchatten:"Du hetzt dich durch Aufgaben, um den Druck loszuwerden, und stellst fest, dass sofort der nächste nachrückt."}
 };
 
 

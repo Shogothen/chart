@@ -156,6 +156,36 @@ h1 em{font-style:italic;color:#EBD9FF}
 .pfeil-wert{font-family:var(--serif);font-size:28px;font-weight:300;margin:6px 0 2px}
 .pfeil-meta{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--licht-leise);font-weight:500}
 .pfeil-karte p{font-size:13.4px;margin-top:10px;color:var(--licht-weich)}
+.kd{position:relative;display:block;text-decoration:none;color:inherit;transition:transform .18s,border-color .18s,background .18s}
+a.kd:hover{transform:translateY(-2px);border-color:rgba(255,180,137,.5);background:rgba(255,255,255,.08)}
+.kd-pfeil{position:absolute;right:13px;bottom:11px;font-size:13px;color:var(--gold);opacity:.5}
+a.kd:hover .kd-pfeil{opacity:1}
+.sprungnav{position:sticky;top:0;z-index:40;padding:9px 0;margin:0 0 6px;width:100%;max-width:100%;box-sizing:border-box;
+  background:rgba(12,4,66,.88);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1);
+  flex-wrap:wrap;justify-content:center;gap:6px}
+.sprungnav a{white-space:nowrap;min-height:38px;display:inline-flex;align-items:center;padding:7px 12px}
+.sprungnav a.an{background:rgba(255,180,137,.2);border-color:rgba(255,180,137,.55);color:#fff}
+.abschnitt[id],section[id]{scroll-margin-top:64px}
+.stabil{margin:12px 0 4px;padding:14px 18px;border-radius:16px;border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.045);font-size:13.4px;line-height:1.65;color:var(--licht-weich)}
+.stabil b{color:var(--licht);font-weight:500}
+.stabil .st-marke{display:inline-block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 9px;border-radius:999px;margin-right:8px;font-weight:500}
+.stabil.hoch .st-marke{background:rgba(184,217,200,.22);color:#B8D9C8}
+.stabil.mittel .st-marke{background:rgba(255,180,137,.22);color:var(--gold)}
+.stabil.knapp .st-marke{background:rgba(235,169,206,.24);color:#EBA9CE}
+.essenz-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:16px}
+.essenz-karte{border-radius:20px;padding:20px 22px;border:1px solid rgba(255,255,255,.13);min-width:0;overflow-wrap:anywhere}
+.essenz-karte.ek-a{background:linear-gradient(165deg,rgba(255,180,137,.16),rgba(255,255,255,.03));border-color:rgba(255,180,137,.32)}
+.essenz-karte.ek-b{background:linear-gradient(165deg,rgba(184,217,200,.14),rgba(255,255,255,.03));border-color:rgba(184,217,200,.3)}
+.essenz-karte.ek-c{background:linear-gradient(165deg,rgba(196,174,232,.15),rgba(255,255,255,.03));border-color:rgba(196,174,232,.32)}
+.ek-titel{font-family:var(--serif);font-size:21px;margin-bottom:10px}
+.essenz-karte p{font-size:13.8px;line-height:1.7;color:var(--licht-weich);margin-top:9px}
+.essenz-signatur{margin-top:16px;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.11);font-size:14px;color:var(--licht-weich);text-align:center}
+.essenz-signatur b{color:var(--gold);font-weight:500}
+.z-schatten{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,.14);font-size:13px}
+.z-schatten b{color:#E4B7C9;font-weight:500}
 .pfeil-anwendung{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.12);font-size:13.2px;color:var(--licht-weich);line-height:1.6}
 .pfeil-anwendung b{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
@@ -167,7 +197,7 @@ h1 em{font-style:italic;color:#EBD9FF}
 @media(max-width:640px){.zentren-intro{grid-template-columns:1fr}}
 .z-wachstum{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.16);font-size:13px}
 .z-wachstum b{color:var(--gold);font-weight:500}
-.wetter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:10px}
+.wetter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;margin-top:10px}
 .wetter-karte{border:1px solid rgba(255,180,137,.28);border-radius:18px;padding:16px 18px;
   background:linear-gradient(170deg,rgba(255,180,137,.12),rgba(255,255,255,.03));min-width:0;overflow-wrap:anywhere}
 .wetter-karte p{font-size:13.3px;color:var(--licht-weich);margin-top:8px;line-height:1.6}
@@ -299,10 +329,11 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
 <section class="ergebnis" id="ergebnis">
   <div class="kopfdaten reveal" id="kopfdaten"></div>
   <div class="zeiten reveal" id="zeiten"></div>
+  <div class="stabil reveal" id="stabil"></div>
 
-  <nav class="sprungnav reveal">
-    <a href="#rat-block">Rat</a><a href="#txt-typ">Typ</a><a href="#zentren-block">Zentren</a>
-    <a href="#kanaele-block">Kanäle</a><a href="#planeten-block">Planeten</a>
+  <nav class="sprungnav reveal" id="sprungnav">
+    <a href="#rat-block">Rat</a><a href="#essenz-block">Essenz</a><a href="#txt-typ">Typ</a>
+    <a href="#zentren-block">Zentren</a><a href="#kanaele-block">Kanäle</a><a href="#planeten-block">Planeten</a>
     <a href="#variablen-block">Variablen</a><a href="#transit-block">Wetter</a>
   </nav>
 
@@ -313,6 +344,13 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
     </div>
     <div class="rat-koerper" id="rat-inhalt"></div>
     <div class="rat-fuss"><button class="btn-teilen" id="btn-rat-teilen" type="button">&#8679;&nbsp;Teilen</button></div>
+  </section>
+
+  <section class="abschnitt reveal" id="essenz-block">
+    <h2><small>Auf einen Blick</small>Deine Essenz</h2>
+    <div class="meta">Die Kurzfassung deiner Karte: was dich ausmacht, worauf du bauen kannst und wo du dir selbst im Weg stehst.</div>
+    <div class="essenz-grid" id="essenz"></div>
+    <div class="essenz-signatur" id="essenz-signatur"></div>
   </section>
 
   <div class="haupt">
@@ -403,12 +441,16 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
 <script src="bodygraph.js"></script>
 <script src="variablen.js"></script>
 <script src="transit.js"></script>
+<script src="kreuze.js"></script>
+<script src="essenz.js"></script>
+<script src="stabil.js"></script>
 <script src="rat.js"></script>
 <script>
 "use strict";
 var $=function(id){return document.getElementById(id)};
 var E=window.HDEngine,I=window.HDInhalte,BG=window.HDBodygraph;
-var VAR=window.HDVariablen,TR=window.HDTransit,RAT=window.HDRat;
+var VAR=window.HDVariablen,TR=window.HDTransit,RAT=window.HDRat,KZ=window.HDKreuze,ES=window.HDEssenz;
+var letztesKreuz=null;var ST=window.HDStabil;
 var letzteChart=null,letzteVariablen=null;
 var sanft=(typeof matchMedia==="function")&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -585,9 +627,13 @@ function zeige(chart,utc){
   var kd=[["Typ",chart.typ,1],["Strategie",chart.strategie],["Autorität",chart.autoritaet],
     ["Profil",chart.profil+" – "+(I.PROFILE[chart.profil]?I.PROFILE[chart.profil][0]:"")],
     ["Definition",chart.definition],["Signatur",chart.signatur],["Nicht-Selbst",chart.nichtSelbst],
-    ["Inkarnationskreuz",chart.winkel.replace("-Kreuz","")+" "+chart.kreuzTore.persSonne+"/"+chart.kreuzTore.persErde+" | "+chart.kreuzTore.desSonne+"/"+chart.kreuzTore.desErde]];
+    ["Inkarnationskreuz",(KZ.info(chart.kreuzTore.persSonne,chart.winkel)||{}).name||chart.winkel]];
+  var kdZiel={"Typ":"txt-typ","Strategie":"txt-typ","Autorität":"txt-autoritaet","Profil":"txt-profil",
+    "Definition":"txt-definition","Signatur":"essenz-block","Nicht-Selbst":"essenz-block","Inkarnationskreuz":"txt-kreuz"};
   $("kopfdaten").innerHTML=kd.map(function(x){
-    return '<div class="kd'+(x[2]?" kd-gold":"")+'"><div class="kd-l">'+x[0]+'</div><div class="kd-w">'+x[1]+"</div></div>";
+    var ziel=kdZiel[x[0]]||"ergebnis";
+    return '<a class="kd'+(x[2]?" kd-gold":"")+'" href="#'+ziel+'"><div class="kd-l">'+x[0]
+      +'</div><div class="kd-w">'+x[1]+'</div><span class="kd-pfeil">&#8595;</span></a>';
   }).join("");
   $("zeiten").textContent="Geburt (UTC): "+chart.geburtUTC.replace("T"," ").slice(0,16)
     +" · Design (UTC): "+chart.designUTC.replace("T"," ").slice(0,16)
@@ -597,6 +643,13 @@ function zeige(chart,utc){
   zeigeVariablen(v);
   zeigeTransit(chart);
   zeigeRat(chart);
+  zeigeEssenz(chart,v);
+  try{
+    var gd=$("datum").value.split("-").map(Number),gz=$("zeit").value.split(":").map(Number);
+    var utcD=new Date(chart.geburtUTC);
+    var versatz=(Date.UTC(gd[0],gd[1]-1,gd[2],gz[0],gz[1])-utcD.getTime())/60000;
+    zeigeStabilitaet(utcD,versatz);
+  }catch(e){if(window.__HD_DEBUG)console.error("Stabil-Aufruf:",e)}
 
   var typ=I.TYPEN[chart.typ];
   abschnitt("txt-typ","Dein Typ",chart.typ,typ.anteil+" · "+typ.kurz,typ.text);
@@ -604,9 +657,15 @@ function zeige(chart,utc){
   var prof=I.PROFILE[chart.profil];
   abschnitt("txt-profil","Dein Profil",chart.profil+" – "+prof[0],"Deine Rolle im Leben",prof[1]);
   abschnitt("txt-definition","Deine Definition",chart.definition,"",I.DEFINITION_TEXTE[chart.definition]||"");
-  abschnitt("txt-kreuz","Dein Inkarnationskreuz",chart.winkel,
-    "Tore "+chart.kreuzTore.persSonne+"/"+chart.kreuzTore.persErde+" | "+chart.kreuzTore.desSonne+"/"+chart.kreuzTore.desErde,
-    I.WINKEL_TEXTE[chart.winkel]||"");
+  var kx=KZ.info(chart.kreuzTore.persSonne,chart.winkel);
+  letztesKreuz=kx;
+  abschnitt("txt-kreuz","Dein Inkarnationskreuz",kx?kx.name:chart.winkel,
+    (kx?kx.uebertitel+" · ":"")+"Tore "+chart.kreuzTore.persSonne+"/"+chart.kreuzTore.persErde+" | "+chart.kreuzTore.desSonne+"/"+chart.kreuzTore.desErde,
+    (kx?kx.artText+" ":"")+(I.WINKEL_TEXTE[chart.winkel]||""));
+  if(kx&&kx.sonnenthemaText){
+    $("txt-kreuz").insertAdjacentHTML("beforeend",
+      "<div class='pfeil-anwendung'><b>Grundthema deines Sonnentors</b>"+kx.sonnenthema+": "+kx.sonnenthemaText+"</div>");
+  }
 
   $("planeten").innerHTML=planetenTabelle(chart.personality,"pers","Persönlichkeit · Geburt")
     +planetenTabelle(chart.design,"des","Design · 88° zuvor");
@@ -626,13 +685,17 @@ function zeige(chart,utc){
   var defZ={};chart.definierteZentren.forEach(function(z){defZ[z]=1});
   $("zentren").innerHTML=reihenfolge.map(function(zk){
     var zt=I.ZENTREN_TEXTE[zk],def=!!defZ[zk];
-    var wachs=(!def&&zt.wachstum)?('<p class="z-wachstum"><b>Dein Wachstum:</b> '+zt.wachstum+"</p>"):"";
+    var w=def?zt.defWachstum:zt.offWachstum;
+    var sch=def?zt.defSchatten:zt.offSchatten;
+    var extra=(w?'<p class="z-wachstum"><b>Dein Wachstum:</b> '+w+"</p>":"")
+      +(sch?'<p class="z-schatten"><b>Dein Schatten:</b> '+sch+"</p>":"");
     return '<div class="z-karte '+(def?"def":"off")+'"><div class="z-name">'+zt.name
-      +'<span class="z-status">'+(def?"Definiert":"Offen")+"</span></div><p>"+(def?zt.def:zt.off)+"</p>"+wachs+"</div>";
+      +'<span class="z-status">'+(def?"Definiert":"Offen")+"</span></div><p>"+(def?zt.def:zt.off)+"</p>"+extra+"</div>";
   }).join("");
 
   $("ergebnis").classList.add("an");
   beobachte();
+  navBeobachten();
   if(!window.__HD_TEST)setTimeout(function(){$("ergebnis").scrollIntoView({behavior:sanft?"auto":"smooth",block:"start"})},60);
   merkeInUrl();
 }
@@ -686,6 +749,61 @@ function zeigeVariablen(v){
       :"Dein linker oberer Pfeil ergänzt: Du darfst mehrere Quellen gleichzeitig offen haben. Dein Geist sammelt nebenbei mehr auf, als du merkst.")
     +"</p>";
   $("quad").textContent="Deine Pfeilkombination: "+v.quad;
+}
+
+/* ---------- Wie sicher ist das Ergebnis? ---------- */
+function zeigeStabilitaet(utcDate,ortsOffsetMin){
+  var el=$("stabil");
+  if(!ST||!el){return}
+  el.className="stabil reveal";
+  el.innerHTML="<span class='st-marke'>prüfe</span>Ich rechne gerade aus, wie empfindlich dein Ergebnis auf die Geburtszeit reagiert.";
+  setTimeout(function(){
+    try{
+      var s=ST.berechne(E,utcDate.getTime(),ortsOffsetMin);
+      var marke=s.sicherheit==="hoch"?"sicher":(s.sicherheit==="mittel"?"beachten":"knapp");
+      el.className="stabil reveal "+s.sicherheit;
+      el.innerHTML="<span class='st-marke'>"+marke+"</span>"+ST.satz(s);
+    }catch(e){
+      if(window.__HD_DEBUG)console.error("Stabil:",e);
+      el.style.display="none";
+    }
+  },30);
+}
+
+/* ---------- Navigation: aktiver Abschnitt ---------- */
+function navBeobachten(){
+  var links=[].slice.call(document.querySelectorAll("#sprungnav a"));
+  var ziele=links.map(function(a){return document.getElementById(a.getAttribute("href").slice(1))});
+  if(!("IntersectionObserver" in window))return;
+  var beo=new IntersectionObserver(function(eintraege){
+    eintraege.forEach(function(e){
+      if(!e.isIntersecting)return;
+      var i=ziele.indexOf(e.target);
+      if(i<0)return;
+      links.forEach(function(a){a.classList.remove("an")});
+      links[i].classList.add("an");
+
+    });
+  },{rootMargin:"-60px 0px -70% 0px",threshold:0});
+  ziele.forEach(function(z){if(z)beo.observe(z)});
+}
+
+/* ---------- Deine Essenz ---------- */
+function zeigeEssenz(chart,v){
+  var e;
+  try{e=ES.erzeuge(chart,v,I,letztesKreuz||KZ.info(chart.kreuzTore.persSonne,chart.winkel))}
+  catch(x){if(window.__HD_DEBUG)console.error("Essenz:",x);$("essenz-block").style.display="none";return}
+  $("essenz-block").style.display="";
+  function karte(titel,klasse,absaetze){
+    return "<div class='essenz-karte "+klasse+"'><div class='ek-titel'>"+titel+"</div>"
+      +absaetze.map(function(a){return "<p>"+a+"</p>"}).join("")+"</div>";
+  }
+  $("essenz").innerHTML=
+     karte("Was dich einzigartig macht","ek-a",e.einzig)
+    +karte("Deine größte Stärke","ek-b",e.staerke)
+    +karte("Worauf du bei dir achten solltest","ek-c",e.achtung);
+  $("essenz-signatur").innerHTML="Wenn du deiner Bauart folgst, fühlt es sich nach <b>"+e.signatur
+    +"</b> an. Wenn nicht, meldet sich <b>"+e.nichtSelbst+"</b>.";
 }
 
 /* ---------- Heutiger Rat ---------- */

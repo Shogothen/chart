@@ -68,3 +68,23 @@ Alle fünf Prüfsuiten grün: 316 Prüfungen (test-core 42, test-app 126, test-g
 **8. Lernstil.** Eigene Karte: rechter oberer Pfeil bestimmt aktiver oder aufnehmender Lerntyp, linker oberer Pfeil ergänzt Fokus oder mehrere Quellen parallel.
 
 **Behobener Darstellungsfehler.** Chromium rendert Inhalte geschlossener details-Elemente mit Layoutbox weiter, wodurch Text des ersten Kanal-Aufklappers rechnerisch in die nächste Überschrift ragte. Behoben per CSS (Inhalt geschlossener Aufklapper wird sicher ausgeblendet); die QA-Überlappungsprüfung überspringt zusätzlich unsichtbare Elemente.
+
+## Zweiter Umbau nach Nutzerfeedback (19.07.2026)
+
+344 Prüfungen grün: test-core 42, test-app 154, test-gegenpruefung 11 plus 1000 Zufallscharts, qa 110 auf sechs Gerätegrößen, qa2 27.
+
+**Zentren.** Wachstum und Schatten gibt es jetzt in beiden Zuständen, definiert wie offen. Alle neun Zentren wurden neu geschrieben und inhaltlich geprüft: 36 neue Texte, keine Gedankenstriche, jeder Zustand mit vier Ebenen (Was es heißt, Dein Wachstum, Dein Schatten). Der Fehler ist korrigiert: es heißt Kronenzentrum, nicht Kopfzentrum. Ebenso Ajna-Zentrum und G-Zentrum sauber benannt.
+
+**Inkarnationskreuz.** Vorher stand dort nur die Winkelart. Jetzt trägt jedes Kreuz seinen echten Namen aus der vollständigen 192er-Tabelle, dazu den Übertitel der Schicksalsart und das Grundthema des Sonnentors. Zur Quellenlage: die erste recherchierte Quelle (dailyhumandesign.com) lieferte für Juxtapositions- und Linkswinkelkreuze dieselben vier Tore wie für Rechtswinkelkreuze, was fachlich falsch ist. Verwendet wurde stattdessen die vollständige Liste von humandesign4all, gegengeprüft an Jovian-Archive-Belegen.
+
+Diese Tabelle dient zugleich als unabhängige Gegenprobe der Berechnung: für jedes Sonnentor und jede Winkelart ist bekannt, in welchem Tor die Design-Sonne stehen muss. Bei 600 Zufallscharts stimmte das berechnete Design-Sonnentor in 600 Fällen mit der Referenz überein. Die 88-Grad-Rechnung ist damit gegen eine externe Quelle bestätigt.
+
+**Chart-Kontrast.** Definierte Zentren sind jetzt kräftige Farbflächen mit weißem Rand und Innenschein, offene sind deutlich dunkler mit gestricheltem Rand. Gemessen an den Zentrumsmitten: definiert Ø 197 Helligkeit, offen Ø 22, Abstand zwischen dem dunkelsten definierten und dem hellsten offenen Zentrum 165 Stufen.
+
+**Zusammenfassung.** Neuer Abschnitt Deine Essenz direkt nach dem Tagesrat, mit drei Karten: Was dich einzigartig macht, Deine größte Stärke, Worauf du bei dir achten solltest. Alles wird aus Typ, Autorität, Profil, Definition, Kreuz, definierten und offenen Zentren, Kanalanzahl und Pfeilrichtungen abgeleitet, nichts ist generisch. Abschließend eine Signaturzeile.
+
+**Navigation.** Die acht Kernwert-Kacheln sind Sprunglinks mit Pfeilsymbol und springen zum passenden Abschnitt. Darüber liegt eine klebende Sprungnavigation mit acht Zielen, deren aktiver Punkt beim Scrollen mitwandert. Im Browser belegt: Kachelklick landet 64 Pixel unter der Oberkante, Navigation bleibt bei y gleich 0 stehen.
+
+**Wettbewerbsvorteil aus der Recherche.** Sichtung von sieben deutschsprachigen Rechnern. Verbreitet sind PDF-Export, Videos und clientseitige Berechnung. Am nächsten kam der Rechner von Daniel Bayer mit einem Schieberegler für die Geburtszeit zum Ausprobieren. Statt Ausprobieren rechnen wir das Ergebnis aus: eine neue Karte zeigt per Bisektion auf die Minute genau, in welchem Zeitfenster Typ, Autorität und Profil unverändert bleiben, wann die nächste Änderung eintritt und was sich dann ändern würde. Kein gesichteter Wettbewerber bietet das.
+
+**Behobener Darstellungsfehler.** Die neuen Rasterspalten mit fester Mindestbreite von 300 Pixeln sprengten bei 320 Pixeln Fensterbreite den Inhaltsrahmen und verschoben die Ränder um 17 Pixel. Behoben durch Begrenzung der Mindestbreite auf die Containerbreite.
