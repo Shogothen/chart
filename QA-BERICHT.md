@@ -120,3 +120,9 @@ Vollständiger Durchlauf aus Nutzersicht auf dem Handy, alles gemessen. Stärken
 6. Kanal-Überschrift zählt mit: "Dein Kanal" bei einem, sonst "Deine N Kanäle".
 
 Alle fünf Suiten grün: 362 Prüfungen (test-core 42, test-app 172, gegen 11, qa 110, qa2 27).
+
+## iOS-Formularfelder (19.07.2026)
+
+Auf dem iPhone (Safari) waren Geburtsdatum und Geburtszeit als überhohe, komplett leere Balken zu sehen: iOS gibt Datums- und Zeitfeldern eine eigene innere Höhe, und leere Felder zeigen dort keinerlei Platzhalter. Behoben: alle drei Eingabefelder haben jetzt eine feste Höhe von 56 Pixeln (box-sizing, appearance zurückgesetzt, Wert im Feld linksbündig und vertikal mittig über die WebKit-Innenelemente). Solange Datum oder Zeit leer sind, zeigt das Feld einen sanften Hinweis (TT.MM.JJJJ beziehungsweise HH:MM), der bei Eingabe verschwindet; die Logik hängt an input- und change-Ereignissen.
+
+Verifiziert: alle drei Felder exakt 56 Pixel, Hinweis erscheint und verschwindet korrekt, Berechnungsablauf unverändert. Die Gleichhöhe ist als dauerhafte QA-Prüfung auf allen sechs Gerätegrößen verankert. Alle fünf Suiten grün: 368 Prüfungen (test-core 42, test-app 172, gegen 11, qa 116, qa2 27).

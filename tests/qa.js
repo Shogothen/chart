@@ -170,6 +170,14 @@ function pruefe(gerät,name,ok,detail){
     });
     pruefe(g.name,"Keine Textüberlappungen",ueberlappung.length===0,ueberlappung.join(" | "));
 
+    // Eingabefelder: alle drei exakt gleich hoch (iOS-Datumsfeld-Regression)
+    const felder=await page.evaluate(()=>{
+      const h=id=>{const e=document.getElementById(id);return e?Math.round(e.getBoundingClientRect().height):0};
+      return {ort:h("ort"),datum:h("datum"),zeit:h("zeit")};
+    });
+    pruefe(g.name,"Eingabefelder einheitlich 56px",
+      felder.ort===56&&felder.datum===56&&felder.zeit===56,JSON.stringify(felder));
+
     // Foto im Kopfbereich sichtbar
     const foto=await page.evaluate(()=>{
       const f=document.getElementById("hero-foto");

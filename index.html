@@ -55,8 +55,16 @@ h1 em{font-style:italic;color:#EBD9FF}
   display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:16px;align-items:end;backdrop-filter:blur(18px);
   box-shadow:0 40px 90px -50px rgba(0,0,0,.9)}
 .feld label{display:block;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--licht-leise);font-weight:500;margin-bottom:9px}
-.feld input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:14px;color:var(--licht);
-  font-family:var(--sans);font-size:16px;font-weight:300;padding:15px 16px;color-scheme:dark}
+.feld input{width:100%;box-sizing:border-box;height:56px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:14px;color:var(--licht);
+  font-family:var(--sans);font-size:16px;font-weight:300;padding:0 16px;color-scheme:dark;
+  -webkit-appearance:none;appearance:none}
+.feld{position:relative}
+/* iOS: Wert im Datums-/Zeitfeld linksbündig und mittig */
+.feld input::-webkit-date-and-time-value{text-align:left;line-height:56px}
+.feld input::-webkit-datetime-edit{display:flex;align-items:center;height:100%;padding:0}
+/* iOS zeigt leere Datums-/Zeitfelder komplett leer: sanfter Hinweis, solange nichts gewählt ist */
+.feld.leer::after{content:attr(data-hinweis);position:absolute;left:17px;bottom:16px;
+  font-size:16px;color:rgba(255,255,255,.38);pointer-events:none}
 .feld input::placeholder{color:rgba(255,255,255,.38)}
 .feld input:focus{outline:none;border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.11);box-shadow:0 0 0 4px rgba(122,98,232,.22)}
 .ort-feld{position:relative}
@@ -325,11 +333,11 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
     <input id="ort" type="text" placeholder="Wo bist du geboren?" autocomplete="off">
     <div class="vorschlaege" id="vorschlaege"></div>
   </div>
-  <div class="feld">
+  <div class="feld leer" data-hinweis="TT.MM.JJJJ" id="feld-datum">
     <label for="datum">Geburtsdatum</label>
-    <input id="datum" type="date">
+    <input id="datum" type="date" data-feld="datum">
   </div>
-  <div class="feld">
+  <div class="feld leer" data-hinweis="HH:MM" id="feld-zeit">
     <label for="zeit">Geburtszeit</label>
     <input id="zeit" type="time">
   </div>
@@ -1057,6 +1065,15 @@ function chartZu(){
   $("chart-voll-inhalt").innerHTML="";
   document.body.style.overflow="";
 }
+function feldLeerePflegen(){
+  [["datum","feld-datum"],["zeit","feld-zeit"]].forEach(function(p){
+    var i=$(p[0]),w=$(p[1]);
+    if(!i||!w)return;
+    var setze=function(){w.classList.toggle("leer",!i.value)};
+    i.addEventListener("input",setze);i.addEventListener("change",setze);setze();
+  });
+}
+feldLeerePflegen();
 $("btn-gross").addEventListener("click",chartGross);
 $("chart-voll-zu").addEventListener("click",chartZu);
 $("graph").addEventListener("click",function(){if(window.innerWidth<=960)chartGross()});
