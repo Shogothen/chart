@@ -1,6 +1,6 @@
-/* HD-BODYGRAPH v5 – Sternenkarte
-   Dunkles Indigo, leuchtende Aktivierungen, animierter Aufbau.
-   Geometrie: klassisches Rave-Layout, symmetriegeprüft. */
+/* HD-BODYGRAPH v9 – Leucht-Chart mit Silhouette und Planetenspalten
+   Vorbild: moderne HD-Apps. Persönlichkeit in Sternenblau, Design in Magenta-Rosé,
+   definierte Zentren leuchten weiß, Tore als farbige Chips, Planetenspalten im Bild. */
 (function(root,factory){
   if(typeof module!=="undefined"&&module.exports)module.exports=factory();
   else root.HDBodygraph=factory();
@@ -8,19 +8,19 @@
 "use strict";
 
 var FARBEN={
-  papier:"#FFFDF9",        /* helles Blatt, damit der Chart wie gewohnt liest */
-  kontur:"#2C2A28",        /* Umrandung wie im klassischen Bodygraph */
-  pers:"#1A1A1A",          /* Persönlichkeit: schwarz */
-  des:"#D8453C",           /* Design: rot */
-  leer:"#FFFFFF",
-  zahl:"#3A3634",
   grund:"#120650",
-  grundTief:"#0C0442"
+  grundTief:"#0C0442",
+  silhouette:"#180B58",
+  pers:"#FFFFFF",          /* Persönlichkeit: Sternenweiß */
+  des:"#FFB489",           /* Design: warmes Gold-Rosé wie das Logo */
+  zentrumAus:"#1B0E5A",
+  leer:"rgba(255,255,255,0.10)",
+  zahl:"#120650"
 };
-/* klassische Zentrumsfarben */
+/* Zentrumsfarben: warme, gedämpfte Töne, die auf Indigo ruhig leuchten */
 var ZFARBEN={
-  kopf:"#F6DF5B", ajna:"#8FC46B", kehle:"#B58453", g:"#F6DF5B", herz:"#E0564C",
-  sakral:"#E0564C", milz:"#B58453", solarplexus:"#B58453", wurzel:"#B58453"
+  kopf:"#F3E6C6", ajna:"#D9E4D4", kehle:"#EAD7BD", g:"#F6E9C8", herz:"#F2CFC4",
+  sakral:"#F2CFC4", milz:"#DEE0D2", solarplexus:"#F0DCC4", wurzel:"#E4D6C4"
 };
 
 var ZFORM={
@@ -58,19 +58,16 @@ var TOR_POS={
   19:[362,882],39:[362,908],41:[362,934]
 };
 
-
-/* Schwerpunkt je Zentrum – die Torziffern rücken dorthin ein */
+/* Schwerpunkte + Zuordnung Tor->Zentrum */
 var SCHWERPUNKT=(function(){
   var s={};
   Object.keys(ZFORM).forEach(function(z){
     var pts=ZFORM[z].split(" ").map(function(p){return p.split(",").map(Number)});
-    var sx=0,sy=0;
-    pts.forEach(function(p){sx+=p[0];sy+=p[1]});
+    var sx=0,sy=0;pts.forEach(function(p){sx+=p[0];sy+=p[1]});
     s[z]=[sx/pts.length,sy/pts.length];
   });
   return s;
 })();
-
 var TOR_ZENTRUM={};
 (function(){
   var Z={kopf:[64,61,63],ajna:[47,24,4,17,43,11],
@@ -92,7 +89,11 @@ var KANAELE=[[1,8],[2,14],[3,60],[4,63],[5,15],[6,59],[7,31],[9,52],
   [26,44],[27,50],[28,38],[29,46],[30,41],[32,54],[34,57],[35,36],
   [37,40],[39,55],[42,53],[47,64]];
 
-/* Torname-Kurzform für Tooltips wird von außen gereicht */
+var PLANET_REIHE=["sonne","erde","mond","nordknoten","suedknoten","merkur","venus","mars","jupiter","saturn","uranus","neptun","pluto"];
+var PLANET_ZEICHEN={sonne:"\u2609",erde:"\u2295",mond:"\u263D",nordknoten:"\u260A",suedknoten:"\u260B",
+  merkur:"\u263F",venus:"\u2640",mars:"\u2642",jupiter:"\u2643",saturn:"\u2644",
+  uranus:"\u2645",neptun:"\u2646",pluto:"\u2647"};
+
 function key(a,b){return Math.min(a,b)+"-"+Math.max(a,b)}
 
 function haelften(a,b){
@@ -130,25 +131,25 @@ function rundPfad(polyStr,r){
   return d+" Z";
 }
 
-function torFarbe(tor,persTore,desTore){
-  var p=persTore.has(tor),d=desTore.has(tor);
-  if(p&&d)return "url(#hd-beide)";
-  if(p)return FARBEN.pers;
-  if(d)return FARBEN.des;
-  return FARBEN.leer;
-}
-
-/* zufällige, aber stabile Sterne im Hintergrund */
-function sterne(anzahl,samen){
+function sterne(anzahl,samen,W,H){
+  W=W||880;H=H||1000;
   var s="",x=samen||7;
   function rnd(){x=(x*1664525+1013904223)%4294967296;return x/4294967296}
   for(var i=0;i<anzahl;i++){
-    var cx=rnd()*620,cy=rnd()*990,r=0.5+rnd()*1.4,o=0.15+rnd()*0.5;
+    var cx=rnd()*W,cy=rnd()*H,r=0.5+rnd()*1.3,o=0.10+rnd()*0.4;
     var dauer=(2.6+rnd()*4).toFixed(1),verzug=(rnd()*5).toFixed(1);
     s+='<circle class="hd-stern" cx="'+cx.toFixed(0)+'" cy="'+cy.toFixed(0)+'" r="'+r.toFixed(2)
       +'" fill="#FFFFFF" opacity="'+o.toFixed(2)+'" style="--d:'+dauer+'s;--v:'+verzug+'s"/>';
   }
   return s;
+}
+
+/* Körper-Silhouette hinter dem Graphen */
+function silhouette(){
+  return '<g fill="'+FARBEN.silhouette+'" opacity="0.55">'
+    +'<ellipse cx="310" cy="70" rx="64" ry="74"/>'
+    +'<path d="M310 128 C 214 128 128 208 118 330 C 110 430 96 540 96 660 C 96 830 168 972 310 972 C 452 972 524 830 524 660 C 524 540 510 430 502 330 C 492 208 406 128 310 128 Z"/>'
+    +'</g>';
 }
 
 function pfeilGruppe(v){
@@ -164,7 +165,7 @@ function pfeilGruppe(v){
     if(a.r==="links")d="M"+(a.x-w/2)+" "+a.y+" L"+(a.x+w/2)+" "+(a.y-h/2)+" L"+(a.x+w/2)+" "+(a.y+h/2)+" Z";
     else d="M"+(a.x+w/2)+" "+a.y+" L"+(a.x-w/2)+" "+(a.y-h/2)+" L"+(a.x-w/2)+" "+(a.y+h/2)+" Z";
     s+='<g class="hd-pfeil" style="--i:'+i+'">';
-    s+='<path d="'+d+'" fill="'+a.f+'"/>';
+    s+='<path d="'+d+'" fill="'+a.f+'" filter="url(#hd-glut)"/>';
     var zx=a.r==="links"?a.x+27:a.x-27;
     s+='<circle cx="'+zx+'" cy="'+a.y+'" r="9.5" fill="none" stroke="'+a.f+'" stroke-width="1.2" opacity="0.8"/>';
     s+='<text x="'+zx+'" y="'+(a.y+3.4)+'" font-size="10" font-weight="600" text-anchor="middle" fill="'+a.f+'">'+a.z+"</text>";
@@ -173,9 +174,27 @@ function pfeilGruppe(v){
   return s;
 }
 
+/* Planetenspalte */
+function spalte(akt,seite,farbe,x0){
+  var s='<g font-size="15">';
+  PLANET_REIHE.forEach(function(pl,i){
+    var a=akt[pl];if(!a)return;
+    var y=196+i*58;
+    var wert=a.tor+"."+a.linie;
+    var chipB=54,chipX=(seite==="links")?x0+30:x0;
+    var symX=(seite==="links")?x0+12:x0+chipB+18;
+    s+='<text x="'+symX+'" y="'+(y+5)+'" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-size="15">'+PLANET_ZEICHEN[pl]+"</text>";
+    s+='<rect x="'+chipX+'" y="'+(y-12)+'" width="'+chipB+'" height="24" rx="8" fill="rgba(255,255,255,0.05)" stroke="'+farbe+'" stroke-opacity="0.5" stroke-width="1"/>';
+    s+='<text x="'+(chipX+chipB/2)+'" y="'+(y+5)+'" text-anchor="middle" fill="'+farbe+'" font-weight="600" font-size="13.5">'+wert+"</text>";
+  });
+  s+="</g>";
+  return s;
+}
+
 function render(chart,variablen,opt){
   opt=opt||{};
   var animiert=opt.animiert!==false;
+  var mitSpalten=opt.spalten!==false;
   var persTore=new Set(),desTore=new Set(),torPlanet={};
   Object.keys(chart.personality).forEach(function(k){
     persTore.add(chart.personality[k].tor);
@@ -186,130 +205,164 @@ function render(chart,variablen,opt){
     (torPlanet[chart.design[k].tor]=torPlanet[chart.design[k].tor]||[]).push(["d",k,chart.design[k].linie]);
   });
   var defZ=new Set(chart.definierteZentren);
+  var B=mitSpalten?880:640, versatz=mitSpalten?130:10;
 
-  var s='<svg viewBox="0 0 620 990" xmlns="http://www.w3.org/2000/svg" class="hd-chart'+(animiert?" hd-an":"")+'" font-family="Jost,system-ui,sans-serif">';
+  var s='<svg viewBox="0 0 '+B+' 1000" xmlns="http://www.w3.org/2000/svg" class="hd-chart'+(animiert?" hd-an":"")+'" font-family="Jost,system-ui,sans-serif">';
   s+='<defs>'
-    +'<pattern id="hd-beide" width="10" height="10" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">'
-    +'<rect width="10" height="10" fill="'+FARBEN.pers+'"/><rect width="5" height="10" fill="'+FARBEN.des+'"/></pattern>'
-    +'<linearGradient id="hd-tiefe" x1="0" y1="0" x2="0.2" y2="1">'
-    +'<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.40"/><stop offset="1" stop-color="#000000" stop-opacity="0.07"/></linearGradient>'
-    +'<filter id="hd-blatt" x="-8%" y="-4%" width="116%" height="110%">'
-    +'<feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#0A0230" flood-opacity="0.55"/></filter>'
+    +'<radialGradient id="hd-himmel" cx="50%" cy="30%" r="80%">'
+    +'<stop offset="0" stop-color="#241263"/><stop offset="55%" stop-color="#140749"/><stop offset="100%" stop-color="#0A0233"/></radialGradient>'
+    +'<filter id="hd-glut" x="-80%" y="-80%" width="260%" height="260%">'
+    +'<feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
+    +'<filter id="hd-glut-weich" x="-120%" y="-120%" width="340%" height="340%">'
+    +'<feGaussianBlur stdDeviation="7"/></filter>'
+    +'<filter id="hd-glut-zentrum" x="-60%" y="-60%" width="220%" height="220%">'
+    +'<feGaussianBlur stdDeviation="14"/></filter>'
     +'<style>'
-    +'.hd-an .hd-fuellung{stroke-dasharray:var(--len,300);stroke-dashoffset:var(--len,300);'
-    +'animation:hdZeichnen 1s cubic-bezier(.4,0,.2,1) forwards;animation-delay:calc(.2s + var(--i,0)*.035s)}'
+    +'.hd-stern{animation:hdFunkeln var(--d,3s) ease-in-out infinite alternate;animation-delay:var(--v,0s)}'
+    +'@keyframes hdFunkeln{from{opacity:.10}to{opacity:.7}}'
+    +'.hd-an .hd-ader{stroke-dasharray:var(--len,300);stroke-dashoffset:var(--len,300);'
+    +'animation:hdZeichnen 1.05s cubic-bezier(.4,0,.2,1) forwards;animation-delay:calc(.2s + var(--i,0)*.04s)}'
     +'@keyframes hdZeichnen{to{stroke-dashoffset:0}}'
-    +'.hd-an .hd-zentrum{opacity:0;animation:hdAuf .7s ease forwards;animation-delay:calc(.05s + var(--i,0)*.055s)}'
+    +'.hd-an .hd-zentrum{opacity:0;animation:hdAuf .8s ease forwards;animation-delay:calc(.05s + var(--i,0)*.06s)}'
     +'@keyframes hdAuf{from{opacity:0}to{opacity:1}}'
-    +'.hd-an .hd-zahl{opacity:0;animation:hdAuf .5s ease forwards;animation-delay:calc(.85s + var(--i,0)*.008s)}'
-    +'.hd-tor-flaeche{cursor:help;fill:transparent}'
-    +'.hd-tor-flaeche:hover{fill:rgba(0,0,0,.07)}'
-    +'@media (prefers-reduced-motion: reduce){.hd-an .hd-fuellung,.hd-an .hd-zentrum,.hd-an .hd-zahl{animation:none;opacity:1;stroke-dashoffset:0}}'
+    +'.hd-an .hd-chip{opacity:0;animation:hdChip .45s ease forwards;animation-delay:calc(.85s + var(--i,0)*.012s)}'
+    +'@keyframes hdChip{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}'
+    +'.hd-chip{transform-box:fill-box;transform-origin:center;cursor:help}'
+    +'@media (prefers-reduced-motion: reduce){.hd-stern,.hd-an .hd-ader,.hd-an .hd-zentrum,.hd-an .hd-chip{animation:none;opacity:1;stroke-dashoffset:0}}'
     +'</style></defs>';
 
-  /* Blatt */
-  s+='<rect x="6" y="6" width="608" height="978" rx="22" fill="'+FARBEN.papier+'" filter="url(#hd-blatt)"/>';
+  s+='<rect x="0" y="0" width="'+B+'" height="1000" rx="26" fill="url(#hd-himmel)"/>';
+  s+=sterne(80,11,B,1000);
+
+  if(mitSpalten){
+    s+=spalte(chart.design,"links",FARBEN.des,16);
+    s+=spalte(chart.personality,"rechts",FARBEN.pers,B-118);
+  }
+
+  s+='<g transform="translate('+versatz+',10)">';
+  s+=silhouette();
   s+=pfeilGruppe(variablen);
 
-  /* Kanäle als umrandete Röhren: erst alle Konturen, dann alle Füllungen */
-  var konturen="",fuellungen="",idx=0;
+  /* Kanäle */
+  var ruhig="",gluehen="",adern="",idx=0;
   KANAELE.forEach(function(k){
     var h=haelften(k[0],k[1]);
-    var fa=torFarbe(k[0],persTore,desTore),fb=torFarbe(k[1],persTore,desTore);
+    var pa=persTore.has(k[0]),da=desTore.has(k[0]);
+    var pb=persTore.has(k[1]),db=desTore.has(k[1]);
+    function farbe(p,d){return p&&d?"url(#hd-mix)":(p?FARBEN.pers:(d?FARBEN.des:null))}
+    var fa=(pa||da)?(pa?FARBEN.pers:FARBEN.des):null;
+    var fb=(pb||db)?(pb?FARBEN.pers:FARBEN.des):null;
+    /* bei doppelter Aktivierung dominiert im Strang die Mischung: einfach beide Farben übereinander */
     var kn=key(k[0],k[1]);
-    var voll=(fa!==FARBEN.leer&&fb!==FARBEN.leer);
-    konturen+='<path d="'+h[0]+'" stroke="'+FARBEN.kontur+'" stroke-width="9.4" fill="none" stroke-linecap="round"/>'
-             +'<path d="'+h[1]+'" stroke="'+FARBEN.kontur+'" stroke-width="9.4" fill="none" stroke-linecap="round"/>';
-    var laenge=Math.round(Math.hypot(TOR_POS[k[0]][0]-TOR_POS[k[1]][0],TOR_POS[k[0]][1]-TOR_POS[k[1]][1])/2)+16;
-    [[h[0],fa,k[0]],[h[1],fb,k[1]]].forEach(function(paar,j){
-      var animiert_teil = paar[1]!==FARBEN.leer;
-      fuellungen+='<path'+(j===0?' data-kanal="'+kn+'" data-status="'+(voll?"definiert":(fa!==FARBEN.leer||fb!==FARBEN.leer?"halb":"leer"))+'"':"")
-        +(animiert_teil?' class="hd-fuellung" style="--len:'+laenge+';--i:'+(idx++)+'"':"")
-        +' d="'+paar[0]+'" stroke="'+paar[1]+'" stroke-width="6.6" fill="none" stroke-linecap="round"/>';
-    });
+    var voll=(fa&&fb);
+    if(!fa&&!fb){
+      ruhig+='<path data-kanal="'+kn+'" data-status="leer" d="'+h[0]+'" stroke="'+FARBEN.leer+'" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
+            +'<path d="'+h[1]+'" stroke="'+FARBEN.leer+'" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    }else{
+      var laenge=Math.round(Math.hypot(TOR_POS[k[0]][0]-TOR_POS[k[1]][0],TOR_POS[k[0]][1]-TOR_POS[k[1]][1])/2)+16;
+      [[h[0],fa,pa,da],[h[1],fb,pb,db]].forEach(function(teil,j){
+        var d=teil[0];
+        if(!teil[1]){
+          adern+='<path'+(j===0?' data-kanal="'+kn+'" data-status="halb"':"")+' d="'+d+'" stroke="'+FARBEN.leer+'" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+          return;
+        }
+        gluehen+='<path d="'+d+'" stroke="'+teil[1]+'" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.16" filter="url(#hd-glut-weich)"/>';
+        adern+='<path d="'+d+'" stroke="'+FARBEN.grundTief+'" stroke-width="6.6" fill="none" stroke-linecap="round" opacity="0.9"/>';
+        adern+='<path class="hd-ader"'+(j===0?' data-kanal="'+kn+'" data-status="'+(voll?"definiert":"halb")+'"':"")
+          +' style="--len:'+laenge+';--i:'+(idx++)+'" d="'+d+'" stroke="'+teil[1]+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+        if(teil[2]&&teil[3]){ /* beide Seiten: zweite Farbe gestrichelt darüber */
+          adern+='<path class="hd-ader" style="--len:'+laenge+';--i:'+(idx++)+'" d="'+d
+            +'" stroke="'+FARBEN.des+'" stroke-width="4.6" fill="none" stroke-linecap="round" stroke-dasharray="7 7"/>';
+        }
+      });
+    }
   });
-  s+=konturen+fuellungen;
+  s+=ruhig+gluehen+adern;
 
   /* Zentren */
   var zi=0;
   Object.keys(ZFORM).forEach(function(z){
-    var def=defZ.has(z),d=rundPfad(ZFORM[z],6);
+    var def=defZ.has(z),d=rundPfad(ZFORM[z],7);
     s+='<g class="hd-zentrum" data-zentrum="'+z+'" data-status="'+(def?"definiert":"offen")+'" style="--i:'+(zi++)+'">';
-    s+='<path d="'+d+'" fill="'+(def?ZFARBEN[z]:FARBEN.leer)+'" stroke="'+FARBEN.kontur+'" stroke-width="2"/>';
-    if(def)s+='<path d="'+d+'" fill="url(#hd-tiefe)" stroke="none"/>';
+    if(def){
+      s+='<path d="'+d+'" fill="'+FARBEN.des+'" opacity="0.20" filter="url(#hd-glut-zentrum)"/>';
+      s+='<path d="'+d+'" fill="'+ZFARBEN[z]+'" fill-opacity="0.96" stroke="rgba(255,255,255,0.65)" stroke-width="1.2"/>';
+      s+='<path d="'+d+'" fill="url(#hd-tiefe)" stroke="none"/>';
+    }else{
+      s+='<path d="'+d+'" fill="'+FARBEN.zentrumAus+'" fill-opacity="0.85" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>';
+    }
     s+='</g>';
   });
 
-  /* Torziffern – im klassischen Chart schlicht und schwarz */
+  /* Tore: aktive als Chips, inaktive als stille Ziffern */
   var ti=0;
   Object.keys(TOR_POS).forEach(function(t){
     var tor=+t,p=TOR_POS[tor];
     var istP=persTore.has(tor),istD=desTore.has(tor);
     var status=istP&&istD?"beides":(istP?"pers":(istD?"des":"leer"));
+    var zDef=defZ.has(TOR_ZENTRUM[tor]);
     var titel="Tor "+tor;
-    if(torPlanet[tor])titel+=" · "+torPlanet[tor].map(function(x){
-      return (x[0]==="p"?"Persönlichkeit ":"Design ")+x[1]+" "+tor+"."+x[2];
-    }).join(" · ");
-    /* Ziffer zum Schwerpunkt des eigenen Zentrums hin versetzt */
-    var zn=TOR_ZENTRUM[tor], sp=SCHWERPUNKT[zn];
-    var dx=p[0]-sp[0],dy=p[1]-sp[1],l=Math.hypot(dx,dy)||1;
-    var weite=(zn==="herz")?8:11.5;
-    var zx=p[0]-dx/l*weite, zy=p[1]-dy/l*weite;
-    s+='<g class="hd-zahl" data-tor="'+tor+'" data-status="'+status+'" style="--i:'+(ti++)+'">';
-    s+='<circle class="hd-tor-flaeche" cx="'+p[0]+'" cy="'+p[1]+'" r="13"/>';
-    s+='<text x="'+zx.toFixed(1)+'" y="'+(zy+3).toFixed(1)+'" font-size="9.4" font-weight="'+(status==="leer"?"400":"600")
-      +'" text-anchor="middle" fill="'+FARBEN.zahl+'" pointer-events="none">'+tor+"</text>";
+    if(torPlanet[tor])titel+=" \u00B7 "+torPlanet[tor].map(function(x){
+      return (x[0]==="p"?"Pers\u00F6nlichkeit ":"Design ")+x[1]+" "+tor+"."+x[2];
+    }).join(" \u00B7 ");
+    s+='<g class="hd-chip" data-tor="'+tor+'" data-status="'+status+'" style="--i:'+(ti++)+'">';
+    if(istP||istD){
+      var w=21,h=15;
+      if(istP&&istD){
+        s+='<path d="M'+(p[0]-w/2)+' '+(p[1]-h/2)+' h'+(w/2)+' v'+h+' h-'+(w/2)+' a4 4 0 0 1 -4 -4 v-'+(h-8)+' a4 4 0 0 1 4 -4 Z" fill="'+FARBEN.pers+'"/>';
+        s+='<path d="M'+(p[0])+' '+(p[1]-h/2)+' h'+(w/2-4)+' a4 4 0 0 1 4 4 v'+(h-8)+' a4 4 0 0 1 -4 4 h-'+(w/2-4)+' Z" fill="'+FARBEN.des+'"/>';
+      }else{
+        s+='<rect x="'+(p[0]-w/2)+'" y="'+(p[1]-h/2)+'" width="'+w+'" height="'+h+'" rx="4.5" fill="'+(istP?FARBEN.pers:FARBEN.des)+'" stroke="'+FARBEN.grundTief+'" stroke-width="0.8"/>';
+      }
+      s+='<text x="'+p[0]+'" y="'+(p[1]+3.4)+'" font-size="9.4" font-weight="700" text-anchor="middle" fill="'+FARBEN.zahl+'" pointer-events="none">'+tor+"</text>";
+    }else{
+      s+='<text x="'+p[0]+'" y="'+(p[1]+3.2)+'" font-size="8.8" text-anchor="middle" fill="rgba(255,255,255,'+(zDef?'0.5':'0.32')+')">'+tor+"</text>";
+    }
     s+='<title>'+titel+'</title></g>';
   });
 
-  s+="</svg>";
+  s+="</g></svg>";
   return s;
 }
 
-/* ---------- Poster: Sternenblatt A4 ---------- */
+/* ---------- Poster ---------- */
 function poster(chart,variablen,name,inhalte){
   var B=1240,H=1754;
-  var inner=render(chart,variablen,{animiert:false}).replace(/^<svg[^>]*>/,"").replace(/<\/svg>$/,"");
+  var inner=render(chart,variablen,{animiert:false,spalten:true}).replace(/^<svg[^>]*>/,"").replace(/<\/svg>$/,"");
   var profilName=inhalte&&inhalte.PROFILE&&inhalte.PROFILE[chart.profil]?inhalte.PROFILE[chart.profil][0]:"";
   var k=chart.kreuzTore;
-  var zeilen=[["Typ",chart.typ],["Strategie",chart.strategie],["Autorität",chart.autoritaet],
-    ["Profil",chart.profil+(profilName?" – "+profilName:"")],["Definition",chart.definition],
+  var zeilen=[["Typ",chart.typ],["Strategie",chart.strategie],["Autorit\u00E4t",chart.autoritaet],
+    ["Profil",chart.profil+(profilName?" \u2013 "+profilName:"")],["Definition",chart.definition],
     ["Inkarnationskreuz",chart.winkel.replace("-Kreuz","")+" "+k.persSonne+"/"+k.persErde+" | "+k.desSonne+"/"+k.desErde]];
   if(variablen){
-    zeilen.push(["Determination",variablen.determination.eintrag.name+" · "+variablen.determination.richtung]);
-    zeilen.push(["Umgebung",variablen.umgebung.eintrag.name+" · "+variablen.umgebung.richtung]);
-    zeilen.push(["Motivation",variablen.motivation.eintrag.name+" · "+variablen.motivation.richtung]);
-    zeilen.push(["Perspektive",variablen.perspektive.eintrag.name+" · "+variablen.perspektive.richtung]);
+    zeilen.push(["Determination",variablen.determination.eintrag.name+" \u00B7 "+variablen.determination.richtung]);
+    zeilen.push(["Umgebung",variablen.umgebung.eintrag.name+" \u00B7 "+variablen.umgebung.richtung]);
+    zeilen.push(["Motivation",variablen.motivation.eintrag.name+" \u00B7 "+variablen.motivation.richtung]);
+    zeilen.push(["Perspektive",variablen.perspektive.eintrag.name+" \u00B7 "+variablen.perspektive.richtung]);
   }
   var s='<svg viewBox="0 0 '+B+' '+H+'" width="'+B+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg">';
   s+='<defs><radialGradient id="pg" cx="50%" cy="26%" r="86%">'
-    +'<stop offset="0" stop-color="#241263"/><stop offset="55%" stop-color="#130648"/><stop offset="100%" stop-color="#08012C"/></radialGradient></defs>';
+    +'<stop offset="0" stop-color="#2A1875"/><stop offset="55%" stop-color="#150A4C"/><stop offset="100%" stop-color="#08012C"/></radialGradient></defs>';
   s+='<rect width="'+B+'" height="'+H+'" fill="url(#pg)"/>';
-  /* Sterne über das ganze Blatt */
-  var x=99;
-  function rnd(){x=(x*1664525+1013904223)%4294967296;return x/4294967296}
-  for(var i=0;i<260;i++){
-    s+='<circle cx="'+(rnd()*B).toFixed(0)+'" cy="'+(rnd()*H).toFixed(0)+'" r="'+(0.6+rnd()*1.6).toFixed(2)
-      +'" fill="#FFFFFF" opacity="'+(0.12+rnd()*0.5).toFixed(2)+'"/>';
-  }
-  s+='<text x="'+(B/2)+'" y="122" font-family="Fraunces,Georgia,serif" font-size="62" text-anchor="middle" fill="#FFFFFF">'
+  var x=99;function rnd(){x=(x*1664525+1013904223)%4294967296;return x/4294967296}
+  for(var i=0;i<240;i++)s+='<circle cx="'+(rnd()*B).toFixed(0)+'" cy="'+(rnd()*H).toFixed(0)+'" r="'+(0.6+rnd()*1.5).toFixed(2)+'" fill="#FFFFFF" opacity="'+(0.10+rnd()*0.45).toFixed(2)+'"/>';
+  s+='<text x="'+(B/2)+'" y="118" font-family="Marcellus,Georgia,serif" font-size="58" text-anchor="middle" fill="#FFFFFF">'
     +((name||"").trim()||"Dein Design")+"</text>";
-  s+='<text x="'+(B/2)+'" y="166" font-family="Jost,system-ui,sans-serif" font-size="15" letter-spacing="7" text-anchor="middle" fill="rgba(255,255,255,0.62)">HUMAN DESIGN CHART</text>';
-  var skala=0.88,chartH=990*skala;
-  s+='<g transform="translate('+((B-620*skala)/2)+',206) scale('+skala+')">'+inner+"</g>";
-  var y=206+chartH+64;
+  s+='<text x="'+(B/2)+'" y="160" font-family="Jost,system-ui,sans-serif" font-size="15" letter-spacing="7" text-anchor="middle" fill="rgba(255,255,255,0.6)">HUMAN DESIGN CHART</text>';
+  var skala=1.02,chartH=1000*skala;
+  s+='<g transform="translate('+((B-880*skala)/2)+',196) scale('+skala+')">'+inner+"</g>";
+  var y=196+chartH+58;
   zeilen.forEach(function(z){
     s+='<text x="150" y="'+y+'" font-family="Jost,system-ui,sans-serif" font-size="13.5" letter-spacing="3" fill="rgba(255,255,255,0.5)">'+z[0].toUpperCase()+"</text>";
-    s+='<text x="430" y="'+y+'" font-family="Fraunces,Georgia,serif" font-size="25" fill="#FFFFFF">'+z[1]+"</text>";
-    s+='<line x1="150" y1="'+(y+17)+'" x2="'+(B-150)+'" y2="'+(y+17)+'" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>';
-    y+=44;
+    s+='<text x="430" y="'+y+'" font-family="Marcellus,Georgia,serif" font-size="24" fill="#FFFFFF">'+z[1]+"</text>";
+    s+='<line x1="150" y1="'+(y+16)+'" x2="'+(B-150)+'" y2="'+(y+16)+'" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>';
+    y+=42;
   });
-  s+='<text x="'+(B/2)+'" y="'+(H-52)+'" font-family="Jost,system-ui,sans-serif" font-size="13" letter-spacing="5" text-anchor="middle" fill="rgba(255,255,255,0.55)">FLOWYOURDESIGN.COM</text>';
+  s+='<text x="'+(B/2)+'" y="'+(H-50)+'" font-family="Jost,system-ui,sans-serif" font-size="13" letter-spacing="5" text-anchor="middle" fill="rgba(255,255,255,0.55)">FLOWYOURDESIGN.COM</text>';
   s+="</svg>";
   return s;
 }
 
-/* ---------- Mandala-Ring für den Kopfbereich ---------- */
 function mandala(){
   var s='<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" class="hd-mandala">';
   s+='<g class="hd-ring">';
@@ -323,11 +376,13 @@ function mandala(){
   s+='<circle cx="200" cy="200" r="178" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>';
   s+='<circle cx="200" cy="200" r="150" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>';
   s+='</g>';
-  s+='<circle cx="200" cy="200" r="118" fill="none" stroke="rgba(255,180,137,0.4)" stroke-width="1" class="hd-ring-gegen"/>';
+  s+='<circle cx="200" cy="200" r="118" fill="none" stroke="rgba(255,95,209,0.35)" stroke-width="1" class="hd-ring-gegen"/>';
   s+="</svg>";
   return s;
 }
 
-return {render:render,SCHWERPUNKT:SCHWERPUNKT,TOR_ZENTRUM:TOR_ZENTRUM,poster:poster,mandala:mandala,pfeilGruppe:pfeilGruppe,haelften:haelften,
+return {render:render,poster:poster,mandala:mandala,pfeilGruppe:pfeilGruppe,haelften:haelften,
+  silhouette:silhouette,spalte:spalte,PLANET_REIHE:PLANET_REIHE,PLANET_ZEICHEN:PLANET_ZEICHEN,
+  SCHWERPUNKT:SCHWERPUNKT,TOR_ZENTRUM:TOR_ZENTRUM,
   TOR_POS:TOR_POS,ZFORM:ZFORM,BOGEN:BOGEN,FARBEN:FARBEN,ZFARBEN:ZFARBEN,KANAELE:KANAELE,sterne:sterne};
 });

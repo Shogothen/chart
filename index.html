@@ -101,7 +101,7 @@ h1 em{font-style:italic;color:#EBD9FF}
 .chart-hinweis{display:none;text-align:center;font-size:12.5px;color:var(--licht-leise);margin-top:10px}
 #chart-voll{position:fixed;inset:0;z-index:90;background:rgba(8,2,44,.97);display:none;overflow:auto;-webkit-overflow-scrolling:touch;padding:64px 12px 28px}
 #chart-voll.an{display:block}
-#chart-voll svg{width:760px;max-width:none;height:auto;display:block;margin:0 auto}
+#chart-voll svg{width:980px;max-width:none;height:auto;display:block;margin:0 auto}
 #chart-voll-zu{position:fixed;top:12px;right:12px;z-index:92;min-height:46px;padding:13px 20px;border-radius:999px;
   border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font-family:var(--sans);
   font-size:12px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(8px)}
@@ -180,6 +180,19 @@ h1 em{font-style:italic;color:#EBD9FF}
 .btn-hell{display:inline-block;margin-top:20px;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;
   color:#0C0442;background:#fff;border-radius:999px;padding:15px 26px;text-decoration:none}
 @media(max-width:780px){.zitat{padding:24px 20px}}
+.rat{margin-bottom:26px;border-radius:26px;overflow:hidden;border:1px solid rgba(255,255,255,.14)}
+.rat-kopf{padding:44px 26px 34px;text-align:center;
+  background:radial-gradient(120% 160% at 50% -20%,#B0538A 0%,#7A3E8F 34%,#3A2280 62%,#1B1054 100%)}
+.rat-kopf h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.6vw,42px);color:#fff}
+.rat-kopf .rat-datum{margin-top:8px;font-size:13px;letter-spacing:.14em;color:rgba(255,255,255,.75)}
+.rat-koerper{background:rgba(10,4,44,.72);backdrop-filter:blur(10px);padding:24px 26px 26px}
+.rat-koerper p{color:var(--licht-weich);font-size:16px;line-height:1.75;max-width:62ch;margin:0 auto 14px}
+.rat-koerper p:last-of-type{margin-bottom:0}
+.rat-fuss{display:flex;justify-content:center;padding:6px 26px 26px;background:rgba(10,4,44,.72)}
+.btn-teilen{display:inline-flex;align-items:center;gap:9px;min-height:50px;padding:14px 30px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.1);color:#fff;font-family:var(--sans);
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;cursor:pointer;backdrop-filter:blur(8px)}
+.btn-teilen:hover{background:rgba(255,255,255,.18)}
 footer{margin-top:64px;padding-top:26px;border-top:1px solid rgba(255,255,255,.1);font-size:11.5px;color:rgba(255,255,255,.42);line-height:2;text-align:center}
 footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12px 6px;min-height:44px}
 
@@ -262,10 +275,19 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
   <div class="zeiten reveal" id="zeiten"></div>
 
   <nav class="sprungnav reveal">
-    <a href="#txt-typ">Typ</a><a href="#variablen-block">Variablen</a>
+    <a href="#rat-block">Rat</a><a href="#txt-typ">Typ</a><a href="#variablen-block">Variablen</a>
     <a href="#transit-block">Heute</a><a href="#planeten-block">Planeten</a>
     <a href="#kanaele-block">Kanäle</a><a href="#zentren-block">Zentren</a>
   </nav>
+
+  <section class="rat reveal" id="rat-block">
+    <div class="rat-kopf">
+      <h2>Heutiger Rat</h2>
+      <div class="rat-datum" id="rat-datum"></div>
+    </div>
+    <div class="rat-koerper" id="rat-inhalt"></div>
+    <div class="rat-fuss"><button class="btn-teilen" id="btn-rat-teilen" type="button">&#8679;&nbsp;Teilen</button></div>
+  </section>
 
   <div class="haupt">
     <div class="graph-karte reveal">
@@ -278,9 +300,9 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
       </div>
       <div class="chart-hinweis">Tippe auf den Chart, um ihn groß und lesbar zu öffnen.</div>
       <div class="legende">
-        <span><span class="lg" style="background:#1A1A1A;border:1px solid rgba(255,255,255,.35)"></span>Persönlichkeit</span>
-        <span><span class="lg" style="background:#D8453C"></span>Design</span>
-        <span><span class="lg" style="background:repeating-linear-gradient(45deg,#1A1A1A 0 3px,#D8453C 3px 6px)"></span>beides</span>
+        <span><span class="lg" style="background:#FFFFFF"></span>Persönlichkeit</span>
+        <span><span class="lg" style="background:#FFB489"></span>Design</span>
+        <span><span class="lg" style="background:repeating-linear-gradient(45deg,#FFFFFF 0 3px,#FFB489 3px 6px)"></span>beides</span>
       </div>
     </div>
 
@@ -349,11 +371,12 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
 <script src="bodygraph.js"></script>
 <script src="variablen.js"></script>
 <script src="transit.js"></script>
+<script src="rat.js"></script>
 <script>
 "use strict";
 var $=function(id){return document.getElementById(id)};
 var E=window.HDEngine,I=window.HDInhalte,BG=window.HDBodygraph;
-var VAR=window.HDVariablen,TR=window.HDTransit;
+var VAR=window.HDVariablen,TR=window.HDTransit,RAT=window.HDRat;
 var letzteChart=null,letzteVariablen=null;
 var sanft=(typeof matchMedia==="function")&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -541,6 +564,7 @@ function zeige(chart,utc){
   $("graph").innerHTML=BG.render(chart,v,{animiert:!sanft});
   zeigeVariablen(v);
   zeigeTransit(chart);
+  zeigeRat(chart);
 
   var typ=I.TYPEN[chart.typ];
   abschnitt("txt-typ","Dein Typ",chart.typ,typ.anteil+" · "+typ.kurz,typ.text);
@@ -607,6 +631,30 @@ function zeigeVariablen(v){
   }).join("");
   $("quad").textContent="Deine Pfeilkombination: "+v.quad;
 }
+
+/* ---------- Heutiger Rat ---------- */
+var letzterRat=null;
+function zeigeRat(chart){
+  try{
+    letzterRat=RAT.erzeuge(E,TR,chart,I,new Date());
+  }catch(e){
+    if(window.__HD_DEBUG)console.error("Rat:",e);
+    $("rat-block").style.display="none";return;
+  }
+  $("rat-block").style.display="";
+  $("rat-datum").textContent=letzterRat.datum;
+  $("rat-inhalt").innerHTML=letzterRat.absaetze.map(function(a){return "<p>"+a+"</p>"}).join("");
+}
+$("btn-rat-teilen").addEventListener("click",function(){
+  if(!letzterRat)return;
+  var b=this;
+  var fertig=function(){b.innerHTML="&#10003;&nbsp;Kopiert";setTimeout(function(){b.innerHTML="&#8679;&nbsp;Teilen"},2200)};
+  if(navigator.share){
+    navigator.share({title:"Heutiger Rat",text:letzterRat.teilen}).catch(function(){});
+  }else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(letzterRat.teilen).then(fertig,fertig);
+  }else fertig();
+});
 
 /* ---------- Transit ---------- */
 function zeigeTransit(chart){

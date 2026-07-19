@@ -23,6 +23,7 @@ w.HDVariablen=require("/home/claude/hd/variablen.js");
 w.HD_HIMMEL=require("/home/claude/hd/himmel.js");
 w.HD_BILDER=require("/home/claude/hd/bilder.js");
 w.HDTransit=require("/home/claude/hd/transit.js");
+w.HDRat=require("/home/claude/hd/rat.js");
 w.URL.createObjectURL=function(){return "blob:test"};
 w.URL.revokeObjectURL=function(){};
 const inline=html.match(/<script>([\s\S]*?)<\/script>\s*<\/body>/)[1];
@@ -137,16 +138,16 @@ check("Persönlichkeits-Färbung vorhanden",persFarbe>4,persFarbe);
 check("Design-Färbung vorhanden",desFarbe>4,desFarbe);
 check("Doppelaktivierung markiert",svg.includes('data-status="beides"'));
 // Definierte Zentren gefüllt: Milz (#C9B18F) und G/Ajna
-check("Definierte Zentren leuchten in ihren Tönen",svg.includes(w.HDBodygraph.ZFARBEN.milz)&&svg.includes(w.HDBodygraph.ZFARBEN.ajna)&&svg.includes(w.HDBodygraph.ZFARBEN.g));
+check("Definierte Zentren als warme Farbflächen",(svg.match(/opacity="0.20" filter="url\(#hd-glut-zentrum\)"/g)||[]).length===w.HDEngine.berechneChart(w.HDEngine.localToUtc(1948,4,9,0,5,"America/Toronto")).definierteZentren.length);
 // Undefinierte Zentren weiß: Sakral/SP/Wurzel/Kopf offen bei Ra
 check("Vier offene Zentren weiß",(svg.match(/data-status="offen"/g)||[]).length===4);
 check("Weiche Rundungen im Chart",(svg.match(/ Q/g)||[]).length>20);
-check("Chart auf hellem Blatt (klassischer Aufbau)",svg.includes(w.HDBodygraph.FARBEN.papier));
-check("Klassische Zentrumsfarben",svg.includes("#F6DF5B")&&svg.includes("#8FC46B")&&svg.includes("#B58453")&&svg.includes("#E0564C"));
-check("Aufbau-Animation vorhanden",svg.includes("hdZeichnen")&&svg.includes("hd-fuellung"));
+check("Chart auf Nachtgrund",svg.includes("url(#hd-himmel)"));
+check("Zentrumsfarben der Marke im Chart",svg.includes(w.HDBodygraph.ZFARBEN.kehle)||svg.includes(w.HDBodygraph.ZFARBEN.sakral));
+check("Aufbau-Animation vorhanden",svg.includes("hdZeichnen")&&svg.includes("hd-ader"));
 check("Bewegungsreduktion respektiert",svg.includes("prefers-reduced-motion"));
 check("Tore haben Tooltips",(svg.match(/<title>Tor /g)||[]).length===64);
-check("Kanalröhren mit Kontur gezeichnet",(svg.match(/stroke-width="9.4"/g)||[]).length===72);
+check("Leuchtende Kanaladern gezeichnet",(svg.match(/class="hd-ader"/g)||[]).length>=8&&svg.includes("hd-glut-weich"));
 fs.writeFileSync("/home/claude/hd/ra-bodygraph.svg",svg);
 
 
@@ -169,13 +170,13 @@ check("Vier Pfeil-Karten gerendert",$("pfeile").querySelectorAll(".pfeil-karte")
 check("Kognition und Sinn gerendert",$("substruktur").querySelectorAll(".pfeil-karte").length===2);
 check("Quad-Zusammenfassung sichtbar",$("quad").textContent.includes("Pfeilkombination"));
 check("Pfeile im SVG (4 Dreiecke)",($("graph").innerHTML.match(/<path d="M[\d.]+ [\d.]+ L[\d.]+ [\d.]+ L[\d.]+ [\d.]+ Z"/g)||[]).length===4);
-check("Chart-Format 620x990",$("graph").innerHTML.includes("0 0 620 990"));
+check("Chart-Format 880x1000 mit Spalten",$("graph").innerHTML.includes("0 0 880 1000"));
 check("Mandala im Kopfbereich",!!$("hero-bogen").querySelector(".hd-mandala"));
 check("Originalhimmel eingebunden (3726 Sterne)",w.HD_HIMMEL&&w.HD_HIMMEL.sterne.length===3726,w.HD_HIMMEL&&w.HD_HIMMEL.sterne.length);
 check("Nebelverlauf als Hintergrundbild gesetzt",($("himmel-bild").style.backgroundImage||"").indexOf("data:image/png;base64")>=0);
 check("Keine eigene Kopfleiste (wird eingebettet)",!w.document.querySelector(".leiste"));
 check("Gemessene Originalfarbe im Stylesheet",w.document.documentElement.innerHTML.includes("#0C0442"));
-check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===6);
+check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===7);
 check("Kernwerte als Kacheln sichtbar",$("kopfdaten").querySelectorAll(".kd").length===8);
 check("Link-Teilen-Knopf vorhanden",!!$("btn-link"));
 
@@ -254,6 +255,30 @@ let minAb=1e9;
 for(let i=0;i<ziffernPos.length;i++)for(let j=i+1;j<ziffernPos.length;j++)
   minAb=Math.min(minAb,Math.hypot(ziffernPos[i][0]-ziffernPos[j][0],ziffernPos[i][1]-ziffernPos[j][1]));
 check("Ziffern überlappen sich nicht",minAb>12,minAb.toFixed(1)+"px");
+
+
+console.log("— Planetenspalten und Rat —");
+const svgSp=$("graph").innerHTML;
+check("26 Planeten-Chips in den Spalten",(svgSp.match(/rx="8"/g)||[]).length===26);
+check("13 Planetensymbole je Seite",(svgSp.match(/\u2609|\u2643/g)||[]).length>=4);
+check("Silhouette hinter dem Graphen",svgSp.includes(w.HDBodygraph.FARBEN.silhouette));
+const chartR=APP.holeChart();
+// Spaltenwerte gegen Berechnung: Design-Sonne und Pers-Sonne müssen als Chip-Text auftauchen
+check("Design-Sonne in linker Spalte",svgSp.indexOf(">"+chartR.design.sonne.tor+"."+chartR.design.sonne.linie+"<")>=0);
+check("Pers-Sonne in rechter Spalte",svgSp.indexOf(">"+chartR.personality.sonne.tor+"."+chartR.personality.sonne.linie+"<")>=0);
+
+const R=w.HDRat;
+const rat1=R.erzeuge(w.HDEngine,w.HDTransit,chartR,w.HDInhalte,new Date("2026-07-19T12:00:00Z"));
+check("Rat hat drei Absätze",rat1.absaetze.length===3);
+check("Rat nennt das Sonnentor des Tages",rat1.absaetze[0].includes("Tor "+rat1.sonne.tor+"."+rat1.sonne.linie));
+check("Rat ist typspezifisch",rat1.absaetze[1].length>60&&w.HDRat.TYP_RAT[chartR.typ].includes(rat1.absaetze[1]));
+const rat2=R.erzeuge(w.HDEngine,w.HDTransit,chartR,w.HDInhalte,new Date("2026-07-19T18:00:00Z"));
+check("Rat am selben Tag stabil (Typ-Absatz)",rat1.absaetze[1]===rat2.absaetze[1]);
+check("Rat-Block im UI gefüllt",$("rat-inhalt").querySelectorAll("p").length===3);
+check("Rat-Datum sichtbar",$("rat-datum").textContent.length>8);
+check("Teilen-Knopf vorhanden",!!$("btn-rat-teilen"));
+check("Teilen-Text enthält flowyourdesign",rat1.teilen.includes("flowyourdesign.com"));
+check("Rat kleines du",!/[a-zß,;]\s(Du|Dich|Dir|Dein)\b/.test(rat1.text));
 
 console.log("— Bilder und Ton —");
 check("Hero-Foto eingebettet",($("hero-foto").style.backgroundImage||"").indexOf("data:image/jpeg")>=0);
