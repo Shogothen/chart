@@ -104,3 +104,19 @@ Gestaltung: helles Papier in der Markenwelt (Creme, Indigo-Tinte, Rosé- und Gol
 Inhalt in dieser Reihenfolge: Deckkopf mit Geburtsdaten und Ort, die acht Kernwerte samt Stabilitätssatz, Deine Essenz (drei Karten plus Signaturzeile), der Bodygraph, Typ/Autorität/Profil/Definition/Inkarnationskreuz mit Übertitel und Sonnenthema, alle neun Zentren mit Wachstum und Schatten, alle definierten Kanäle mit Volltext, beide Planetentafeln, die vier Variablen mit Anwendungsblock. Tagesrat und Planetarisches Wetter bleiben bewusst draußen, der Bericht ist die zeitlose Fassung. Fußzeile mit Erstellungsdatum und flowyourdesign.com.
 
 Verifiziert: Bericht aus der laufenden Seite gebaut (93 KB), als A4-PDF gerendert: 10 Seiten (Vergleichschart mit 9 Kanälen: 11 Seiten), kein "undefined", alle Kernabschnitte im extrahierten PDF-Text nachgewiesen, Chartseite mit 56 Prozent dunkler Panelfläche und hellen Leuchtzentren darin. Alle fünf Suiten grün: 355 Prüfungen (test-core 42, test-app 165, gegen 11, qa 110, qa2 27).
+
+## Nutzer-Screening und Umsetzung (19.07.2026)
+
+Vollständiger Durchlauf aus Nutzersicht auf dem Handy, alles gemessen. Stärken bestätigt: Ergebnis nach rund einer Sekunde, automatischer Sprung zu den Kernwerten, freundliche Fehlermeldung, Ladezustand am Knopf, Großansicht, teilbarer Link, Planetentafel ohne Querscrollen.
+
+**Behobener Fehler.** Die Sprungnavigation war mobil dreizeilig (145 Pixel, auf 320er-Geräten 189) und jeder Ankersprung landete mit der Überschrift dahinter, weil der Versatz fest auf 64 Pixel stand. Jetzt: einzeilig wischbar (59 Pixel), der aktive Punkt wischt sich selbst in Sicht, der Ankerversatz ist per CSS-Variable an die gemessene Navigationshöhe gekoppelt. Auf 390 und 320 Pixeln verifiziert: alle Sprünge landen frei unter der Leiste.
+
+**Sechs Verbesserungen umgesetzt und im Browser belegt:**
+1. Einstieg gestrafft: Hero-Foto mobil gedeckelt, Formular rückt näher; der Hero-Knopf war bereits im ersten Bildschirm sichtbar.
+2. "Daten ändern" als erster Punkt der Sprungnavigation, springt frei sichtbar zum Formular (gemessen: Formular bei 24 Pixel unter der Oberkante).
+3. Abschlussblock am Seitenende mit "Bericht als PDF sichern" und "Neue Berechnung"; beide Wege öffnen verifiziert das Berichtsfenster beziehungsweise das Formular.
+4. Ortssuche bevorzugt DACH: "Her" liefert jetzt Herne, Herten, Herford, Herzogenrath statt Hermosillo und Matamoros.
+5. Die beiden Planetentafeln stecken in einem anfangs geschlossenen Aufklapper ("Alle 26 Aktivierungen anzeigen"), nach Tipp 28 Zeilen sichtbar.
+6. Kanal-Überschrift zählt mit: "Dein Kanal" bei einem, sonst "Deine N Kanäle".
+
+Alle fünf Suiten grün: 362 Prüfungen (test-core 42, test-app 172, gegen 11, qa 110, qa2 27).

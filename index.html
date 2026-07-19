@@ -40,7 +40,7 @@ h1 em{font-style:italic;color:#EBD9FF}
   color:#0C0442;background:#fff;border-radius:999px;text-decoration:none;
   transition:transform .18s ease,box-shadow .3s ease;-webkit-tap-highlight-color:transparent}
 .btn-hero:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px rgba(255,255,255,.5)}
-.hero-bogen{position:relative;aspect-ratio:1/1.2;border-radius:50% 50% 14px 14px / 38% 38% 3% 3%;overflow:hidden;
+.hero-bogen{position:relative;aspect-ratio:1/1.2;max-height:340px;border-radius:50% 50% 14px 14px / 38% 38% 3% 3%;overflow:hidden;
   background:radial-gradient(120% 90% at 50% 12%,rgba(122,98,232,.55),rgba(18,10,56,.9) 68%);
   border:1px solid rgba(255,255,255,.16)}
 .hero-foto{position:absolute;inset:0;background-size:cover;background-position:52% 30%}
@@ -160,14 +160,24 @@ h1 em{font-style:italic;color:#EBD9FF}
 a.kd:hover{transform:translateY(-2px);border-color:rgba(255,180,137,.5);background:rgba(255,255,255,.08)}
 .kd-pfeil{position:absolute;right:13px;bottom:11px;font-size:13px;color:var(--gold);opacity:.5}
 a.kd:hover .kd-pfeil{opacity:1}
-.sprungnav{position:sticky;top:0;z-index:40;padding:9px 0;margin:0 0 6px;width:100%;max-width:100%;box-sizing:border-box;
-  background:rgba(12,4,66,.88);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1);
-  flex-wrap:wrap;justify-content:center;gap:6px}
-.sprungnav a{white-space:nowrap;min-height:38px;display:inline-flex;align-items:center;padding:7px 12px}
+.sprungnav{position:sticky;top:0;z-index:40;padding:8px 2px;margin:0 0 6px;width:100%;max-width:100%;box-sizing:border-box;
+  background:rgba(12,4,66,.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1);
+  flex-wrap:nowrap;justify-content:flex-start;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sprungnav::-webkit-scrollbar{display:none}
+.sprungnav a{white-space:nowrap;flex:0 0 auto;min-height:42px;display:inline-flex;align-items:center;padding:8px 13px}
+.sprungnav a.nav-zurueck{border-style:dashed;color:var(--licht-leise)}
 .sprungnav a.an{background:rgba(255,180,137,.2);border-color:rgba(255,180,137,.55);color:#fff}
-.abschnitt[id],section[id]{scroll-margin-top:64px}
+.abschnitt[id],section[id]{scroll-margin-top:calc(var(--navh,56px) + 14px)}
 .stabil{margin:12px 0 4px;padding:14px 18px;border-radius:16px;border:1px solid rgba(255,255,255,.13);
   background:rgba(255,255,255,.045);font-size:13.4px;line-height:1.65;color:var(--licht-weich)}
+.planeten-klapp summary{cursor:pointer;list-style:none;min-height:48px;display:flex;align-items:center;gap:10px;padding:12px 18px;border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(255,255,255,.05);font-size:14px;color:var(--licht-weich)}
+.planeten-klapp summary::-webkit-details-marker{display:none}
+.planeten-klapp summary::before{content:"\2193";color:var(--gold);transition:transform .2s}
+.planeten-klapp[open] summary::before{transform:rotate(180deg)}
+.planeten-klapp[open] summary{margin-bottom:10px}
+.planeten-klapp:not([open]) .tab-doppel{display:none}
+.abschluss-knoepfe{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.abschluss-knoepfe .btn,.abschluss-knoepfe .btn-leise{min-height:52px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .stabil b{color:var(--licht);font-weight:500}
 .stabil .st-marke{display:inline-block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
   padding:3px 9px;border-radius:999px;margin-right:8px;font-weight:500}
@@ -270,6 +280,8 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
   .wrap{padding:0 16px 80px}
   .formular{grid-template-columns:1fr}
   .kd .kd-w{font-size:19px}
+  .hero-bogen{max-height:280px}
+  .lede{margin-bottom:4px}
   .abschnitt h2{font-size:26px}
   .pfeil-wert{font-size:24px}
 }
@@ -332,7 +344,7 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
   <div class="stabil reveal" id="stabil"></div>
 
   <nav class="sprungnav reveal" id="sprungnav">
-    <a href="#rat-block">Rat</a><a href="#essenz-block">Essenz</a><a href="#txt-typ">Typ</a>
+    <a href="#formular" class="nav-zurueck">Daten ändern</a><a href="#rat-block">Rat</a><a href="#essenz-block">Essenz</a><a href="#txt-typ">Typ</a>
     <a href="#zentren-block">Zentren</a><a href="#kanaele-block">Kanäle</a><a href="#planeten-block">Planeten</a>
     <a href="#variablen-block">Variablen</a><a href="#transit-block">Wetter</a>
   </nav>
@@ -396,7 +408,10 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
 
   <div class="abschnitt reveal" id="planeten-block">
     <h2><small>Die 26 Aktivierungen</small>Deine Planeten</h2>
-    <div class="tab-doppel" id="planeten"></div>
+    <details class="planeten-klapp">
+      <summary>Alle 26 Aktivierungen anzeigen</summary>
+      <div class="tab-doppel" id="planeten"></div>
+    </details>
   </div>
 
   <div class="abschnitt reveal" id="variablen-block" style="margin-top:34px">
@@ -413,6 +428,15 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
     <div class="meta" id="transit-meta"></div>
     <div class="transit-kopf" id="transit-kopf"></div>
     <div id="transit-inhalt"></div>
+  </div>
+
+  <div class="abschnitt reveal" id="abschluss-block">
+    <h2><small>Zum Mitnehmen</small>Behalte dein Design bei dir</h2>
+    <div class="meta">Sichere dir alles Gelesene als Dokument, oder rechne die Karte eines Menschen, den du liebst.</div>
+    <div class="abschluss-knoepfe">
+      <button class="btn" id="btn-bericht-ende" type="button">Bericht als PDF sichern</button>
+      <a class="btn-leise" href="#formular" id="btn-neu">Neue Berechnung</a>
+    </div>
   </div>
 
 </section>
@@ -548,7 +572,15 @@ function suche(q){
     if(kandidaten.indexOf(n)>=0)exakt.push(HD_STAEDTE[i]);
     else if(kandidaten.some(function(k){return n.indexOf(k)===0}))praefix.push(HD_STAEDTE[i]);
   }
-  return exakt.concat(praefix).slice(0,8);
+  var dach={DE:0,AT:1,CH:2};
+  function sortiere(a){
+    return a.map(function(s,i){return [s,i]}).sort(function(x,y){
+      var dx=(x[0][1] in dach)?dach[x[0][1]]:9, dy=(y[0][1] in dach)?dach[y[0][1]]:9;
+      if(dx!==dy)return dx-dy;
+      return x[1]-y[1];
+    }).map(function(p){return p[0]});
+  }
+  return sortiere(exakt).concat(sortiere(praefix)).slice(0,8);
 }
 var vsAktiv=-1,vsListe=[];
 function zeigeVorschlaege(liste){
@@ -672,6 +704,9 @@ function zeige(chart,utc){
   $("planeten").innerHTML=planetenTabelle(chart.personality,"pers","Persönlichkeit · Geburt")
     +planetenTabelle(chart.design,"des","Design · 88° zuvor");
 
+  var kb=$("kanaele-block").querySelector("h2");
+  var kAnz=chart.definierteKanaele.length;
+  kb.innerHTML="<small>Deine Lebensadern</small>"+(kAnz===1?"Dein Kanal":"Deine "+kAnz+" Kanäle");
   $("kanaele").innerHTML=chart.definierteKanaele.map(function(k){
     var s=Math.min(k[0],k[1])+"-"+Math.max(k[0],k[1]);
     var text=I.KANAL_TEXTE[s]||"";
@@ -774,9 +809,15 @@ function zeigeStabilitaet(utcDate,ortsOffsetMin){
 }
 
 /* ---------- Navigation: aktiver Abschnitt ---------- */
+function navHoeheSetzen(){
+  var n=$("sprungnav");
+  if(n)document.documentElement.style.setProperty("--navh",n.offsetHeight+"px");
+}
 function navBeobachten(){
   var links=[].slice.call(document.querySelectorAll("#sprungnav a"));
   var ziele=links.map(function(a){return document.getElementById(a.getAttribute("href").slice(1))});
+  navHoeheSetzen();
+  window.addEventListener("resize",navHoeheSetzen);
   if(!("IntersectionObserver" in window))return;
   var beo=new IntersectionObserver(function(eintraege){
     eintraege.forEach(function(e){
@@ -785,7 +826,9 @@ function navBeobachten(){
       if(i<0)return;
       links.forEach(function(a){a.classList.remove("an")});
       links[i].classList.add("an");
-
+      var nav=$("sprungnav"),l=links[i];
+      if(nav&&(l.offsetLeft<nav.scrollLeft+8||l.offsetLeft+l.offsetWidth>nav.scrollLeft+nav.clientWidth-8))
+        nav.scrollTo({left:Math.max(0,l.offsetLeft-16),behavior:"smooth"});
     });
   },{rootMargin:"-60px 0px -70% 0px",threshold:0});
   ziele.forEach(function(z){if(z)beo.observe(z)});
@@ -960,7 +1003,7 @@ function baueBerichtHTML(){
     datumText:datumText,zeitText:z,heuteText:heuteText,
     svg:BG.render(letzteChart,letzteVariablen,{animiert:false})});
 }
-$("btn-bericht").addEventListener("click",function(){
+function berichtOeffnen(){
   var html=baueBerichtHTML();
   if(!html)return;
   var w=window.open("","_blank");
@@ -973,7 +1016,9 @@ $("btn-bericht").addEventListener("click",function(){
     if(w.document.fonts&&w.document.fonts.ready)w.document.fonts.ready.then(function(){setTimeout(drucken,250)});
   }catch(e){}
   setTimeout(drucken,1600);
-});
+}
+$("btn-bericht").addEventListener("click",berichtOeffnen);
+$("btn-bericht-ende").addEventListener("click",berichtOeffnen);
 
 $("btn-poster").addEventListener("click",function(){
   if(!letzteChart)return;

@@ -182,7 +182,7 @@ check("Originalhimmel eingebunden (3726 Sterne)",w.HD_HIMMEL&&w.HD_HIMMEL.sterne
 check("Nebelverlauf als Hintergrundbild gesetzt",($("himmel-bild").style.backgroundImage||"").indexOf("data:image/png;base64")>=0);
 check("Keine eigene Kopfleiste (wird eingebettet)",!w.document.querySelector(".leiste"));
 check("Gemessene Originalfarbe im Stylesheet",w.document.documentElement.innerHTML.includes("#0C0442"));
-check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===8);
+check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===9);
 check("Kernwerte als Kacheln sichtbar",$("kopfdaten").querySelectorAll(".kd").length===8);
 check("Link-Teilen-Knopf vorhanden",!!$("btn-link"));
 
@@ -331,7 +331,7 @@ check("Essenz vor dem Chart",htmlNav.indexOf('id="essenz-block"')<htmlNav.indexO
 check("Kacheln sind Sprunglinks",$("kopfdaten").querySelectorAll("a.kd").length===8);
 check("Jede Kachel zeigt auf ein vorhandenes Ziel",
   [].every.call($("kopfdaten").querySelectorAll("a.kd"),function(a){return !!w.document.getElementById(a.getAttribute("href").slice(1))}));
-check("Sprungnavigation mit 8 Zielen",w.document.querySelectorAll("#sprungnav a").length===8);
+check("Sprungnavigation mit 9 Zielen inkl. Daten ändern",w.document.querySelectorAll("#sprungnav a").length===9&&w.document.querySelector("#sprungnav a[href=\"#formular\"]")!==null);
 check("Navigation klebt oben",htmlNav.includes("position:sticky"));
 check("Alle Navi-Ziele existieren",
   [].every.call(w.document.querySelectorAll("#sprungnav a"),function(a){return !!w.document.getElementById(a.getAttribute("href").slice(1))}));
@@ -345,6 +345,24 @@ check("Stabilität nennt Änderung mit Uhrzeit",!stab.vorigeAenderung||/^\d\d:\d
 check("Stabilitätssatz ohne Platzhalter",S.satz(stab).length>60&&!S.satz(stab).includes("undefined"));
 check("Stabilitätskarte im Markup",htmlNav.includes('id="stabil"'));
 
+
+
+console.log("— Nutzerfeedback-Runde 3 —");
+const her=APP.suche("Her");
+check("DACH-Orte zuerst in der Suche",her.length>0&&["DE","AT","CH"].includes(her[0][1]));
+check("Herne unter den ersten drei",her.slice(0,3).some(s=>s[0]==="Herne"));
+check("Kanal-Überschrift persönlich",(function(){
+  const h=$("kanaele-block").querySelector("h2").textContent;
+  const n=APP.holeChart().definierteKanaele.length;
+  return n===1?h.includes("Dein Kanal"):h.includes("Deine "+n+" Kanäle");
+})());
+check("Planeten als Aufklapper, anfangs zu",(function(){
+  const d=w.document.querySelector(".planeten-klapp");
+  return d&&!d.open&&d.querySelector("summary").textContent.includes("26");
+})());
+check("Abschlussblock mit PDF und Neustart",!!w.document.getElementById("btn-bericht-ende")&&!!w.document.getElementById("btn-neu"));
+check("Daten ändern springt zum Formular",(w.document.querySelector(".nav-zurueck")||{}).getAttribute&&w.document.querySelector(".nav-zurueck").getAttribute("href")==="#formular");
+check("Hero-Foto mobil gedeckelt",htmlNav.includes("max-height:340px")&&htmlNav.includes("max-height:280px"));
 
 console.log("— PDF-Bericht —");
 w.HDBericht=require("/home/claude/hd/bericht.js");
