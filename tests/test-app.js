@@ -142,12 +142,13 @@ check("Persönlichkeits-Färbung vorhanden",persFarbe>4,persFarbe);
 check("Design-Färbung vorhanden",desFarbe>4,desFarbe);
 check("Doppelaktivierung markiert",svg.includes('data-status="beides"'));
 // Definierte Zentren gefüllt: Milz (#C9B18F) und G/Ajna
-check("Definierte Zentren als kräftige Farbflächen",(svg.match(/stroke-width="2.2"/g)||[]).length===w.HDEngine.berechneChart(w.HDEngine.localToUtc(1948,4,9,0,5,"America/Toronto")).definierteZentren.length);
+check("Definierte Zentren als helle Leuchtflächen",(svg.match(/url\(#hd-zentrum-an\)/g)||[]).length===w.HDEngine.berechneChart(w.HDEngine.localToUtc(1948,4,9,0,5,"America/Toronto")).definierteZentren.length);
+check("Offene Zentren als ruhige dunkle Flächen",svg.includes('fill="#251754"')&&!svg.includes("stroke-dasharray=\"5 4\""));
 // Undefinierte Zentren weiß: Sakral/SP/Wurzel/Kopf offen bei Ra
 check("Vier offene Zentren weiß",(svg.match(/data-status="offen"/g)||[]).length===4);
 check("Weiche Rundungen im Chart",(svg.match(/ Q/g)||[]).length>20);
 check("Chart auf Nachtgrund",svg.includes("url(#hd-himmel)"));
-check("Zentrumsfarben der Marke im Chart",svg.includes(w.HDBodygraph.ZFARBEN.kehle)||svg.includes(w.HDBodygraph.ZFARBEN.sakral));
+check("Definierte Zentren in warmem Weiß der Marke",svg.includes("#FFFDF8")&&svg.includes("#F2DCC4"));
 check("Aufbau-Animation vorhanden",svg.includes("hdZeichnen")&&svg.includes("hd-ader"));
 check("Bewegungsreduktion respektiert",svg.includes("prefers-reduced-motion"));
 check("Tore haben Tooltips",(svg.match(/<title>Tor /g)||[]).length===64);

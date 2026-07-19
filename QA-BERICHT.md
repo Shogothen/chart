@@ -88,3 +88,9 @@ Diese Tabelle dient zugleich als unabhängige Gegenprobe der Berechnung: für je
 **Wettbewerbsvorteil aus der Recherche.** Sichtung von sieben deutschsprachigen Rechnern. Verbreitet sind PDF-Export, Videos und clientseitige Berechnung. Am nächsten kam der Rechner von Daniel Bayer mit einem Schieberegler für die Geburtszeit zum Ausprobieren. Statt Ausprobieren rechnen wir das Ergebnis aus: eine neue Karte zeigt per Bisektion auf die Minute genau, in welchem Zeitfenster Typ, Autorität und Profil unverändert bleiben, wann die nächste Änderung eintritt und was sich dann ändern würde. Kein gesichteter Wettbewerber bietet das.
 
 **Behobener Darstellungsfehler.** Die neuen Rasterspalten mit fester Mindestbreite von 300 Pixeln sprengten bei 320 Pixeln Fensterbreite den Inhaltsrahmen und verschoben die Ränder um 17 Pixel. Behoben durch Begrenzung der Mindestbreite auf die Containerbreite.
+
+## Chart-Nachbesserung (19.07.2026, zweiter Durchgang)
+
+Die Buntfarben je Zentrum sind wieder raus. Neue Darstellung nach dem Vorbild etablierter Rechner, aber in der Markenpalette: definierte Zentren sind warm-weiße Leuchtflächen (Verlauf #FFFDF8 bis #F2DCC4) mit zweistufigem Leuchthof, offene Zentren ruhige dunkle Flächen (#251754) ohne Strichelung. Nicht aktivierte Tornummern stehen dunkel auf hellen und gedämpft hell auf dunklen Zentren.
+
+Gemessen am gerenderten Chart: definierte Zentren Ø 248 Helligkeit, offene Ø 47, Abstand 200 Stufen. Alle Leuchtflächen im Warmton (R größer G größer B, Ø 253/248/240). Neon-Cyan/Magenta-Anteil 0,00 Prozent. Alle fünf Suiten grün: 345 Prüfungen (test-core 42, test-app 155, gegen 11, qa 110, qa2 27).

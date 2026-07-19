@@ -215,6 +215,8 @@ function render(chart,variablen,opt){
     +'<feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
     +'<filter id="hd-glut-weich" x="-120%" y="-120%" width="340%" height="340%">'
     +'<feGaussianBlur stdDeviation="7"/></filter>'
+    +'<radialGradient id="hd-zentrum-an" cx="50%" cy="38%" r="75%">'
+    +'<stop offset="0" stop-color="#FFFDF8"/><stop offset="70%" stop-color="#FBEFE0"/><stop offset="100%" stop-color="#F2DCC4"/></radialGradient>'
     +'<filter id="hd-glut-zentrum" x="-60%" y="-60%" width="220%" height="220%">'
     +'<feGaussianBlur stdDeviation="14"/></filter>'
     +'<style>'
@@ -285,11 +287,12 @@ function render(chart,variablen,opt){
     var def=defZ.has(z),d=rundPfad(ZFORM[z],7);
     s+='<g class="hd-zentrum" data-zentrum="'+z+'" data-status="'+(def?"definiert":"offen")+'" style="--i:'+(zi++)+'">';
     if(def){
-      s+='<path d="'+d+'" fill="'+ZFARBEN[z]+'" opacity="0.42" filter="url(#hd-glut-zentrum)"/>';
-      s+='<path d="'+d+'" fill="'+ZFARBEN[z]+'" fill-opacity="1" stroke="#FFFFFF" stroke-opacity="0.92" stroke-width="2.2"/>';
-      s+='<path d="'+d+'" fill="url(#hd-tiefe)" stroke="none"/>';
+      /* Leuchthof in zwei Lagen, dann die helle Fläche selbst */
+      s+='<path d="'+d+'" fill="#FFE9D2" opacity="0.55" filter="url(#hd-glut-zentrum)"/>';
+      s+='<path d="'+d+'" fill="#FFF6EA" opacity="0.35" filter="url(#hd-glut-weich)"/>';
+      s+='<path d="'+d+'" fill="url(#hd-zentrum-an)" stroke="rgba(255,255,255,0.95)" stroke-width="1.4"/>';
     }else{
-      s+='<path d="'+d+'" fill="#0A0233" fill-opacity="0.92" stroke="rgba(255,255,255,0.30)" stroke-width="1.1" stroke-dasharray="5 4"/>';
+      s+='<path d="'+d+'" fill="#251754" fill-opacity="0.9" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>';
     }
     s+='</g>';
   });
@@ -316,7 +319,7 @@ function render(chart,variablen,opt){
       }
       s+='<text x="'+p[0]+'" y="'+(p[1]+3.4)+'" font-size="9.4" font-weight="700" text-anchor="middle" fill="'+FARBEN.zahl+'" pointer-events="none">'+tor+"</text>";
     }else{
-      s+='<text x="'+p[0]+'" y="'+(p[1]+3.2)+'" font-size="8.8" text-anchor="middle" fill="rgba(255,255,255,'+(zDef?'0.55':'0.5')+')">'+tor+"</text>";
+      s+='<text x="'+p[0]+'" y="'+(p[1]+3.2)+'" font-size="8.8" text-anchor="middle" fill="'+(zDef?'rgba(38,20,90,0.5)':'rgba(255,255,255,0.42)')+'">'+tor+"</text>";
     }
     s+='<title>'+titel+'</title></g>';
   });
