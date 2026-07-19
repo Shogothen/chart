@@ -1,0 +1,273 @@
+"use strict";
+const {JSDOM}=require("jsdom");
+const fs=require("fs");
+let ok=0,fail=0;
+const check=(n,c,x)=>{c?(ok++,console.log("  PASS "+n)):(fail++,console.log("  FAIL "+n+(x!==undefined?"  ->  "+x:"")))};
+
+const html=fs.readFileSync("/home/claude/hd/index.html","utf8");
+const dom=new JSDOM(html.replace(/<script src="[^"]*"><\/script>/g,""),{runScripts:"outside-only",url:"https://example.org/"});
+const w=dom.window;
+w.HTMLElement.prototype.scrollIntoView=function(){};
+w.IntersectionObserver=function(cb){this.observe=function(el){cb([{isIntersecting:true,target:el}])};this.unobserve=function(){}};
+w.requestAnimationFrame=function(){return 0};
+w.matchMedia=function(){return {matches:false}};
+w.HTMLCanvasElement.prototype.getContext=function(){return null};
+// Module in Fensterkontext laden
+w.Astronomy=require("astronomy-engine");
+const st=require("/home/claude/hd/staedte.js");
+w.HD_STAEDTE=st.HD_STAEDTE;w.HD_EXONYME=st.HD_EXONYME;
+w.HDEngine=require("/home/claude/hd/hd-engine.js");
+w.HDInhalte=require("/home/claude/hd/inhalte.js");
+w.HDBodygraph=require("/home/claude/hd/bodygraph.js");
+w.HDVariablen=require("/home/claude/hd/variablen.js");
+w.HD_HIMMEL=require("/home/claude/hd/himmel.js");
+w.HD_BILDER=require("/home/claude/hd/bilder.js");
+w.HDTransit=require("/home/claude/hd/transit.js");
+w.URL.createObjectURL=function(){return "blob:test"};
+w.URL.revokeObjectURL=function(){};
+const inline=html.match(/<script>([\s\S]*?)<\/script>\s*<\/body>/)[1];
+w.eval(inline);
+const $=id=>w.document.getElementById(id);
+const APP=w.__HD_APP;
+
+console.log("— Geometrie-Konsistenz Bodygraph —");
+const BG=w.HDBodygraph,E=w.HDEngine;
+check("64 Tor-Anker vorhanden",Object.keys(BG.TOR_POS).length===64);
+check("Alle Kanal-Tore haben Anker",E.KANAELE.every(k=>BG.TOR_POS[k[0]]&&BG.TOR_POS[k[1]]));
+// Jeder Tor-Anker liegt auf/an seinem Zentrum? Grobe Distanzprüfung zum Zentrums-Schwerpunkt
+function schwerpunkt(poly){const pts=poly.split(" ").map(p=>p.split(",").map(Number));
+  return pts.reduce((a,p)=>[a[0]+p[0]/pts.length,a[1]+p[1]/pts.length],[0,0]);}
+let maxAbstand=0,schlecht=null;
+for(const [tor,zentrum] of Object.entries(E.TOR_ZU_ZENTRUM)){
+  const p=BG.TOR_POS[tor],s=schwerpunkt(BG.ZFORM[zentrum]);
+  const d=Math.hypot(p[0]-s[0],p[1]-s[1]);
+  if(d>maxAbstand){maxAbstand=d;schlecht=tor+"@"+zentrum}
+}
+check("Tor-Anker nahe an ihrem Zentrum (<95px)",maxAbstand<95,maxAbstand.toFixed(0)+"px "+schlecht);
+
+
+console.log("— Chart-Geometrie: Handwerk —");
+const BGX=w.HDBodygraph;
+function polyPts(s){return s.split(" ").map(p=>p.split(",").map(Number))}
+function imPolygon(pt,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+  const [xi,yi]=poly[i],[xj,yj]=poly[j];
+  if(((yi>pt[1])!=(yj>pt[1]))&&(pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi))c=!c;}return c;}
+function randAbstand(pt,poly){let m=1e9;for(let i=0;i<poly.length;i++){
+  const a=poly[i],b=poly[(i+1)%poly.length];
+  const dx=b[0]-a[0],dy=b[1]-a[1],l2=dx*dx+dy*dy;
+  let t=l2?((pt[0]-a[0])*dx+(pt[1]-a[1])*dy)/l2:0;t=Math.max(0,Math.min(1,t));
+  m=Math.min(m,Math.hypot(pt[0]-(a[0]+t*dx),pt[1]-(a[1]+t*dy)));}return m;}
+const ZTOR={};for(const [z,tore] of Object.entries(w.HDEngine.ZENTREN))for(const g of tore)ZTOR[g]=z;
+
+let kollision=new Set();
+for(const [a,b] of BGX.KANAELE){
+  const h=BGX.haelften(a,b);
+  const n=(h[0]+" "+h[1]).replace(/[ML]/g," ").trim().split(/\s+/).map(Number);
+  for(let i=2;i<n.length-2;i+=2){
+    const pt=[n[i],n[i+1]];
+    for(const [z,poly] of Object.entries(BGX.ZFORM)){
+      if(z===ZTOR[a]||z===ZTOR[b])continue;
+      if(imPolygon(pt,polyPts(poly)))kollision.add(a+"-"+b+"→"+z);
+    }
+  }
+}
+check("Kein Kanal läuft durch ein fremdes Zentrum",kollision.size===0,[...kollision].join(", "));
+
+let maxRand=0,schuldiger="";
+for(const [tor,z] of Object.entries(ZTOR)){
+  const d=randAbstand(BGX.TOR_POS[tor],polyPts(BGX.ZFORM[z]));
+  if(d>maxRand){maxRand=d;schuldiger=tor}
+}
+check("Jedes Tor sitzt auf dem Rand seines Zentrums (<3px)",maxRand<3,maxRand.toFixed(1)+"px bei Tor "+schuldiger);
+
+const spiegelpaare=[[48,36],[57,22],[44,37],[50,6],[32,49],[28,55],[18,30],[16,35],[20,12],
+  [54,19],[38,39],[58,41],[64,63],[47,4],[17,11],[62,56],[31,33],[7,13],[15,46],[10,25],[5,29],[42,9],[53,52]];
+check("Alle 23 Spiegelpaare exakt symmetrisch",spiegelpaare.every(([l,r])=>{
+  const a=BGX.TOR_POS[l],b=BGX.TOR_POS[r];
+  return Math.abs((310-a[0])-(b[0]-310))<0.01&&Math.abs(a[1]-b[1])<0.01;}));
+check("Mittelachsen-Tore exakt auf der Achse",[61,24,43,23,8,1,2,14,3,60].every(t=>BGX.TOR_POS[t][0]===310));
+const milzG=polyPts(BGX.ZFORM.milz).map(p=>[620-p[0],p[1]]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+const solarG=polyPts(BGX.ZFORM.solarplexus).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+check("Milz und Solarplexus exakt gespiegelt",JSON.stringify(milzG)===JSON.stringify(solarG));
+check("Alle 36 Kanäle gezeichnet",BGX.KANAELE.length===36);
+
+console.log("— Städtesuche —");
+const herne=APP.suche("Herne");
+check("Herne gefunden, DE zuerst (Population)",herne.length>0&&herne[0][1]==="DE",JSON.stringify(herne[0]));
+check("Herne-Zeitzone Europe/Berlin",herne[0][4]==="Europe/Berlin");
+const muc=APP.suche("München");
+check("Exonym: München findet Munich",muc.length>0&&muc[0][0]==="Munich",JSON.stringify(muc[0]&&muc[0][0]));
+const koeln=APP.suche("Köln");
+check("Köln findet nativen Eintrag Köln (DE)",koeln.length>0&&koeln[0][0]==="Köln"&&koeln[0][1]==="DE",JSON.stringify(koeln[0]&&koeln[0].slice(0,2)));
+const mtl=APP.suche("Montreal");
+check("Diakritik: Montreal findet Montréal",mtl.length>0&&mtl[0][0]==="Montréal");
+check("Kurzeingabe liefert nichts",APP.suche("H").length===0);
+
+console.log("— Kompletter UI-Durchlauf: Ra Uru Hu —");
+APP.setzeOrt(mtl[0]);
+$("ort").value="Montréal, Kanada";
+$("datum").value="1948-04-09";
+$("zeit").value="00:05";
+APP.rechne();
+check("Ergebnis sichtbar",$("ergebnis").classList.contains("an"));
+const kopf=$("kopfdaten").textContent;
+check("Typ Manifestor",kopf.includes("Manifestor")&&!kopf.includes("Manifestierender Generator"),kopf.slice(0,80));
+check("Profil 5/1 Häretiker/Forscher",kopf.includes("5/1"));
+check("Autorität Milz",kopf.includes("Milz"));
+check("Kreuz 51/57 | 61/62",kopf.includes("51/57 | 61/62"));
+check("Einfache Definition",kopf.includes("Einfache Definition"));
+check("Zeiten-Zeile mit Design-Datum Jan 1948",$("zeiten").textContent.includes("1948-01-12"));
+check("Typ-Text geladen",$("txt-typ").textContent.includes("Informier")||$("txt-typ").textContent.includes("informier"));
+check("Autoritäts-Text geladen",$("txt-autoritaet").textContent.includes("leiseste"));
+check("Profil-Text geladen",$("txt-profil").textContent.includes("Häretiker"));
+check("26 Planetenzeilen",$("planeten").querySelectorAll("tr").length===2*14);
+check("5 definierte Kanäle gelistet",$("kanaele").querySelectorAll("li").length===5);
+check("Kanalnamen aufgelöst",$("kanaele").textContent.includes("Hellsicht"));
+const zk=$("zentren").querySelectorAll(".z-karte");
+check("9 Zentren-Karten",zk.length===9);
+check("5 definiert / 4 offen",$("zentren").querySelectorAll(".def").length===5&&$("zentren").querySelectorAll(".off").length===4);
+
+console.log("— Bodygraph-SVG inhaltlich —");
+const svg=$("graph").innerHTML;
+check("SVG gerendert",svg.includes("<svg")&&svg.includes("</svg>"));
+// Ra: Kanäle 10-20,10-57,20-57,23-43,25-51 definiert; Tor 51 nur Persönlichkeit? (P-Sonne 51) -> schwarz
+const persFarbe=(svg.match(new RegExp(w.HDBodygraph.FARBEN.pers,"g"))||[]).length;
+const desFarbe=(svg.match(new RegExp(w.HDBodygraph.FARBEN.des,"g"))||[]).length;
+check("Persönlichkeits-Färbung vorhanden",persFarbe>4,persFarbe);
+check("Design-Färbung vorhanden",desFarbe>4,desFarbe);
+check("Doppelaktivierung markiert",svg.includes('data-status="beides"'));
+// Definierte Zentren gefüllt: Milz (#C9B18F) und G/Ajna
+check("Definierte Zentren leuchten in ihren Tönen",svg.includes(w.HDBodygraph.ZFARBEN.milz)&&svg.includes(w.HDBodygraph.ZFARBEN.ajna)&&svg.includes(w.HDBodygraph.ZFARBEN.g));
+// Undefinierte Zentren weiß: Sakral/SP/Wurzel/Kopf offen bei Ra
+check("Vier offene Zentren weiß",(svg.match(/data-status="offen"/g)||[]).length===4);
+check("Weiche Rundungen im Chart",(svg.match(/ Q/g)||[]).length>20);
+check("Chart auf hellem Blatt (klassischer Aufbau)",svg.includes(w.HDBodygraph.FARBEN.papier));
+check("Klassische Zentrumsfarben",svg.includes("#F6DF5B")&&svg.includes("#8FC46B")&&svg.includes("#B58453")&&svg.includes("#E0564C"));
+check("Aufbau-Animation vorhanden",svg.includes("hdZeichnen")&&svg.includes("hd-fuellung"));
+check("Bewegungsreduktion respektiert",svg.includes("prefers-reduced-motion"));
+check("Tore haben Tooltips",(svg.match(/<title>Tor /g)||[]).length===64);
+check("Kanalröhren mit Kontur gezeichnet",(svg.match(/stroke-width="9.4"/g)||[]).length===72);
+fs.writeFileSync("/home/claude/hd/ra-bodygraph.svg",svg);
+
+
+console.log("— Variablen (vier Pfeile) —");
+const V=w.HDVariablen;
+const vRa=V.berechne(APP.holeChart());
+check("Vier Pfeile berechnet",["determination","umgebung","motivation","perspektive"].every(k=>vRa[k]&&vRa[k].eintrag));
+check("Farben im Bereich 1-6",[vRa.determination,vRa.umgebung,vRa.motivation,vRa.perspektive,vRa.kognition,vRa.sinn].every(x=>x.farbe>=1&&x.farbe<=6));
+check("Töne im Bereich 1-6",[vRa.determination,vRa.umgebung,vRa.motivation,vRa.perspektive].every(x=>x.ton>=1&&x.ton<=6));
+check("Pfeilregel: Ton 1-3 links, 4-6 rechts",
+  [vRa.determination,vRa.umgebung,vRa.motivation,vRa.perspektive].every(x=>x.richtung===(x.ton<=3?"links":"rechts")));
+check("Determination aus Design-Sonne",vRa.determination.farbe===APP.holeChart().design.sonne.farbe);
+check("Umgebung aus Design-Nordknoten",vRa.umgebung.farbe===APP.holeChart().design.nordknoten.farbe);
+check("Motivation aus Persönlichkeits-Sonne",vRa.motivation.farbe===APP.holeChart().personality.sonne.farbe);
+check("Perspektive aus Persönlichkeits-Nordknoten",vRa.perspektive.farbe===APP.holeChart().personality.nordknoten.farbe);
+check("Kognition aus Design-Erde",vRa.kognition.farbe===APP.holeChart().design.erde.farbe);
+check("Sinn aus Persönlichkeits-Erde",vRa.sinn.farbe===APP.holeChart().personality.erde.farbe);
+check("Motivations-Transferenzpaare vollständig",[1,2,3,4,5,6].every(i=>V.MOTIVATION[i].gegen&&V.MOTIVATION[i].transfer));
+check("Vier Pfeil-Karten gerendert",$("pfeile").querySelectorAll(".pfeil-karte").length===4);
+check("Kognition und Sinn gerendert",$("substruktur").querySelectorAll(".pfeil-karte").length===2);
+check("Quad-Zusammenfassung sichtbar",$("quad").textContent.includes("Pfeilkombination"));
+check("Pfeile im SVG (4 Dreiecke)",($("graph").innerHTML.match(/<path d="M[\d.]+ [\d.]+ L[\d.]+ [\d.]+ L[\d.]+ [\d.]+ Z"/g)||[]).length===4);
+check("Chart-Format 620x990",$("graph").innerHTML.includes("0 0 620 990"));
+check("Mandala im Kopfbereich",!!$("hero-bogen").querySelector(".hd-mandala"));
+check("Originalhimmel eingebunden (3726 Sterne)",w.HD_HIMMEL&&w.HD_HIMMEL.sterne.length===3726,w.HD_HIMMEL&&w.HD_HIMMEL.sterne.length);
+check("Nebelverlauf als Hintergrundbild gesetzt",($("himmel-bild").style.backgroundImage||"").indexOf("data:image/png;base64")>=0);
+check("Originalnavigation vorhanden",w.document.querySelectorAll(".navi a").length===5);
+check("Gemessene Originalfarbe im Stylesheet",w.document.documentElement.innerHTML.includes("#0C0442"));
+check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===6);
+check("Kopfleiste zeigt Kernwerte",$("leiste-fakten").classList.contains("an"));
+check("Link-Teilen-Knopf vorhanden",!!$("btn-link"));
+
+console.log("— Substruktur-Auflösung (Minutenschärfe) —");
+const c1=w.HDEngine.berechneChart(w.HDEngine.localToUtc(1948,4,9,0,5,"America/Toronto"));
+const c2=w.HDEngine.berechneChart(w.HDEngine.localToUtc(1948,4,9,3,5,"America/Toronto"));
+check("Drei Stunden später ändert die Substruktur",
+  JSON.stringify(V.berechne(c1))!==JSON.stringify(V.berechne(c2)));
+check("Basis-Ebene vorhanden (1-5)",[1,2,3,4,5].includes(c1.personality.sonne.basis),c1.personality.sonne.basis);
+
+console.log("— Transit-Overlay —");
+const T=w.HDTransit;
+const tr=T.berechne(w.HDEngine,APP.holeChart(),new Date("2026-07-19T12:00:00Z"));
+check("Transit liefert 13 Aktivierungen",Object.keys(tr.aktivierungen).length===13);
+const natalKanaele=new Set(APP.holeChart().definierteKanaele.map(k=>Math.min(k[0],k[1])+"-"+Math.max(k[0],k[1])));
+check("Keine natal schon definierten Kanäle als neu gemeldet",tr.neueKanaele.every(n=>!natalKanaele.has(n.kanal)));
+check("Jeder neue Kanal hat mindestens ein Transit-Tor",tr.neueKanaele.every(n=>n.quelleA==="transit"||n.quelleB==="transit"));
+const natalZ=new Set(APP.holeChart().definierteZentren);
+check("Neue Zentren waren natal nicht definiert",tr.neueZentren.every(z=>!natalZ.has(z)));
+check("Transit-Block im UI gefüllt",$("transit-kopf").textContent.includes("Sonne heute"));
+check("Transit-Inhalt vorhanden",$("transit-inhalt").innerHTML.length>40);
+
+console.log("— Poster & Export —");
+const poster=w.HDBodygraph.poster(APP.holeChart(),vRa,"Test",w.HDInhalte);
+check("Poster ist gültiges SVG",poster.startsWith("<svg")&&poster.endsWith("</svg>"));
+check("Poster enthält Kernwerte",["Manifestor","Milz","5/1","DETERMINATION","UMGEBUNG","MOTIVATION","PERSPEKTIVE"].every(x=>poster.includes(x)));
+check("Poster im Sternenhimmel",poster.includes("url(#pg)")&&(poster.match(/<circle/g)||[]).length>200);
+check("Poster A4-Format",poster.includes('width="1240" height="1754"'));
+const posterYs=[...poster.matchAll(/y="(\d+(?:\.\d+)?)"/g)].map(m=>+m[1]);
+check("Poster-Inhalt bleibt im Blatt",Math.max(...posterYs)<1754);
+check("Download-Buttons vorhanden",!!$("btn-poster")&&!!$("btn-svg"));
+fs.writeFileSync("/home/claude/hd/poster-final.svg",poster);
+
+
+console.log("— Darstellung gegen Berechnung —");
+const svgD=$("graph").innerHTML;
+const chartD=APP.holeChart();
+const gezZentren=[...svgD.matchAll(/data-zentrum="(\w+)" data-status="definiert"/g)].map(m=>m[1]).sort();
+check("Gezeichnete definierte Zentren = berechnete",
+  JSON.stringify(gezZentren)===JSON.stringify(chartD.definierteZentren.slice().sort()),gezZentren.join(","));
+const gezOffen=[...svgD.matchAll(/data-zentrum="(\w+)" data-status="offen"/g)].map(m=>m[1]);
+check("Summe Zentren ist neun",gezZentren.length+gezOffen.length===9);
+const gezTore=[...svgD.matchAll(/data-tor="(\d+)" data-status="(pers|des|beides)"/g)].map(m=>+m[1]).sort((a,b)=>a-b);
+check("Gezeichnete aktive Tore = berechnete",JSON.stringify(gezTore)===JSON.stringify(chartD.aktiveTore),
+  gezTore.length+" gezeichnet / "+chartD.aktiveTore.length+" berechnet");
+const gezKanaele=[...svgD.matchAll(/data-kanal="([\d-]+)" data-status="definiert"/g)].map(m=>m[1]).sort();
+const sollKanaele=chartD.definierteKanaele.map(k=>Math.min(k[0],k[1])+"-"+Math.max(k[0],k[1])).sort();
+check("Gezeichnete definierte Kanäle = berechnete",JSON.stringify(gezKanaele)===JSON.stringify(sollKanaele),gezKanaele.join(" "));
+check("64 Tore insgesamt gezeichnet",(svgD.match(/data-tor="/g)||[]).length===64);
+check("36 Kanäle insgesamt gezeichnet",(svgD.match(/data-kanal="/g)||[]).length===36);
+// Tore, die von beiden Seiten aktiviert sind, werden halb/halb dargestellt
+const beides=[...svgD.matchAll(/data-tor="(\d+)" data-status="beides"/g)].map(m=>+m[1]);
+const sollBeides=chartD.aktiveTore.filter(t=>
+  Object.keys(chartD.personality).some(k=>chartD.personality[k].tor===t)&&
+  Object.keys(chartD.design).some(k=>chartD.design[k].tor===t));
+check("Doppelt aktivierte Tore korrekt markiert",JSON.stringify(beides.sort((a,b)=>a-b))===JSON.stringify(sollBeides.sort((a,b)=>a-b)),beides.join(","));
+
+
+console.log("— Ziffernsatz im Chart —");
+const BGZ=w.HDBodygraph;
+function ppZ(s){return s.split(" ").map(p=>p.split(",").map(Number))}
+function drinZ(pt,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+  const [xi,yi]=poly[i],[xj,yj]=poly[j];
+  if(((yi>pt[1])!=(yj>pt[1]))&&(pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi))c=!c;}return c;}
+let ziffernRaus=[],ziffernPos=[];
+for(const [tor,z] of Object.entries(BGZ.TOR_ZENTRUM)){
+  const p=BGZ.TOR_POS[tor],sp=BGZ.SCHWERPUNKT[z];
+  const dx=p[0]-sp[0],dy=p[1]-sp[1],l=Math.hypot(dx,dy)||1;
+  const weite=(z==="herz")?8:11.5;
+  const zx=p[0]-dx/l*weite,zy=p[1]-dy/l*weite;
+  ziffernPos.push([zx,zy]);
+  if(!drinZ([zx,zy],ppZ(BGZ.ZFORM[z])))ziffernRaus.push(tor);
+}
+check("Alle 64 Torziffern liegen in ihrem Zentrum",ziffernRaus.length===0,ziffernRaus.join(","));
+let minAb=1e9;
+for(let i=0;i<ziffernPos.length;i++)for(let j=i+1;j<ziffernPos.length;j++)
+  minAb=Math.min(minAb,Math.hypot(ziffernPos[i][0]-ziffernPos[j][0],ziffernPos[i][1]-ziffernPos[j][1]));
+check("Ziffern überlappen sich nicht",minAb>12,minAb.toFixed(1)+"px");
+
+console.log("— Bilder und Ton —");
+check("Hero-Foto eingebettet",($("hero-foto").style.backgroundImage||"").indexOf("data:image/jpeg")>=0);
+check("Zitatband ohne Bild",!$("zitat-bild"));
+check("Homepage-Ton: kleines du im Fließtext",w.document.querySelector(".lede").textContent.includes("Hier darfst du dich erinnern"));
+check("Deutungstexte im kleinen du",w.HDInhalte.TYPEN.Generator.text.indexOf(" dich ")>=0||w.HDInhalte.TYPEN.Generator.text.indexOf(" dir ")>=0||w.HDInhalte.TYPEN.Generator.text.indexOf(" dein")>=0);
+check("Keine versehentliche Großschreibung mitten im Satz",
+  !/[a-zß,;]\s(Du|Dich|Dir|Dein|Deine|Deiner|Deinem|Deinen)\b/.test(Object.values(w.HDInhalte.AUTORITAETEN).join(" ")));
+
+console.log("— Fehlerpfade —");
+APP.setzeOrt(null);
+$("datum").value="";
+APP.rechne();
+check("Fehlermeldung ohne Ort",$("form-fehler").classList.contains("an"));
+
+console.log("\n"+ok+" bestanden, "+fail+" fehlgeschlagen");
+process.exit(fail?1:0);
