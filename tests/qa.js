@@ -152,8 +152,14 @@ function pruefe(gerät,name,ok,detail){
     // Textüberlappungen
     const ueberlappung=await page.evaluate(()=>{
       const t=[...document.querySelectorAll(".abschnitt h2,.abschnitt p,.kd-w,.pfeil-wert,.transit-kachel .tk-w,.zitat-gross,.lede")]
+        .filter(e=>{
+          const d=e.closest("details");
+          if(d&&!d.open&&e.tagName!=="SUMMARY"&&!e.closest("summary"))return false;
+          const s=getComputedStyle(e);
+          return s.display!=="none"&&s.visibility!=="hidden"&&s.contentVisibility!=="hidden";
+        })
         .map(e=>({t:(e.textContent||"").slice(0,16),b:e.getBoundingClientRect()}))
-        .filter(x=>x.b.width>0&&x.b.height>0);
+        .filter(x=>Number(x.b.width)>0&&Number(x.b.height)>0);
       const u=[];
       for(let i=0;i<t.length;i++)for(let j=i+1;j<t.length;j++){
         const a=t[i].b,c=t[j].b;

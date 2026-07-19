@@ -280,6 +280,31 @@ check("Teilen-Knopf vorhanden",!!$("btn-rat-teilen"));
 check("Teilen-Text enthält flowyourdesign",rat1.teilen.includes("flowyourdesign.com"));
 check("Rat kleines du",!/[a-zß,;]\s(Du|Dich|Dir|Dein)\b/.test(rat1.text));
 
+
+console.log("— Feedback-Umbau —");
+check("36 Kanaltexte vorhanden",Object.keys(w.HDInhalte.KANAL_TEXTE).length===36);
+check("Zentrum-Wetter für alle 9 Zentren",Object.keys(w.HDInhalte.ZENTRUM_WETTER).length===9&&Object.values(w.HDInhalte.ZENTRUM_WETTER).every(z=>z.heisst&&z.chance&&z.achtung&&z.umgang));
+check("Wachstumszeilen für alle 9 Zentren",["kopf","ajna","kehle","g","herz","sakral","milz","solarplexus","wurzel"].every(z=>w.HDInhalte.ZENTREN_TEXTE[z].wachstum));
+check("48 Anwendungstexte vollständig",[1,2,3,4,5,6].every(f=>
+  w.HDVariablen.DETERMINATION[f].anwLinks&&w.HDVariablen.DETERMINATION[f].anwRechts&&
+  w.HDVariablen.UMGEBUNG[f].anwLinks&&w.HDVariablen.UMGEBUNG[f].anwRechts&&
+  w.HDVariablen.MOTIVATION[f].anw&&w.HDVariablen.PERSPEKTIVE[f].anw&&
+  w.HDVariablen.KOGNITION[f].anw&&w.HDVariablen.SINN[f].anw));
+const htmlQ=w.document.documentElement.innerHTML;
+check("Reihenfolge: Zentren vor Variablen",htmlQ.indexOf('id="zentren-block"')<htmlQ.indexOf('id="variablen-block"'));
+check("Reihenfolge: Variablen vor Wetter",htmlQ.indexOf('id="variablen-block"')<htmlQ.indexOf('id="transit-block"'));
+check("Wetter-Überschrift umbenannt",htmlQ.includes("Planetarisches Wetter"));
+check("Minuten-Satz ersetzt",htmlQ.includes("nur so genau wie deine Geburtszeit")&&!htmlQ.includes("reagiert auf Minuten"));
+check("Zentren-Intro definiert/offen",htmlQ.includes("fest in dir verdrahtet")&&htmlQ.includes("Wachstumspotenzial"));
+check("Anwendungsblöcke gerendert",$("pfeile").querySelectorAll(".pfeil-anwendung").length===4);
+check("Lernstil-Karte gefüllt",$("lernstil").textContent.includes("Lerntyp"));
+check("Kanäle aufklappbar mit Text",$("kanaele").querySelectorAll("details").length===APP.holeChart().definierteKanaele.length&&$("kanaele").querySelector(".kanal-erster"));
+check("Wachstum in offenen Zentrums-Karten",$("zentren").querySelectorAll(".z-wachstum").length===9-APP.holeChart().definierteZentren.length);
+check("Sonnen-Dauer im Wetter",$("transit-kopf").textContent.includes("noch bis"));
+const tD=w.HDTransit.berechne(w.HDEngine,APP.holeChart(),new Date());
+check("Torwechsel Sonne in der Zukunft",tD.sonneEnde instanceof w.Date===false?tD.sonneEnde>new Date():tD.sonneEnde>new Date());
+check("Torwechsel Mond binnen 3 Tagen",tD.mondEnde&&(tD.mondEnde-Date.now())<3*864e5);
+
 console.log("— Bilder und Ton —");
 check("Hero-Foto eingebettet",($("hero-foto").style.backgroundImage||"").indexOf("data:image/jpeg")>=0);
 check("Zitatband ohne Bild",!$("zitat-bild"));

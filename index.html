@@ -156,6 +156,32 @@ h1 em{font-style:italic;color:#EBD9FF}
 .pfeil-wert{font-family:var(--serif);font-size:28px;font-weight:300;margin:6px 0 2px}
 .pfeil-meta{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--licht-leise);font-weight:500}
 .pfeil-karte p{font-size:13.4px;margin-top:10px;color:var(--licht-weich)}
+.pfeil-anwendung{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);font-size:13.2px;color:var(--licht-weich);line-height:1.6}
+.pfeil-anwendung b{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px;font-weight:500}
+.zentren-intro{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 18px}
+.zentren-intro p{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.11);border-radius:16px;
+  padding:14px 16px;font-size:13.6px;color:var(--licht-weich);line-height:1.65}
+.zentren-intro b{color:var(--licht)}
+@media(max-width:640px){.zentren-intro{grid-template-columns:1fr}}
+.z-wachstum{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.16);font-size:13px}
+.z-wachstum b{color:var(--gold);font-weight:500}
+.wetter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:10px}
+.wetter-karte{border:1px solid rgba(255,180,137,.28);border-radius:18px;padding:16px 18px;
+  background:linear-gradient(170deg,rgba(255,180,137,.12),rgba(255,255,255,.03));min-width:0;overflow-wrap:anywhere}
+.wetter-karte p{font-size:13.3px;color:var(--licht-weich);margin-top:8px;line-height:1.6}
+.wetter-karte p b{color:var(--licht);font-weight:500}
+.wk-titel{font-family:var(--serif);font-size:19px}
+.wk-bis,.tk-bis{margin-top:10px;font-size:11.5px;letter-spacing:.06em;color:var(--gold)}
+.liste-def details{cursor:pointer}
+.liste-def summary{list-style:none;position:relative;padding-right:26px}
+.liste-def summary::-webkit-details-marker{display:none}
+.liste-def summary:after{content:"+";position:absolute;right:2px;top:0;font-size:19px;color:var(--gold);transition:transform .2s}
+.liste-def details[open] summary:after{transform:rotate(45deg)}
+.kanal-erster{display:block;margin-top:5px;font-size:13.2px;color:var(--licht-weich)}
+.kanal-text{margin-top:8px;font-size:13.2px;color:var(--licht-weich);line-height:1.65}
+.liste-def details:not([open]) .kanal-text{display:none}
 .pfeil-seite{font-size:13px;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.1);color:var(--licht-leise)}
 .substruktur{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .quad{text-align:center;font-family:var(--serif);font-style:italic;font-size:20px;margin-top:18px;color:var(--gold)}
@@ -275,9 +301,9 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
   <div class="zeiten reveal" id="zeiten"></div>
 
   <nav class="sprungnav reveal">
-    <a href="#rat-block">Rat</a><a href="#txt-typ">Typ</a><a href="#variablen-block">Variablen</a>
-    <a href="#transit-block">Heute</a><a href="#planeten-block">Planeten</a>
-    <a href="#kanaele-block">Kanäle</a><a href="#zentren-block">Zentren</a>
+    <a href="#rat-block">Rat</a><a href="#txt-typ">Typ</a><a href="#zentren-block">Zentren</a>
+    <a href="#kanaele-block">Kanäle</a><a href="#planeten-block">Planeten</a>
+    <a href="#variablen-block">Variablen</a><a href="#transit-block">Wetter</a>
   </nav>
 
   <section class="rat reveal" id="rat-block">
@@ -315,24 +341,13 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
     </div>
   </div>
 
-  <div class="abschnitt reveal" id="variablen-block" style="margin-top:34px">
-    <h2><small>Die vier Pfeile</small>Deine Variablen</h2>
-    <div class="meta">Die tiefste Schicht deiner Chart: wie dein Körper Nahrung aufnimmt, welche Umgebung dich trägt, in welcher Frequenz dein Geist arbeitet. Diese Ebene reagiert auf Minuten – geh liebevoll mit ihr um.</div>
-    <div class="pfeil-grid" id="pfeile"></div>
-    <div class="substruktur" id="substruktur"></div>
-    <div class="quad" id="quad"></div>
-  </div>
-
-  <div class="abschnitt reveal" id="transit-block">
-    <h2><small>Gerade jetzt</small><span class="puls"></span>Was heute auf dich wirkt</h2>
-    <div class="meta" id="transit-meta"></div>
-    <div class="transit-kopf" id="transit-kopf"></div>
-    <div id="transit-inhalt"></div>
-  </div>
-
-  <div class="abschnitt reveal" id="planeten-block">
-    <h2><small>Die 26 Aktivierungen</small>Deine Planeten</h2>
-    <div class="tab-doppel" id="planeten"></div>
+  <div class="abschnitt reveal" id="zentren-block">
+    <h2><small>Die neun Zentren</small>Definiert und offen</h2>
+    <div class="zentren-intro">
+      <p><b>Definiert</b> heißt: Diese Energie ist fest in dir verdrahtet. Sie ist immer da, verlässlich, unabhängig davon, wer neben dir sitzt. Auf sie kannst du bauen.</p>
+      <p><b>Offen</b> heißt: Hier nimmst du auf, was von außen kommt, und verstärkst es. Du bist dort beeinflussbar, aber genau dort liegt auch dein größtes Wachstumspotenzial. Offene Zentren machen dich mit den Jahren weise.</p>
+    </div>
+    <div class="zentren-grid" id="zentren"></div>
   </div>
 
   <div class="abschnitt reveal" id="kanaele-block">
@@ -340,10 +355,27 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
     <ul class="liste-def" id="kanaele"></ul>
   </div>
 
-  <div class="abschnitt reveal" id="zentren-block">
-    <h2><small>Die neun Zentren</small>Definiert und offen</h2>
-    <div class="zentren-grid" id="zentren"></div>
+  <div class="abschnitt reveal" id="planeten-block">
+    <h2><small>Die 26 Aktivierungen</small>Deine Planeten</h2>
+    <div class="tab-doppel" id="planeten"></div>
   </div>
+
+  <div class="abschnitt reveal" id="variablen-block" style="margin-top:34px">
+    <h2><small>Die vier Pfeile</small>Deine Variablen</h2>
+    <div class="meta">Die tiefste Schicht deiner Chart: wie dein Körper Nahrung aufnimmt, welche Umgebung dich trägt, in welcher Frequenz dein Geist arbeitet. Diese Ebene ist nur so genau wie deine Geburtszeit. Schon wenige Minuten können Farbe und Ton verschieben. Wenn du deine Zeit nur ungefähr kennst, lies diese Karten als Einladung, nicht als Festlegung.</div>
+    <div class="pfeil-grid" id="pfeile"></div>
+    <div class="substruktur" id="substruktur"></div>
+    <div class="lernstil pfeil-karte" id="lernstil" style="margin-top:14px"></div>
+    <div class="quad" id="quad"></div>
+  </div>
+
+  <div class="abschnitt reveal" id="transit-block">
+    <h2><small>Gerade jetzt</small><span class="puls"></span>Planetarisches Wetter</h2>
+    <div class="meta" id="transit-meta"></div>
+    <div class="transit-kopf" id="transit-kopf"></div>
+    <div id="transit-inhalt"></div>
+  </div>
+
 </section>
 
 <section class="zitat reveal">
@@ -581,16 +613,22 @@ function zeige(chart,utc){
 
   $("kanaele").innerHTML=chart.definierteKanaele.map(function(k){
     var s=Math.min(k[0],k[1])+"-"+Math.max(k[0],k[1]);
-    return "<li><b>Kanal "+s+"</b> · "+(I.KANAL_NAMEN[s]||"")
-      +'<div class="ld-sub">Tor '+k[0]+": "+I.TOR_NAMEN[k[0]]+" &nbsp;·&nbsp; Tor "+k[1]+": "+I.TOR_NAMEN[k[1]]+"</div></li>";
+    var text=I.KANAL_TEXTE[s]||"";
+    var teile=text.split(". ");
+    var erster=teile.shift()+".";
+    var rest=teile.join(". ");
+    return "<li><details><summary><b>Kanal "+s+"</b> · "+(I.KANAL_NAMEN[s]||"")
+      +"<span class='kanal-erster'>"+erster+"</span></summary>"
+      +(rest?"<p class='kanal-text'>"+rest+"</p>":"")+"</details></li>";
   }).join("")||"<li>Keine definierten Kanäle – du bist ein Spiegel.</li>";
 
   var reihenfolge=["kopf","ajna","kehle","g","herz","sakral","milz","solarplexus","wurzel"];
   var defZ={};chart.definierteZentren.forEach(function(z){defZ[z]=1});
   $("zentren").innerHTML=reihenfolge.map(function(zk){
     var zt=I.ZENTREN_TEXTE[zk],def=!!defZ[zk];
+    var wachs=(!def&&zt.wachstum)?('<p class="z-wachstum"><b>Dein Wachstum:</b> '+zt.wachstum+"</p>"):"";
     return '<div class="z-karte '+(def?"def":"off")+'"><div class="z-name">'+zt.name
-      +'<span class="z-status">'+(def?"Definiert":"Offen")+"</span></div><p>"+(def?zt.def:zt.off)+"</p></div>";
+      +'<span class="z-status">'+(def?"Definiert":"Offen")+"</span></div><p>"+(def?zt.def:zt.off)+"</p>"+wachs+"</div>";
   }).join("");
 
   $("ergebnis").classList.add("an");
@@ -607,6 +645,11 @@ function zeigeVariablen(v){
     {k:"motivation",titel:"Motivation",quelle:"Persönlichkeits-Sonne",seite:"pers"},
     {k:"perspektive",titel:"Perspektive",quelle:"Persönlichkeits-Nordknoten",seite:"pers"}
   ];
+  function anwendung(d,e){
+    var text=e.anwLinks?(d.richtung==="links"?e.anwLinks:e.anwRechts):e.anw;
+    if(!text)return "";
+    return "<div class='pfeil-anwendung'><b>So wendest du es an</b>"+text+"</div>";
+  }
   $("pfeile").innerHTML=karten.map(function(c){
     var d=v[c.k],e=d.eintrag;
     var pfeil=d.richtung==="links"?"&#9666;":"&#9656;";
@@ -618,6 +661,7 @@ function zeigeVariablen(v){
       +"<div class='pfeil-meta'>"+(d.richtung==="links"?"Links · aktiv":"Rechts · rezeptiv")
       +" &nbsp;·&nbsp; Farbe "+d.farbe+" · Ton "+d.ton+"</div>"
       +"<p>"+e.text+"</p>"+seite+transfer
+      +anwendung(d,e)
       +"<div class='pfeil-meta' style='margin-top:10px'>Quelle: "+c.quelle+"</div></div>";
   }).join("");
   $("substruktur").innerHTML=[
@@ -629,6 +673,18 @@ function zeigeVariablen(v){
       +"<div class='pfeil-meta'>"+x[1]+" · Farbe "+x[2].farbe+"</div>"
       +"<p>"+x[2].eintrag.text+"</p></div>";
   }).join("");
+  var lernAktiv=v.motivation.richtung==="links";
+  var lernFokus=v.determination.richtung==="links";
+  $("lernstil").innerHTML=
+    "<div class='pfeil-titel'>Dein Lernstil</div>"
+    +"<div class='pfeil-wert'>"+(lernAktiv?"Aktiver Lerntyp":"Aufnehmender Lerntyp")+"</div>"
+    +"<p>"+(lernAktiv
+      ?"Dein rechter oberer Pfeil zeigt nach links: Du lernst durch Tun. Erarbeite dir Dinge selbst, mit Struktur, Übungen und eigenen Notizen. Reines Zuhören verpufft bei dir schneller."
+      :"Dein rechter oberer Pfeil zeigt nach rechts: Du lernst durch Aufnehmen. Lass dich von guten Quellen tragen, hör zu, beobachte, wiederhole in der richtigen Umgebung. Du musst nichts erzwingen, es setzt sich von selbst.")
+    +"</p><p>"+(lernFokus
+      ?"Dein linker oberer Pfeil ergänzt: ein Thema nach dem anderen. Fokus ist dein Freund, Multitasking dein Feind."
+      :"Dein linker oberer Pfeil ergänzt: Du darfst mehrere Quellen gleichzeitig offen haben. Dein Geist sammelt nebenbei mehr auf, als du merkst.")
+    +"</p>";
   $("quad").textContent="Deine Pfeilkombination: "+v.quad;
 }
 
@@ -663,33 +719,63 @@ function zeigeTransit(chart){
   catch(e){if(window.__HD_DEBUG)console.error("Transit:",e);$("transit-block").style.display="none";return}
   $("transit-block").style.display="";
   var jetzt=new Date();
+  function bis(d){
+    if(!d)return "über Monate hinaus";
+    return d.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"long"})
+      +", "+d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})+" Uhr";
+  }
   $("transit-meta").textContent="Stand: "+jetzt.toLocaleDateString("de-DE",{day:"2-digit",month:"long",year:"numeric"})
-    +", "+jetzt.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})+" Uhr – der Himmel von jetzt, gelegt über deine Karte.";
+    +", "+jetzt.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})+" Uhr. Der Himmel von jetzt, gelegt über deine Karte, mit exakt berechneten Zeiten.";
   $("transit-kopf").innerHTML=
     "<div class='transit-kachel'><div class='tk-l'>Sonne heute</div><div class='tk-w'>"+t.sonne.tor+"."+t.sonne.linie+"</div>"
-    +"<div class='tk-l' style='letter-spacing:0;text-transform:none;margin-top:5px'>"+(I.TOR_NAMEN[t.sonne.tor]||"")+"</div></div>"
+    +"<div class='tk-l' style='letter-spacing:0;text-transform:none;margin-top:5px'>"+(I.TOR_NAMEN[t.sonne.tor]||"")+"</div>"
+    +"<div class='tk-bis'>noch bis "+bis(t.sonneEnde)+"</div></div>"
     +"<div class='transit-kachel'><div class='tk-l'>Mond heute</div><div class='tk-w'>"+t.mond.tor+"."+t.mond.linie+"</div>"
-    +"<div class='tk-l' style='letter-spacing:0;text-transform:none;margin-top:5px'>"+(I.TOR_NAMEN[t.mond.tor]||"")+"</div></div>";
+    +"<div class='tk-l' style='letter-spacing:0;text-transform:none;margin-top:5px'>"+(I.TOR_NAMEN[t.mond.tor]||"")+"</div>"
+    +"<div class='tk-bis'>noch bis "+bis(t.mondEnde)+"</div></div>";
   var html="";
+
+  if(t.neueZentren.length){
+    var kanalZuZentrum={};
+    t.neueKanaele.forEach(function(n){
+      [n.torA,n.torB].forEach(function(g){
+        var z=BG.TOR_ZENTRUM[g];
+        (kanalZuZentrum[z]=kanalZuZentrum[z]||[]).push(n.endet);
+      });
+    });
+    html+="<div class='pfeil-meta'>Vorübergehend definierte Zentren</div><div class='wetter-grid'>"
+      +t.neueZentren.map(function(z){
+        var w=I.ZENTRUM_WETTER[z],name=I.ZENTREN_TEXTE[z].name;
+        var enden=(kanalZuZentrum[z]||[]).filter(function(e){return e});
+        var ende=enden.length?new Date(Math.max.apply(null,enden)):null;
+        return "<div class='wetter-karte'>"
+          +"<div class='wk-titel'>"+name+" <span class='tag transit'>heute definiert</span></div>"
+          +"<p><b>Was das heißt:</b> "+w.heisst+"</p>"
+          +"<p><b>Deine Chance:</b> "+w.chance+"</p>"
+          +"<p><b>Wo es schwierig wird:</b> "+w.achtung+"</p>"
+          +"<p><b>So gehst du damit um:</b> "+w.umgang+"</p>"
+          +"<div class='wk-bis'>voraussichtlich bis "+bis(ende)+"</div>"
+          +"</div>";
+      }).join("")+"</div>";
+  }
+
   if(t.neueKanaele.length){
-    html+="<div class='pfeil-meta'>Kanäle, die gerade vorübergehend geschlossen werden</div><ul class='transit-liste'>"
+    html+="<div class='pfeil-meta' style='margin-top:16px'>Kanäle, die der Himmel gerade schließt</div><ul class='transit-liste'>"
       +t.neueKanaele.map(function(n){
-        return "<li><b>"+n.kanal+"</b> · "+(I.KANAL_NAMEN[n.kanal]||"")+"<br>"
+        return "<li><b>"+n.kanal+"</b> · "+(I.KANAL_NAMEN[n.kanal]||"")
+          +" <span class='tag transit'>bis "+bis(n.endet)+"</span><br>"
           +"<span style='opacity:.7;font-size:12.8px'>Tor "+n.torA+"<span class='tag "+(n.quelleA==="du"?"du":"transit")+"'>"+(n.quelleA==="du"?"Deins":"Transit")+"</span>"
           +" &nbsp;+&nbsp; Tor "+n.torB+"<span class='tag "+(n.quelleB==="du"?"du":"transit")+"'>"+(n.quelleB==="du"?"Deins":"Transit")+"</span></span></li>";
       }).join("")+"</ul>";
   }else{
-    html+="<p>Gerade schließt der Himmel keinen zusätzlichen Kanal in deiner Karte – heute bist du ganz bei dir.</p>";
+    html+="<p>Gerade schließt der Himmel keinen zusätzlichen Kanal in deiner Karte. Heute bist du ganz bei dir.</p>";
   }
-  if(t.neueZentren.length){
-    html+="<p style='margin-top:12px'><b>Vorübergehend definiert:</b> "
-      +t.neueZentren.map(function(z){return I.ZENTREN_TEXTE[z].name}).join(", ")
-      +". Diese Zentren fühlen sich heute anders an als sonst – geliehene Energie, kein neues Ich.</p>";
-  }
+
   if(t.resonanz.length){
+    var r0=t.resonanz[0];
     html+="<p style='margin-top:12px'><b>"+t.resonanz.length+" Resonanzen:</b> Der Himmel steht heute auf Toren, die du selbst trägst ("
       +t.resonanz.slice(0,6).map(function(r){return r.tor+"."+r.linie}).join(", ")
-      +(t.resonanz.length>6?" …":"")+"). Diese Themen wirken heute lauter.</p>";
+      +(t.resonanz.length>6?" …":"")+"). Diese Themen klingen heute lauter in dir. Die stärkste Resonanz läuft noch bis "+bis(r0.endet)+".</p>";
   }
   $("transit-inhalt").innerHTML=html;
 }
