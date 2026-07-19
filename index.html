@@ -358,6 +358,7 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
       <div id="graph"></div>
       <div class="chart-aktionen">
         <button class="btn-leise" id="btn-gross" type="button">Chart groß ansehen</button>
+        <button class="btn-leise" id="btn-bericht" type="button">Bericht als PDF</button>
         <button class="btn-leise" id="btn-poster" type="button">Poster speichern</button>
         <button class="btn-leise" id="btn-svg" type="button">Chart als SVG</button>
         <button class="btn-leise" id="btn-link" type="button">Link kopieren</button>
@@ -444,13 +445,14 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
 <script src="kreuze.js"></script>
 <script src="essenz.js"></script>
 <script src="stabil.js"></script>
+<script src="bericht.js"></script>
 <script src="rat.js"></script>
 <script>
 "use strict";
 var $=function(id){return document.getElementById(id)};
 var E=window.HDEngine,I=window.HDInhalte,BG=window.HDBodygraph;
 var VAR=window.HDVariablen,TR=window.HDTransit,RAT=window.HDRat,KZ=window.HDKreuze,ES=window.HDEssenz;
-var letztesKreuz=null;var ST=window.HDStabil;
+var letztesKreuz=null;var ST=window.HDStabil,BE=window.HDBericht;var letzterStabilSatz="";
 var letzteChart=null,letzteVariablen=null;
 var sanft=(typeof matchMedia==="function")&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -762,7 +764,8 @@ function zeigeStabilitaet(utcDate,ortsOffsetMin){
       var s=ST.berechne(E,utcDate.getTime(),ortsOffsetMin);
       var marke=s.sicherheit==="hoch"?"sicher":(s.sicherheit==="mittel"?"beachten":"knapp");
       el.className="stabil reveal "+s.sicherheit;
-      el.innerHTML="<span class='st-marke'>"+marke+"</span>"+ST.satz(s);
+      var satz=ST.satz(s);letzterStabilSatz=satz;
+      el.innerHTML="<span class='st-marke'>"+marke+"</span>"+satz;
     }catch(e){
       if(window.__HD_DEBUG)console.error("Stabil:",e);
       el.style.display="none";
@@ -943,6 +946,35 @@ $("btn-link").addEventListener("click",function(){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(location.href).then(fertig,fertig);
   else fertig();
 });
+function baueBerichtHTML(){
+  if(!letzteChart)return null;
+  var d=$("datum").value.split("-"),z=$("zeit").value;
+  var MON=["Januar","Februar","M\u00E4rz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  var datumText=(+d[2])+". "+MON[(+d[1])-1]+" "+d[0];
+  var heute=new Date();
+  var heuteText=heute.getDate()+". "+MON[heute.getMonth()]+" "+heute.getFullYear();
+  var kx=letztesKreuz||KZ.info(letzteChart.kreuzTore.persSonne,letzteChart.winkel);
+  var es=null;try{es=ES.erzeuge(letzteChart,letzteVariablen,I,kx)}catch(e){}
+  return BE.erzeuge({chart:letzteChart,variablen:letzteVariablen,inhalte:I,kreuz:kx,essenz:es,
+    stabilSatz:letzterStabilSatz,ortName:gewaehlt?gewaehlt[0]:"",
+    datumText:datumText,zeitText:z,heuteText:heuteText,
+    svg:BG.render(letzteChart,letzteVariablen,{animiert:false})});
+}
+$("btn-bericht").addEventListener("click",function(){
+  var html=baueBerichtHTML();
+  if(!html)return;
+  var w=window.open("","_blank");
+  if(!w){alert("Bitte erlaube Pop-ups f\u00FCr diese Seite, um den Bericht zu \u00F6ffnen.");return}
+  w.document.open();w.document.write(html);w.document.close();
+  var gedruckt=false;
+  function drucken(){if(gedruckt)return;gedruckt=true;try{w.focus();w.print()}catch(e){}}
+  /* warten bis Schriften geladen sind, sonst Rückfall nach 1.6s */
+  try{
+    if(w.document.fonts&&w.document.fonts.ready)w.document.fonts.ready.then(function(){setTimeout(drucken,250)});
+  }catch(e){}
+  setTimeout(drucken,1600);
+});
+
 $("btn-poster").addEventListener("click",function(){
   if(!letzteChart)return;
   var b=this;b.disabled=true;b.textContent="Poster entsteht …";
@@ -992,7 +1024,7 @@ $("btn-rechnen").addEventListener("click",rechne);
 beobachte();
 ausUrl();
 
-window.__HD_APP={suche:suche,rechne:function(){return rechne(true)},zeige:zeige,setzeOrt:function(c){gewaehlt=c},
+window.__HD_APP={suche:suche,rechne:function(){return rechne(true)},zeige:zeige,setzeOrt:function(c){gewaehlt=c},baueBerichtHTML:baueBerichtHTML,
   zeigeVariablen:zeigeVariablen,zeigeTransit:zeigeTransit,
   holeChart:function(){return letzteChart},holeVariablen:function(){return letzteVariablen}};
 </script>

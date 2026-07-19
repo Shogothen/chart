@@ -27,6 +27,7 @@ w.HDRat=require("/home/claude/hd/rat.js");
 w.HDKreuze=require("/home/claude/hd/kreuze.js");
 w.HDEssenz=require("/home/claude/hd/essenz.js");
 w.HDStabil=require("/home/claude/hd/stabil.js");
+w.HDBericht=require("/home/claude/hd/bericht.js");
 w.URL.createObjectURL=function(){return "blob:test"};
 w.URL.revokeObjectURL=function(){};
 const inline=html.match(/<script>([\s\S]*?)<\/script>\s*<\/body>/)[1];
@@ -343,6 +344,22 @@ check("Stabilität stuft Sicherheit ein",["hoch","mittel","knapp"].includes(stab
 check("Stabilität nennt Änderung mit Uhrzeit",!stab.vorigeAenderung||/^\d\d:\d\d$/.test(stab.vorigeAenderung.zeit));
 check("Stabilitätssatz ohne Platzhalter",S.satz(stab).length>60&&!S.satz(stab).includes("undefined"));
 check("Stabilitätskarte im Markup",htmlNav.includes('id="stabil"'));
+
+
+console.log("— PDF-Bericht —");
+w.HDBericht=require("/home/claude/hd/bericht.js");
+check("Bericht-Knopf vorhanden",!!w.document.getElementById("btn-bericht"));
+const bhtml=APP.baueBerichtHTML();
+check("Bericht wird gebaut",typeof bhtml==="string"&&bhtml.length>40000);
+check("Bericht ohne undefined",!bhtml.includes("undefined"));
+check("Bericht enthält alle Abschnitte",["Deine Essenz","Der Bodygraph","Typ, Autorität und Profil","Definiert und offen","Die Planeten","Deine Variablen"].every(x=>bhtml.includes(x)));
+check("Bericht enthält Kreuzname und Kronenzentrum",bhtml.includes("Kreuz")&&bhtml.includes("Kronenzentrum"));
+check("Bericht nutzt A4-Druckformat",bhtml.includes("@page{size:A4"));
+check("Bericht mit Chart-SVG",bhtml.includes("<svg")&&bhtml.includes("hd-zentrum-an"));
+const bJahr=$("datum").value.split("-")[0];
+check("Bericht nennt das Geburtsjahr aus dem Formular",!!bJahr&&bhtml.includes(bJahr));
+check("Bericht nennt die Uhrzeit aus dem Formular",bhtml.includes($("zeit").value));
+check("Bericht ist HTML-escaped aufgebaut",!/[<]script/i.test(bhtml.replace(/^[\s\S]*?<body>/,"")));
 
 console.log("— Feedback-Umbau —");
 check("36 Kanaltexte vorhanden",Object.keys(w.HDInhalte.KANAL_TEXTE).length===36);

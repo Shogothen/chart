@@ -94,3 +94,13 @@ Diese Tabelle dient zugleich als unabhängige Gegenprobe der Berechnung: für je
 Die Buntfarben je Zentrum sind wieder raus. Neue Darstellung nach dem Vorbild etablierter Rechner, aber in der Markenpalette: definierte Zentren sind warm-weiße Leuchtflächen (Verlauf #FFFDF8 bis #F2DCC4) mit zweistufigem Leuchthof, offene Zentren ruhige dunkle Flächen (#251754) ohne Strichelung. Nicht aktivierte Tornummern stehen dunkel auf hellen und gedämpft hell auf dunklen Zentren.
 
 Gemessen am gerenderten Chart: definierte Zentren Ø 248 Helligkeit, offene Ø 47, Abstand 200 Stufen. Alle Leuchtflächen im Warmton (R größer G größer B, Ø 253/248/240). Neon-Cyan/Magenta-Anteil 0,00 Prozent. Alle fünf Suiten grün: 345 Prüfungen (test-core 42, test-app 155, gegen 11, qa 110, qa2 27).
+
+## PDF-Bericht (19.07.2026)
+
+Neuer Knopf "Bericht als PDF" in der Aktionsleiste unter dem Chart. Er baut den gesamten Report als eigenständiges, druckfertiges Dokument und öffnet den Druckdialog des Browsers (dort "Als PDF sichern"). Das funktioniert ohne Bibliotheken, offline und auf jedem Gerät; der Druck startet erst, wenn die Schriften geladen sind, mit Rückfall nach 1,6 Sekunden. Bei blockierten Pop-ups erscheint ein Hinweis.
+
+Gestaltung: helles Papier in der Markenwelt (Creme, Indigo-Tinte, Rosé- und Gold-Akzente, Marcellus/Radley/Jost), A4 mit sauberen Seitenrändern, Karten brechen nicht über Seiten. Der Bodygraph liegt als dunkles Panel mit den Leuchtzentren auf eigener Seite.
+
+Inhalt in dieser Reihenfolge: Deckkopf mit Geburtsdaten und Ort, die acht Kernwerte samt Stabilitätssatz, Deine Essenz (drei Karten plus Signaturzeile), der Bodygraph, Typ/Autorität/Profil/Definition/Inkarnationskreuz mit Übertitel und Sonnenthema, alle neun Zentren mit Wachstum und Schatten, alle definierten Kanäle mit Volltext, beide Planetentafeln, die vier Variablen mit Anwendungsblock. Tagesrat und Planetarisches Wetter bleiben bewusst draußen, der Bericht ist die zeitlose Fassung. Fußzeile mit Erstellungsdatum und flowyourdesign.com.
+
+Verifiziert: Bericht aus der laufenden Seite gebaut (93 KB), als A4-PDF gerendert: 10 Seiten (Vergleichschart mit 9 Kanälen: 11 Seiten), kein "undefined", alle Kernabschnitte im extrahierten PDF-Text nachgewiesen, Chartseite mit 56 Prozent dunkler Panelfläche und hellen Leuchtzentren darin. Alle fünf Suiten grün: 355 Prüfungen (test-core 42, test-app 165, gegen 11, qa 110, qa2 27).
