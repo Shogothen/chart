@@ -179,7 +179,7 @@ function pruefe(gerät,name,ok,detail){
       if(!leiste)return null;
       return leiste.getBoundingClientRect().height;
     });
-    pruefe(g.name,"Kopfleiste nicht zu hoch",verdeckt===null||verdeckt<=90,verdeckt+"px");
+    pruefe(g.name,"Keine eigene Kopfleiste",verdeckt===null,verdeckt+"px");
 
     pruefe(g.name,"Keine Konsolenfehler im Ablauf",konsolenfehler.length===0,konsolenfehler.slice(0,2).join(" | "));
 

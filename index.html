@@ -29,25 +29,8 @@ body{background:var(--nacht);color:var(--licht);font-family:var(--sans);font-wei
   background:radial-gradient(120% 80% at 50% 120%,rgba(8,1,44,.85),transparent 62%)}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px 110px;position:relative;z-index:2}
 
-/* Kopfleiste */
-.leiste{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:rgba(13,3,63,.72);border-bottom:1px solid rgba(255,255,255,.07)}
-.leiste-innen{max-width:1240px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:34px}
-.marke{font-family:var(--serif);font-size:20px;letter-spacing:.01em;white-space:nowrap}
-.marke span{color:var(--gold)}
-.navi{display:flex;gap:26px;flex:1;justify-content:center}
-.navi a{color:rgba(255,255,255,.88);text-decoration:none;font-size:14.5px;letter-spacing:.01em;padding:12px 2px;border-bottom:1px solid transparent;transition:border-color .2s,color .2s}
-.navi a:hover{border-color:rgba(255,255,255,.6)}
-.navi a.hier{border-color:#fff}
-@media(max-width:900px){.navi{display:none}}
-.zurueck{display:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#fff;text-decoration:none;
-  border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:11px 16px;min-height:44px;align-items:center;white-space:nowrap}
-@media(max-width:900px){.zurueck{display:inline-flex}}
-.leiste-fakten{display:none;gap:20px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--licht-leise)}
-.leiste-fakten.an{display:flex}
-.leiste-fakten b{color:var(--licht);font-weight:500}
-
 /* Hero */
-header{padding:86px 0 24px;display:grid;grid-template-columns:1.06fr .94fr;gap:52px;align-items:center}
+header{padding:44px 0 24px;display:grid;grid-template-columns:1.06fr .94fr;gap:52px;align-items:center}
 .eyebrow{font-size:11.5px;letter-spacing:.46em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:24px}
 h1{font-family:var(--serif);font-weight:300;font-size:clamp(46px,7.4vw,86px);line-height:1.02;letter-spacing:-.012em}
 h1 em{font-style:italic;color:#EBD9FF}
@@ -68,7 +51,7 @@ h1 em{font-style:italic;color:#EBD9FF}
 @keyframes drehen{to{transform:rotate(360deg)}}
 
 /* Formular */
-.formular{scroll-margin-top:84px;margin:44px auto 0;background:var(--glas);border:1px solid var(--glas-rand);border-radius:26px;padding:26px;
+.formular{scroll-margin-top:24px;margin:44px auto 0;background:var(--glas);border:1px solid var(--glas-rand);border-radius:26px;padding:26px;
   display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:16px;align-items:end;backdrop-filter:blur(18px);
   box-shadow:0 40px 90px -50px rgba(0,0,0,.9)}
 .feld label{display:block;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--licht-leise);font-weight:500;margin-bottom:9px}
@@ -112,7 +95,7 @@ h1 em{font-style:italic;color:#EBD9FF}
 .sprungnav a:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.32)}
 
 .haupt{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,1fr);gap:36px;margin-top:26px;align-items:start}
-.graph-karte{position:sticky;top:78px;padding:0}
+.graph-karte{position:sticky;top:22px;padding:0}
 .graph-karte svg.hd-chart{width:100%;height:auto;display:block}
 .chart-aktionen{display:flex;gap:9px;justify-content:center;margin-top:14px;flex-wrap:wrap}
 .chart-hinweis{display:none;text-align:center;font-size:12.5px;color:var(--licht-leise);margin-top:10px}
@@ -201,7 +184,7 @@ footer{margin-top:64px;padding-top:26px;border-top:1px solid rgba(255,255,255,.1
 footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12px 6px;min-height:44px}
 
 @media(max-width:960px){
-  header{grid-template-columns:1fr;gap:26px;padding-top:52px}
+  header{grid-template-columns:1fr;gap:26px;padding-top:28px}
   /* Breite explizit setzen: margin:auto würde das Element auf Inhaltsbreite schrumpfen */
   .hero-bogen{width:min(300px,74%);justify-self:center;margin:0}
   .haupt{grid-template-columns:1fr}
@@ -213,7 +196,6 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
   .abschnitt{padding:22px 20px}
   .zentren-grid,.pfeil-grid,.substruktur,.transit-kopf,.tab-doppel{grid-template-columns:1fr}
   .kopfdaten{grid-template-columns:1fr 1fr}
-  .leiste-fakten{display:none!important}
 }
 @media(max-width:560px){
   .wrap{padding:0 16px 80px}
@@ -227,7 +209,7 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
   .reveal{opacity:1;transform:none}
 }
 @media print{
-  .himmel,#sternenfeld,.leiste,.formular,.sprungnav,.chart-aktionen,footer{display:none!important}
+  .himmel,.himmel-bild,.himmel-tiefe,#sternenfeld,.formular,.sprungnav,.chart-aktionen,footer{display:none!important}
   body{background:#fff;color:#000}
   .abschnitt,.kd,.graph-karte{border-color:#ccc;background:#fff;backdrop-filter:none}
 }
@@ -238,20 +220,6 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
 <div class="himmel-bild" id="himmel-bild"></div>
 <div class="himmel-tiefe"></div>
 <canvas id="sternenfeld"></canvas>
-
-<div class="leiste">
-  <div class="leiste-innen">
-    <div class="marke">Flow your <span>Design</span></div>
-    <nav class="navi">
-      <a href="https://flowyourdesign.com/">Startseite</a>
-      <a href="https://flowyourdesign.com/human-design">Human Design</a>
-      <a href="https://flowyourdesign.com/uber-mich">Über mich</a>
-      <a href="https://flowyourdesign.com/mein-angebot">Mein Angebot</a>
-      <a href="#" class="hier">Chartrechner</a>
-    </nav>
-    <div class="leiste-fakten" id="leiste-fakten"></div>
-  </div>
-</div>
 
 <div id="chart-voll"><button id="chart-voll-zu" type="button">Schließen</button><div id="chart-voll-inhalt"></div></div>
 
@@ -569,8 +537,6 @@ function zeige(chart,utc){
   $("zeiten").textContent="Geburt (UTC): "+chart.geburtUTC.replace("T"," ").slice(0,16)
     +" · Design (UTC): "+chart.designUTC.replace("T"," ").slice(0,16)
     +(gewaehlt?" · "+gewaehlt[0]+" ("+gewaehlt[4]+")":"");
-  $("leiste-fakten").innerHTML="<span><b>"+chart.typ+"</b></span><span><b>"+chart.profil+"</b></span><span><b>"+chart.autoritaet.split(" ")[0]+"</b></span>";
-  $("leiste-fakten").classList.add("an");
 
   $("graph").innerHTML=BG.render(chart,v,{animiert:!sanft});
   zeigeVariablen(v);

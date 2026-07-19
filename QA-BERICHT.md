@@ -31,6 +31,11 @@ Geprüft im echten Browser (Chromium 149, Puppeteer) auf fünf Gerätegrößen:
 8. **Download auf älteren iOS-Browsern.** Rückfall eingebaut: Fehlt die Download-Eigenschaft,
    öffnet sich die Datei in einem neuen Tab.
 
+## Einbindung in die bestehende Seite
+Der Rechner bringt keine eigene Kopfleiste und keine Navigation mit – Logo, Menü und
+Fusszeile kommen von der umgebenden Seite. Beim Einbetten per iframe empfiehlt sich
+`width:100%` und eine Höhe von mindestens 900 px, oder eine dynamische Höhenanpassung.
+
 ## Was laufend geprüft wird
 - Kein horizontales Scrollen, keine Elemente außerhalb des Bildschirms, symmetrische Ränder
 - Keine Textüberlappungen, keine Konsolenfehler

@@ -173,10 +173,10 @@ check("Chart-Format 620x990",$("graph").innerHTML.includes("0 0 620 990"));
 check("Mandala im Kopfbereich",!!$("hero-bogen").querySelector(".hd-mandala"));
 check("Originalhimmel eingebunden (3726 Sterne)",w.HD_HIMMEL&&w.HD_HIMMEL.sterne.length===3726,w.HD_HIMMEL&&w.HD_HIMMEL.sterne.length);
 check("Nebelverlauf als Hintergrundbild gesetzt",($("himmel-bild").style.backgroundImage||"").indexOf("data:image/png;base64")>=0);
-check("Originalnavigation vorhanden",w.document.querySelectorAll(".navi a").length===5);
+check("Keine eigene Kopfleiste (wird eingebettet)",!w.document.querySelector(".leiste"));
 check("Gemessene Originalfarbe im Stylesheet",w.document.documentElement.innerHTML.includes("#0C0442"));
 check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===6);
-check("Kopfleiste zeigt Kernwerte",$("leiste-fakten").classList.contains("an"));
+check("Kernwerte als Kacheln sichtbar",$("kopfdaten").querySelectorAll(".kd").length===8);
 check("Link-Teilen-Knopf vorhanden",!!$("btn-link"));
 
 console.log("— Substruktur-Auflösung (Minutenschärfe) —");
