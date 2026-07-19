@@ -168,5 +168,36 @@ function info(sonnentor,winkel){
   };
 }
 
-return {TABELLE:T,THEMA:THEMA,WINKEL_ART:WINKEL_ART,name:name,info:info};
+var WINKEL_RAHMEN={
+  "Rechtswinkel-Kreuz":{
+    auftakt:"Dein Kreuz ist rechtwinklig: Du gehst ein persönliches Schicksal. Dein Lebensthema entfaltet sich aus dir selbst heraus, du musst es nicht mit anderen aushandeln, es reift, indem du dein eigenes Leben lebst.",
+    schluss:"Niemand muss dieses Thema verstehen, damit es wirkt. Du lebst es, und das genügt."},
+  "Juxtapositions-Kreuz":{
+    auftakt:"Dein Kreuz ist ein Juxtapositionskreuz, die seltenste Form: Dein Lebensthema ist fixiert wie eine Schiene. Du bist nicht hier, um zu wählen, sondern um eine ganz bestimmte Spur mit ganzer Konsequenz zu fahren.",
+    schluss:"Was von außen wie Eigensinn aussieht, ist deine Präzision: Diese eine Spur fährt niemand sonst."},
+  "Linkswinkel-Kreuz":{
+    auftakt:"Dein Kreuz ist linkswinklig: ein transpersonales Schicksal. Dein Lebensthema entfaltet sich durch Begegnungen, es braucht die anderen, um sich zu erfüllen, und die anderen brauchen dich dafür.",
+    schluss:"Die entscheidenden Wendungen deines Lebens tragen Gesichter: Menschen sind bei dir kein Beiwerk des Wegs, sie sind der Weg."}
+};
+function ersterSatz(txt){
+  if(!txt)return "";
+  var i=txt.indexOf(". ");
+  return i>0?txt.slice(0,i+1):txt;
+}
+function komposition(kreuzTore,winkel,torTexte){
+  if(!kreuzTore||!torTexte)return "";
+  var r=WINKEL_RAHMEN[winkel]||WINKEL_RAHMEN["Rechtswinkel-Kreuz"];
+  var pS=ersterSatz(torTexte[kreuzTore.persSonne]);
+  var pE=ersterSatz(torTexte[kreuzTore.persErde]);
+  var dS=ersterSatz(torTexte[kreuzTore.desSonne]);
+  var dE=ersterSatz(torTexte[kreuzTore.desErde]);
+  var teile=[r.auftakt];
+  teile.push("Sein Motor ist Tor "+kreuzTore.persSonne+": "+pS+" Das ist die Energie, mit der du morgens aufwachst, dein bewusstes Lebensthema.");
+  teile.push("Geerdet wird sie von Tor "+kreuzTore.persErde+": "+pE+" Hier findet dein Thema Boden und Gegenwicht.");
+  teile.push("Darunter, in deinem Körperwissen, arbeitet Tor "+kreuzTore.desSonne+": "+dS+" Diese Seite lebst du, ohne sie zu bemerken, andere spüren sie zuerst.");
+  teile.push("Und Tor "+kreuzTore.desErde+" hält das Unbewusste im Gleichgewicht: "+dE);
+  teile.push(r.schluss);
+  return teile.join(" ");
+}
+return {TABELLE:T,THEMA:THEMA,WINKEL_ART:WINKEL_ART,name:name,info:info,komposition:komposition};
 });

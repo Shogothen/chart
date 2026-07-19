@@ -34,42 +34,45 @@ var DEF_KERN={
 };
 
 var ZENTRUM_STAERKE={
-kopf:"eine eigene Quelle für Fragen und Inspiration",
-ajna:"ein verlässliches Denkgerüst",
-kehle:"ein Ausdruck, auf den man sich verlassen kann",
-g:"ein festes Gefühl für Identität und Richtung",
-herz:"echte Willenskraft, wenn dein Herz dahintersteht",
-sakral:"ein Motor, der sich immer wieder erneuert",
-milz:"eine Intuition im Jetzt und ein gesundes Zeitgefühl",
-solarplexus:"emotionale Tiefe, die andere berührt",
-wurzel:"ein eigener Antrieb, der dich in Bewegung hält"
-};
-var ZENTRUM_ACHTUNG={
-kopf:"dich von fremden Fragen unter Druck setzen zu lassen",
-ajna:"so zu tun, als wärst du dir sicher, um dazuzugehören",
-kehle:"zu reden, nur um wahrgenommen zu werden",
-g:"deine Identität in anderen Menschen oder Orten zu suchen",
-herz:"dich zu beweisen und Versprechen zu geben, die dich kosten",
-sakral:"mitzuhalten, bis nichts mehr da ist",
-milz:"an Ungesundem festzuhalten, weil Loslassen sich wie Gefahr anfühlt",
-solarplexus:"Konflikte zu vermeiden und Wahrheiten zu schlucken",
-wurzel:"dich vom Druck hetzen zu lassen, der nie aufhört"
+"kopf": "eine eigene Quelle von Inspiration, die andere zum Denken anstiftet",
+"ajna": "eine verlässliche Art zu denken, an der Menschen dich erkennen",
+"kehle": "eine Stimme mit eigener Handschrift, auf deren Wirkung Verlass ist",
+"g": "einen inneren Kompass, der dich hält, wo andere schwanken",
+"herz": "einen Willen, der Versprechen halten kann, und ein Wort mit Gewicht",
+"sakral": "einen Motor, der sich jede Nacht erneuert, wenn er für das Richtige lief",
+"milz": "einen wachen Instinkt, der Gefahr und Chance vor jedem Gedanken erkennt",
+"solarplexus": "eine Gefühlstiefe, die die Welt in Tiefenschärfe wahrnimmt",
+"wurzel": "einen eigenen Druckpuls, der Berge versetzt, wenn er an ist"
 };
 
-var PROFIL_KERN={
-"1/3":"Du musst erst den Boden verstehen und dann selbst ausprobieren. Deine Umwege sind deine Methode.",
-"1/4":"Du gräbst dich in Wissen und gibst es an dein Netzwerk weiter. Deine Chancen kommen über Menschen, die dich kennen.",
-"2/4":"Du hast ein natürliches Talent, das andere in dir sehen, während du eigentlich deine Ruhe willst.",
-"2/5":"Du wirst gerufen, ob du willst oder nicht. Menschen projizieren viel auf dich, weil sie in dir eine Lösung sehen.",
-"3/5":"Du lernst durch Versuch und Irrtum und bist deshalb später der Mensch, dem man die praktische Lösung zutraut.",
-"3/6":"Du probierst früh viel aus, ziehst dich dann zurück und wirst in der zweiten Lebenshälfte zum Vorbild.",
-"4/6":"Dein Netzwerk trägt dich, und mit den Jahren wirst du zu jemandem, dem man einfach glaubt.",
-"4/1":"Du hast ein festes Fundament und ein festes Netz. Dein Weg ist schmal, aber klar.",
-"5/1":"Man erwartet von dir Lösungen. Du kannst liefern, solange du dein Fundament kennst und dich nicht überhöhen lässt.",
-"5/2":"Du wirst aus deinem Rückzug heraus gerufen. Deine Wirkung entsteht, ohne dass du dafür arbeitest.",
-"6/2":"Du lebst in drei Phasen: erst erleben, dann beobachten, dann Vorbild sein. Geduld mit dir ist die halbe Miete.",
-"6/3":"Du sammelst früh viele Erfahrungen und wirst später zu jemandem, der aus echtem Erleben spricht."
+var ZENTRUM_ACHTUNG={
+"kopf": "Fragen zu beantworten, die nie deine waren",
+"ajna": "Gewissheit zu spielen, wo dein Schweben die eigentliche Stärke wäre",
+"kehle": "dich ins Gespräch zu drängen, statt auf deine Lücke zu warten",
+"g": "in Identitäten zu schlüpfen, die dir eine Umgebung übergestreift hat",
+"herz": "Dinge zu beweisen, die niemand von dir verlangt hat",
+"sakral": "nicht zu wissen, wann genug ist, weil geliehene Kraft sich echt anfühlt",
+"milz": "an Vertrautem festzuhalten, nur weil das Loslassen Angst macht",
+"solarplexus": "Ja zu sagen, um Frieden zu halten, und mit deiner Wahrheit zu bezahlen",
+"wurzel": "im Takt fremder Eile zu hetzen, die nie fertig wird"
 };
+
+
+var PROFIL_KERN={
+"1/3": "Du baust Fundamente und testest sie durch Anfassen. Was dabei bricht, war Forschung, deine Umwege sind die Methode, nicht der Fehler.",
+"1/4": "Du gräbst tief und teilst über dein Netz. Deine Chancen tragen Gesichter von Menschen, die dir vertrauen, nicht Logos von Portalen.",
+"2/4": "Dein Talent reift im Rückzug, und deine Menschen holen es ans Licht. Beides braucht Schutz: die stille Kammer und die echten Verbindungen.",
+"2/5": "Du willst deine Ruhe, und die Welt ruft dich trotzdem. Deine Kunst ist die Auswahl: Nur Rufe annehmen, die dein wirkliches Talent treffen.",
+"3/5": "Du hast fast alles schon einmal repariert, verloren und wiedergefunden. Genau deshalb glaubt man dir die Rettung: Sie kommt aus dem Graben, nicht vom Podest.",
+"3/6": "Deine wilden Jahre waren Rohmaterial, die stillen sind Reifung. Dein Leben ist auf späte Autorität angelegt, nicht auf Frühstart.",
+"4/6": "Dein Netz trägt dich, dein Ansehen wächst mit den Jahren. Verlasse nie das Alte, bevor das Neue steht, das ist deine einzige harte Regel.",
+"4/1": "Ein Fundament, ein Netz, ein schmaler sicherer Weg. Du bist nicht zum Neuerfinden gebaut, sondern zum Vertiefen, und darin unerschütterlich.",
+"5/1": "Man projiziert Lösungen auf dich, oft bevor du sprichst. Tragfähig wird das durch dein Fundament: Liefere nur, was dein Wissen deckt, und zieh dich rechtzeitig zurück.",
+"5/2": "Dein Ruf eilt dir voraus, während du eigentlich im Rückzug wärst. Folge den Rufen, die dein Talent wirklich treffen, den anderen darfst du unsichtbar bleiben.",
+"6/2": "Anecken, beobachten, Vorbild werden: Dein Leben hat drei Akte und eine Einsiedelei als Rückzugsort. Deine Währung ist Vertrauen, verspiele sie nie.",
+"6/3": "Auch als Vorbild hörst du nie auf zu stolpern, und genau das macht dich glaubwürdig: Deine Weisheit ist von letzter Woche, nicht aus dem Lehrbuch."
+};
+
 
 function erzeuge(chart,variablen,inhalte,kreuzInfo){
   var defZ=chart.definierteZentren||[];

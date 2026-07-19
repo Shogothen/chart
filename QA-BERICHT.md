@@ -126,3 +126,33 @@ Alle fünf Suiten grün: 362 Prüfungen (test-core 42, test-app 172, gegen 11, q
 Auf dem iPhone (Safari) waren Geburtsdatum und Geburtszeit als überhohe, komplett leere Balken zu sehen: iOS gibt Datums- und Zeitfeldern eine eigene innere Höhe, und leere Felder zeigen dort keinerlei Platzhalter. Behoben: alle drei Eingabefelder haben jetzt eine feste Höhe von 56 Pixeln (box-sizing, appearance zurückgesetzt, Wert im Feld linksbündig und vertikal mittig über die WebKit-Innenelemente). Solange Datum oder Zeit leer sind, zeigt das Feld einen sanften Hinweis (TT.MM.JJJJ beziehungsweise HH:MM), der bei Eingabe verschwindet; die Logik hängt an input- und change-Ereignissen.
 
 Verifiziert: alle drei Felder exakt 56 Pixel, Hinweis erscheint und verschwindet korrekt, Berechnungsablauf unverändert. Die Gleichhöhe ist als dauerhafte QA-Prüfung auf allen sechs Gerätegrößen verankert. Alle fünf Suiten grün: 368 Prüfungen (test-core 42, test-app 172, gegen 11, qa 116, qa2 27).
+
+## Die Tiefenrunde: Inhalte in Kaufqualität (19.07.2026)
+
+Der komplette Textbestand wurde neu geschrieben, mit dem Anspruch, dass kein Text gegen einen anderen austauschbar ist.
+
+**Neu: alle 64 Tore.** Bisher existierten nur die Tornamen. Jetzt trägt jedes Tor einen eigenen Text mit dem Bogen Kern, wie es sich zeigt, wo der Schatten liegt. Mindestlänge 180 Zeichen, paarweise verschieden, per Test verankert. Die Tore erscheinen an drei Orten: in der neuen Sektion "Deine Tore" (alle aktivierten Tore mit Herkunftsmarken P, D oder P + D und der Liste der aktivierenden Planeten), in den Wetterkacheln (Sonnen- und Mondtor erhalten ihre Deutungszeile) und im PDF-Bericht als eigene Sektion.
+
+**36 Kanäle dreischichtig.** Jeder Kanal hat jetzt Kern, Im Alltag und Der Schatten als eigene Ebenen, im Durchschnitt 550 statt 233 Zeichen, alle Kerne paarweise verschieden.
+
+**Typen, Autoritäten, Profile vertieft.** Typen im Schnitt 1286 statt 668 Zeichen, jetzt mit Beziehungs- und Arbeitsebene. Acht Autoritäten (beide Ego-Varianten eigenständig ausgeführt) mit konkretem Entscheidungsprotokoll, im Schnitt 723 statt 358 Zeichen. Zwölf Profile als echte Porträts, im Schnitt 653 statt 259 Zeichen, ergänzt um die Aufschlüsselung der bewussten und unbewussten Linie (sechs Linien-Grundtöne mit Name, Kern, Gabe und Falle), sichtbar im Profil-Abschnitt und im PDF.
+
+**Dubletten geprüft.** Essenz-Bausteine, Zentrumstexte und Wettertexte wurden gegeneinander auf wortgleiche Formulierungen geprüft: keine gefunden.
+
+**Handwerkliche Regeln, per Test erzwungen:** kleines du, keine Gedankenstriche in allen neuen Texten, weibliche Rollenbilder passend zum Publikum der Seite. Die Sprungnavigation führt jetzt zehn Ziele (neu: Tore).
+
+Alle fünf Suiten grün: 386 Prüfungen (test-core 42, test-app 190, gegen 11, qa 116, qa2 27). Der Beispielbericht umfasst 14 Seiten inklusive Tor-Sektion und Linienaufschlüsselung.
+
+## Shareholder-Runde: die letzten generischen Schichten (19.07.2026)
+
+**Individuelle Inkarnationskreuz-Texte.** Bisher teilten sich 192 Kreuze drei Winkel-Texte. Jetzt komponiert das Modul für jedes Kreuz einen eigenen Text aus seinen vier tatsächlichen Toren: Winkel-Rahmung (persönlich, fixiert oder transpersonal), das Sonnentor als bewusster Motor, das Erdtor als Erdung, die Design-Seite als unbewusstes Körperwissen samt Gegengewicht, plus Schlusssatz je Winkel. Deterministisch, ehrlich, individuell: Zwei verschiedene Kreuze ergeben nachweislich verschiedene Texte von über 900 Zeichen. Sichtbar im Kreuz-Abschnitt und im PDF.
+
+**Neun Zentren auf Tiefenniveau.** Alle 54 Felder (definiert und offen, je mit Wachstum und Schatten) neu geschrieben: durchschnittlich 217 statt 120 Zeichen pro Feld, kürzestes Feld 138, paarweise verschieden, gleiche Stimme wie Tore und Kanäle.
+
+**Linien an jeder Aktivierung.** Die Planetentafeln zeigen unter jeder der 26 Aktivierungen den Linien-Grundton (36.5 Retterin), auch im PDF. Die Tor-Sektion erhält je vorkommender Linie einen komponierten Satz (In Linie 5 gelebt, als Retterin: ...). Damit ist erstmals die Linienebene der Aktivierungen erklärt.
+
+**Tagesrat verdoppelt.** Sechs statt drei Varianten je Typ, 30 Bausteine, alle in der neuen Stimme; Wiederholung beginnt erst nach Tag sechs statt Tag drei.
+
+**Stimmangleichung.** Zentrums-Wetter (36 Felder) und Essenz-Bausteine (12 Profil-Kerne, 18 Stärke- und Achtungszeilen) neu geschrieben; maschinelle Dublettenprüfung gegen die Zentrumstexte: null Treffer.
+
+Alle fünf Suiten grün: 397 Prüfungen (test-core 42, test-app 201, gegen 11, qa 116, qa2 27). Beispielbericht jetzt 17 Seiten.

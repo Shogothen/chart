@@ -105,10 +105,19 @@ function erzeuge(d){
   s+=karte(esc(c.typ)+' <span class="z-status">'+esc(typ.anteil||"")+"</span>","<p>"+esc(typ.text||"")+"</p>");
   s+=karte("Innere Autorität: "+esc(c.autoritaet),"<p>"+esc(I.AUTORITAETEN[c.autoritaet]||"")+"</p>");
   var prof=I.PROFILE[c.profil]||["",""];
-  s+=karte("Profil "+esc(c.profil)+" · "+esc(prof[0]),"<p>"+esc(prof[1])+"</p>");
+  var linienHtml="";
+  if(d.linien){
+    var lp=c.profil.split("/");
+    var la=d.linien[+lp[0]],lb=d.linien[+lp[1]];
+    if(la&&lb)linienHtml='<div class="ebene"><b>Bewusste Linie '+lp[0]+", "+esc(la.name)+"</b> "+esc(la.kern)
+      +" Gabe: "+esc(la.gabe)+". Falle: "+esc(la.falle)+".</div>"
+      +'<div class="ebene"><b>Unbewusste Linie '+lp[1]+", "+esc(lb.name)+"</b> "+esc(lb.kern)
+      +" Gabe: "+esc(lb.gabe)+". Falle: "+esc(lb.falle)+". Diese Seite lebst du, ohne sie zu sehen.</div>";
+  }
+  s+=karte("Profil "+esc(c.profil)+" · "+esc(prof[0]),"<p>"+esc(prof[1])+"</p>"+linienHtml);
   s+=karte(esc(c.definition),"<p>"+esc(I.DEFINITION_TEXTE[c.definition]||"")+"</p>");
   if(kx)s+=karte(esc(kx.name)+' <span class="z-status">'+esc(kx.uebertitel)+"</span>",
-    "<p>"+esc(kx.artText)+" "+esc(I.WINKEL_TEXTE[c.winkel]||"")+"</p>"
+    "<p>"+esc(d.kreuzText||((kx.artText||"")+" "+(I.WINKEL_TEXTE[c.winkel]||"")))+"</p>"
     +'<div class="ebene"><b>Grundthema deines Sonnentors</b> '+esc(kx.sonnenthema)+": "+esc(kx.sonnenthemaText)+"</div>");
   s+="</div>";
 
@@ -136,8 +145,33 @@ function erzeuge(d){
     kan.forEach(function(k){
       var key=Math.min(k[0],k[1])+"-"+Math.max(k[0],k[1]);
       var name=I.KANAL_NAMEN[key]||("Kanal "+key);
-      var tx=I.KANAL_TEXTE[key]||"";
-      s+=karte(esc(key)+" · "+esc(name),tx?"<p>"+esc(tx)+"</p>":"");
+      var tx=I.KANAL_TEXTE[key]||{};
+      s+=karte(esc(key)+" · "+esc(name),
+        (tx.kern?"<p>"+esc(tx.kern)+"</p>":"")
+        +(tx.alltag?'<div class="ebene"><b>Im Alltag</b> '+esc(tx.alltag)+"</div>":"")
+        +(tx.schatten?'<div class="ebene schatten"><b>Der Schatten</b> '+esc(tx.schatten)+"</div>":""));
+    });
+    s+="</div>";
+  }
+
+  /* ---- Tore ---- */
+  if(d.torTexte){
+    var herkunft={};
+    ["personality","design"].forEach(function(seite){
+      Object.keys(c[seite]).forEach(function(p){
+        var tor=c[seite][p].tor;
+        herkunft[tor]=herkunft[tor]||{p:false,d:false};
+        herkunft[tor][seite==="personality"?"p":"d"]=true;
+      });
+    });
+    var tore=Object.keys(herkunft).map(Number).sort(function(a,b){return a-b});
+    s+='<div class="abschnitt gross"><h2><small>Deine Aktivierungen im Detail</small>Deine Tore</h2>'
+      +'<div class="meta">'+tore.length+' Tore sind in dir fest aktiviert. P steht für die Persönlichkeit, D für das Design.</div>';
+    tore.forEach(function(tor){
+      var h=herkunft[tor];
+      var marke=h.p&&h.d?"P + D":(h.p?"P":"D");
+      s+=karte("Tor "+tor+" · "+esc(I.TOR_NAMEN[tor]||"")+' <span class="z-status">'+marke+"</span>",
+        "<p>"+esc(d.torTexte[tor]||"")+"</p>");
     });
     s+="</div>";
   }
@@ -147,7 +181,8 @@ function erzeuge(d){
     var t='<table><tr><th>'+titel+'</th><th>Tor.Linie</th><th>Bedeutung</th></tr>';
     Object.keys(I.PLANET_LABELS||{}).forEach(function(k){
       var e2=pl[k];if(!e2)return;
-      t+="<tr><td>"+esc(I.PLANET_LABELS[k])+"</td><td>"+e2.tor+"."+e2.linie+"</td><td>"+esc(String(I.TOR_NAMEN[e2.tor]||"").split(" \u2013 ")[0])+"</td></tr>";
+      var lname=d.linien&&d.linien[e2.linie]?" · "+d.linien[e2.linie].name.replace("Die ","").replace("Das ",""):"";
+      t+="<tr><td>"+esc(I.PLANET_LABELS[k])+"</td><td>"+e2.tor+"."+e2.linie+"</td><td>"+esc(String(I.TOR_NAMEN[e2.tor]||"").split(" \u2013 ")[0]+lname)+"</td></tr>";
     });
     return t+"</table>";
   }

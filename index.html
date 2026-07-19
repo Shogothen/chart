@@ -228,6 +228,13 @@ a.kd:hover .kd-pfeil{opacity:1}
 .liste-def summary:after{content:"+";position:absolute;right:2px;top:0;font-size:19px;color:var(--gold);transition:transform .2s}
 .liste-def details[open] summary:after{transform:rotate(45deg)}
 .kanal-erster{display:block;margin-top:5px;font-size:13.2px;color:var(--licht-weich)}
+.kanal-ebene{margin-top:9px;padding-top:9px;border-top:1px dashed rgba(255,255,255,.13)}
+.kanal-ebene b{color:var(--gold);font-weight:500;margin-right:4px}
+.kanal-ebene.schatten b{color:#E4B7C9}
+.tor-marke{display:inline-block;font-size:9.5px;letter-spacing:.14em;padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:2px;font-weight:500}
+.tor-marke.pers{background:rgba(255,255,255,.16);color:#fff}
+.tor-marke.des{background:rgba(255,180,137,.2);color:var(--gold)}
+.tor-marke.beide{background:linear-gradient(90deg,rgba(255,255,255,.16),rgba(255,180,137,.22));color:var(--licht)}
 .kanal-text{margin-top:8px;font-size:13.2px;color:var(--licht-weich);line-height:1.65}
 .liste-def details:not([open]) .kanal-text{display:none}
 .pfeil-seite{font-size:13px;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.1);color:var(--licht-leise)}
@@ -237,6 +244,7 @@ a.kd:hover .kd-pfeil{opacity:1}
 .transit-kopf{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
 .transit-kachel{background:linear-gradient(165deg,rgba(122,98,232,.24),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:16px;text-align:center;min-width:0;overflow-wrap:anywhere}
 .transit-kachel .tk-l{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--licht-leise);font-weight:500}
+.transit-kachel .tk-satz{margin-top:8px;font-size:12.6px;line-height:1.55;color:var(--licht-weich)}
 .transit-kachel .tk-w{font-family:var(--serif);font-size:27px;font-weight:300;margin-top:4px}
 .transit-liste{list-style:none;margin-top:8px}
 .transit-liste li{padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px;color:var(--licht-weich)}
@@ -353,7 +361,7 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
 
   <nav class="sprungnav reveal" id="sprungnav">
     <a href="#formular" class="nav-zurueck">Daten ändern</a><a href="#rat-block">Rat</a><a href="#essenz-block">Essenz</a><a href="#txt-typ">Typ</a>
-    <a href="#zentren-block">Zentren</a><a href="#kanaele-block">Kanäle</a><a href="#planeten-block">Planeten</a>
+    <a href="#zentren-block">Zentren</a><a href="#kanaele-block">Kanäle</a><a href="#tore-block">Tore</a><a href="#planeten-block">Planeten</a>
     <a href="#variablen-block">Variablen</a><a href="#transit-block">Wetter</a>
   </nav>
 
@@ -412,6 +420,12 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
   <div class="abschnitt reveal" id="kanaele-block">
     <h2><small>Deine Lebensadern</small>Definierte Kanäle</h2>
     <ul class="liste-def" id="kanaele"></ul>
+  </div>
+
+  <div class="abschnitt reveal" id="tore-block">
+    <h2><small>Deine Aktivierungen im Detail</small>Deine Tore</h2>
+    <div class="meta" id="tore-meta"></div>
+    <ul class="liste-def" id="tore"></ul>
   </div>
 
   <div class="abschnitt reveal" id="planeten-block">
@@ -474,6 +488,7 @@ footer a{color:var(--gold);text-decoration:none;display:inline-block;padding:12p
 <script src="bodygraph.js"></script>
 <script src="variablen.js"></script>
 <script src="transit.js"></script>
+<script src="tiefe.js"></script>
 <script src="kreuze.js"></script>
 <script src="essenz.js"></script>
 <script src="stabil.js"></script>
@@ -650,10 +665,14 @@ function rechne(sofort){
 }
 
 function planetenTabelle(akt,klasse,titel){
+  var LT=(window.HDTiefe||{}).LINIEN||{};
   var reihen=E.PLANETEN.map(function(p){
     var name=p[0],a=akt[name];
+    var linie=LT[a.linie];
     return "<tr><td>"+I.PLANET_SYMBOL[name]+" "+I.PLANET_LABELS[name]
-      +'</td><td class="tor">'+a.tor+"."+a.linie+"</td><td>"+grad(a.grad)+"</td></tr>";
+      +'</td><td class="tor">'+a.tor+"."+a.linie
+      +(linie?'<span class="tor-linie">'+linie.name.replace("Die ","").replace("Das ","")+"</span>":"")
+      +"</td><td>"+grad(a.grad)+"</td></tr>";
   }).join("");
   return '<div class="'+klasse+'"><div class="spalten-titel '+(klasse==="pers"?"p":"d")+'">'+titel
     +'</div><table class="tabelle"><tr><th>Planet</th><th>Tor.Linie</th><th>Position</th></tr>'+reihen+"</table></div>";
@@ -686,6 +705,7 @@ function zeige(chart,utc){
   zeigeTransit(chart);
   zeigeRat(chart);
   zeigeEssenz(chart,v);
+  zeigeTore(chart);
   try{
     var gd=$("datum").value.split("-").map(Number),gz=$("zeit").value.split(":").map(Number);
     var utcD=new Date(chart.geburtUTC);
@@ -698,12 +718,25 @@ function zeige(chart,utc){
   abschnitt("txt-autoritaet","Deine innere Autorität",chart.autoritaet,"So triffst du stimmige Entscheidungen",I.AUTORITAETEN[chart.autoritaet]||"");
   var prof=I.PROFILE[chart.profil];
   abschnitt("txt-profil","Dein Profil",chart.profil+" – "+prof[0],"Deine Rolle im Leben",prof[1]);
+  (function(){
+    var L=(window.HDTiefe||{}).LINIEN||{};
+    var teile=chart.profil.split("/");
+    var l1=L[+teile[0]],l2=L[+teile[1]];
+    if(!l1||!l2)return;
+    $("txt-profil").insertAdjacentHTML("beforeend",
+      "<div class='pfeil-anwendung'><b>Deine bewusste Linie "+teile[0]+", "+l1.name+"</b>"+l1.kern
+      +" Ihre Gabe: "+l1.gabe+". Ihre Falle: "+l1.falle+".</div>"
+      +"<div class='pfeil-anwendung'><b>Deine unbewusste Linie "+teile[1]+", "+l2.name+"</b>"+l2.kern
+      +" Ihre Gabe: "+l2.gabe+". Ihre Falle: "+l2.falle+". Diese Seite lebst du, ohne sie zu sehen, andere erkennen sie sofort in dir.</div>");
+  })();
   abschnitt("txt-definition","Deine Definition",chart.definition,"",I.DEFINITION_TEXTE[chart.definition]||"");
   var kx=KZ.info(chart.kreuzTore.persSonne,chart.winkel);
   letztesKreuz=kx;
+  var kreuzText=KZ.komposition(chart.kreuzTore,chart.winkel,(window.HDTiefe||{}).TOR_TEXTE)
+    ||((kx?kx.artText+" ":"")+(I.WINKEL_TEXTE[chart.winkel]||""));
   abschnitt("txt-kreuz","Dein Inkarnationskreuz",kx?kx.name:chart.winkel,
     (kx?kx.uebertitel+" · ":"")+"Tore "+chart.kreuzTore.persSonne+"/"+chart.kreuzTore.persErde+" | "+chart.kreuzTore.desSonne+"/"+chart.kreuzTore.desErde,
-    (kx?kx.artText+" ":"")+(I.WINKEL_TEXTE[chart.winkel]||""));
+    kreuzText);
   if(kx&&kx.sonnenthemaText){
     $("txt-kreuz").insertAdjacentHTML("beforeend",
       "<div class='pfeil-anwendung'><b>Grundthema deines Sonnentors</b>"+kx.sonnenthema+": "+kx.sonnenthemaText+"</div>");
@@ -717,14 +750,18 @@ function zeige(chart,utc){
   kb.innerHTML="<small>Deine Lebensadern</small>"+(kAnz===1?"Dein Kanal":"Deine "+kAnz+" Kanäle");
   $("kanaele").innerHTML=chart.definierteKanaele.map(function(k){
     var s=Math.min(k[0],k[1])+"-"+Math.max(k[0],k[1]);
-    var text=I.KANAL_TEXTE[s]||"";
-    var teile=text.split(". ");
-    var erster=teile.shift()+".";
-    var rest=teile.join(". ");
+    var tx=I.KANAL_TEXTE[s]||{};
+    var kernTeile=(tx.kern||"").split(". ");
+    var erster=kernTeile.shift()+".";
+    var rest=kernTeile.join(". ");
     return "<li><details><summary><b>Kanal "+s+"</b> · "+(I.KANAL_NAMEN[s]||"")
       +"<span class='kanal-erster'>"+erster+"</span></summary>"
-      +(rest?"<p class='kanal-text'>"+rest+"</p>":"")+"</details></li>";
-  }).join("")||"<li>Keine definierten Kanäle – du bist ein Spiegel.</li>";
+      +"<div class='kanal-text'>"
+      +(rest?"<p>"+rest+"</p>":"")
+      +(tx.alltag?"<p class='kanal-ebene'><b>Im Alltag</b> "+tx.alltag+"</p>":"")
+      +(tx.schatten?"<p class='kanal-ebene schatten'><b>Der Schatten</b> "+tx.schatten+"</p>":"")
+      +"</div></details></li>";
+  }).join("")||"<li>Keine definierten Kanäle: Du bist ein Spiegel, und das ist eine eigene Königsklasse.</li>";
 
   var reihenfolge=["kopf","ajna","kehle","g","herz","sakral","milz","solarplexus","wurzel"];
   var defZ={};chart.definierteZentren.forEach(function(z){defZ[z]=1});
@@ -842,6 +879,46 @@ function navBeobachten(){
   ziele.forEach(function(z){if(z)beo.observe(z)});
 }
 
+/* ---------- Deine Tore ---------- */
+function zeigeTore(chart){
+  var TT=(window.HDTiefe||{}).TOR_TEXTE||{};
+  var herkunft={};
+  function sammle(seite,marke){
+    Object.keys(chart[seite]).forEach(function(p){
+      var tor=chart[seite][p].tor;
+      (herkunft[tor]=herkunft[tor]||{p:false,d:false,planeten:[]});
+      herkunft[tor][marke]=true;
+      herkunft[tor].planeten.push((marke==="p"?"P ":"D ")+(I.PLANET_LABELS[p]||p)+" "+chart[seite][p].tor+"."+chart[seite][p].linie);
+    });
+  }
+  sammle("personality","p");sammle("design","d");
+  var tore=Object.keys(herkunft).map(Number).sort(function(a,b){return a-b});
+  $("tore-meta").textContent="Deine "+Object.keys(chart.personality).length*2+" Aktivierungen berühren "+tore.length
+    +" verschiedene Tore. Jedes davon ist eine feste Farbe in deinem Leben. Weiß steht für die Persönlichkeit, Gold für das Design.";
+  $("tore").innerHTML=tore.map(function(tor){
+    var h=herkunft[tor];
+    var marke=h.p&&h.d?"<span class='tor-marke beide'>P + D</span>":(h.p?"<span class='tor-marke pers'>P</span>":"<span class='tor-marke des'>D</span>");
+    var txt=TT[tor]||"";
+    var teile=txt.split(". ");
+    var erster=teile.shift()+".";
+    var rest=teile.join(". ");
+    return "<li><details><summary><b>Tor "+tor+"</b> · "+(I.TOR_NAMEN[tor]||"")+" "+marke
+      +"<span class='kanal-erster'>"+erster+"</span></summary>"
+      +"<div class='kanal-text'>"+(rest?"<p>"+rest+"</p>":"")
+      +"<p class='kanal-ebene'><b>Aktiviert durch</b> "+h.planeten.join(" · ")+"</p>"
+      +(function(){
+        var L=(window.HDTiefe||{}).LINIEN||{};
+        var linien=[];
+        h.planeten.forEach(function(pl){var m=pl.match(/\.(\d)$/);if(m&&linien.indexOf(+m[1])<0)linien.push(+m[1])});
+        return linien.sort().map(function(l){
+          var d=L[l];if(!d)return "";
+          return "<p class='kanal-ebene'><b>In Linie "+l+" gelebt, "+d.name.replace("Die ","als ").replace("Das ","als ")+":</b> "+d.kern.split(". ")[0]+".</p>";
+        }).join("");
+      })()
+      +"</div></details></li>";
+  }).join("");
+}
+
 /* ---------- Deine Essenz ---------- */
 function zeigeEssenz(chart,v){
   var e;
@@ -901,9 +978,11 @@ function zeigeTransit(chart){
   $("transit-kopf").innerHTML=
     "<div class='transit-kachel'><div class='tk-l'>Sonne heute</div><div class='tk-w'>"+t.sonne.tor+"."+t.sonne.linie+"</div>"
     +"<div class='tk-l' style='letter-spacing:0;text-transform:none;margin-top:5px'>"+(I.TOR_NAMEN[t.sonne.tor]||"")+"</div>"
+    +"<div class='tk-satz'>"+((((window.HDTiefe||{}).TOR_TEXTE||{})[t.sonne.tor]||"").split(". ")[0]+".")+"</div>"
     +"<div class='tk-bis'>noch bis "+bis(t.sonneEnde)+"</div></div>"
     +"<div class='transit-kachel'><div class='tk-l'>Mond heute</div><div class='tk-w'>"+t.mond.tor+"."+t.mond.linie+"</div>"
     +"<div class='tk-l' style='letter-spacing:0;text-transform:none;margin-top:5px'>"+(I.TOR_NAMEN[t.mond.tor]||"")+"</div>"
+    +"<div class='tk-satz'>"+((((window.HDTiefe||{}).TOR_TEXTE||{})[t.mond.tor]||"").split(". ")[0]+".")+"</div>"
     +"<div class='tk-bis'>noch bis "+bis(t.mondEnde)+"</div></div>";
   var html="";
 
@@ -1007,6 +1086,8 @@ function baueBerichtHTML(){
   var kx=letztesKreuz||KZ.info(letzteChart.kreuzTore.persSonne,letzteChart.winkel);
   var es=null;try{es=ES.erzeuge(letzteChart,letzteVariablen,I,kx)}catch(e){}
   return BE.erzeuge({chart:letzteChart,variablen:letzteVariablen,inhalte:I,kreuz:kx,essenz:es,
+    torTexte:(window.HDTiefe||{}).TOR_TEXTE,linien:(window.HDTiefe||{}).LINIEN,
+    kreuzText:KZ.komposition(letzteChart.kreuzTore,letzteChart.winkel,(window.HDTiefe||{}).TOR_TEXTE),
     stabilSatz:letzterStabilSatz,ortName:gewaehlt?gewaehlt[0]:"",
     datumText:datumText,zeitText:z,heuteText:heuteText,
     svg:BG.render(letzteChart,letzteVariablen,{animiert:false})});

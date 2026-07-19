@@ -25,6 +25,7 @@ w.HD_BILDER=require("/home/claude/hd/bilder.js");
 w.HDTransit=require("/home/claude/hd/transit.js");
 w.HDRat=require("/home/claude/hd/rat.js");
 w.HDKreuze=require("/home/claude/hd/kreuze.js");
+w.HDTiefe=require("/home/claude/hd/tiefe.js");
 w.HDEssenz=require("/home/claude/hd/essenz.js");
 w.HDStabil=require("/home/claude/hd/stabil.js");
 w.HDBericht=require("/home/claude/hd/bericht.js");
@@ -124,8 +125,8 @@ check("Kachel nennt den Kreuznamen",kopf.includes("Kreuz"));
 check("Einfache Definition",kopf.includes("Einfache Definition"));
 check("Zeiten-Zeile mit Design-Datum Jan 1948",$("zeiten").textContent.includes("1948-01-12"));
 check("Typ-Text geladen",$("txt-typ").textContent.includes("Informier")||$("txt-typ").textContent.includes("informier"));
-check("Autoritäts-Text geladen",$("txt-autoritaet").textContent.includes("leiseste"));
-check("Profil-Text geladen",$("txt-profil").textContent.includes("Häretiker"));
+check("Autoritäts-Text geladen",$("txt-autoritaet").textContent.length>500&&$("txt-autoritaet").textContent.includes("Milz"));
+check("Profil-Text geladen",$("txt-profil").textContent.includes("Retterin")&&$("txt-profil").textContent.length>800);
 check("26 Planetenzeilen",$("planeten").querySelectorAll("tr").length===2*14);
 check("5 definierte Kanäle gelistet",$("kanaele").querySelectorAll("li").length===5);
 check("Kanalnamen aufgelöst",$("kanaele").textContent.includes("Hellsicht"));
@@ -182,7 +183,7 @@ check("Originalhimmel eingebunden (3726 Sterne)",w.HD_HIMMEL&&w.HD_HIMMEL.sterne
 check("Nebelverlauf als Hintergrundbild gesetzt",($("himmel-bild").style.backgroundImage||"").indexOf("data:image/png;base64")>=0);
 check("Keine eigene Kopfleiste (wird eingebettet)",!w.document.querySelector(".leiste"));
 check("Gemessene Originalfarbe im Stylesheet",w.document.documentElement.innerHTML.includes("#0C0442"));
-check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===9);
+check("Sprungnavigation vorhanden",w.document.querySelectorAll(".sprungnav a").length===10);
 check("Kernwerte als Kacheln sichtbar",$("kopfdaten").querySelectorAll(".kd").length===8);
 check("Link-Teilen-Knopf vorhanden",!!$("btn-link"));
 
@@ -331,7 +332,7 @@ check("Essenz vor dem Chart",htmlNav.indexOf('id="essenz-block"')<htmlNav.indexO
 check("Kacheln sind Sprunglinks",$("kopfdaten").querySelectorAll("a.kd").length===8);
 check("Jede Kachel zeigt auf ein vorhandenes Ziel",
   [].every.call($("kopfdaten").querySelectorAll("a.kd"),function(a){return !!w.document.getElementById(a.getAttribute("href").slice(1))}));
-check("Sprungnavigation mit 9 Zielen inkl. Daten ändern",w.document.querySelectorAll("#sprungnav a").length===9&&w.document.querySelector("#sprungnav a[href=\"#formular\"]")!==null);
+check("Sprungnavigation mit 10 Zielen inkl. Tore",w.document.querySelectorAll("#sprungnav a").length===10&&w.document.querySelector("#sprungnav a[href=\"#tore-block\"]")!==null);
 check("Navigation klebt oben",htmlNav.includes("position:sticky"));
 check("Alle Navi-Ziele existieren",
   [].every.call(w.document.querySelectorAll("#sprungnav a"),function(a){return !!w.document.getElementById(a.getAttribute("href").slice(1))}));
@@ -346,6 +347,53 @@ check("Stabilitätssatz ohne Platzhalter",S.satz(stab).length>60&&!S.satz(stab).
 check("Stabilitätskarte im Markup",htmlNav.includes('id="stabil"'));
 
 
+
+
+console.log("— Inhaltsebene in Kaufqualität —");
+const TT=w.HDTiefe.TOR_TEXTE, LN=w.HDTiefe.LINIEN;
+check("Alle 64 Tore mit eigenem Text",Object.keys(TT).length===64&&[1,32,64].every(g=>TT[g].length>150));
+check("Tortexte mindestens 180 Zeichen",Object.values(TT).every(x=>x.length>=180));
+check("Tortexte paarweise verschieden",new Set(Object.values(TT).map(x=>x.slice(0,60))).size===64);
+check("Tortexte ohne Gedankenstriche",!JSON.stringify(TT).includes("\u2013"));
+check("Alle 6 Linien beschrieben",[1,2,3,4,5,6].every(l=>LN[l]&&LN[l].kern&&LN[l].gabe&&LN[l].falle));
+const KT=w.HDInhalte.KANAL_TEXTE;
+check("36 Kanäle dreischichtig",Object.keys(KT).length===36&&Object.values(KT).every(k=>k.kern&&k.alltag&&k.schatten));
+check("Kanaltexte substanziell (Ø über 450 Zeichen)",Object.values(KT).map(k=>JSON.stringify(k).length).reduce((a,b)=>a+b)/36>450);
+check("Kanal-Kerne paarweise verschieden",new Set(Object.values(KT).map(k=>k.kern.slice(0,50))).size===36);
+check("Typen vertieft (je über 900 Zeichen)",Object.values(w.HDInhalte.TYPEN).every(t=>t.text.length>900));
+check("Alle 8 Autoritäten mit Engine-Schlüsseln",["Sakral","Emotional (Solarplexus)","Milz (Intuition)","Ego (manifestiert)","Ego (projiziert)","Selbst-projiziert","Mental (Umgebung als Resonanzboden)","Lunar (Mondzyklus)"].every(k=>w.HDInhalte.AUTORITAETEN[k]&&w.HDInhalte.AUTORITAETEN[k].length>400));
+check("Beide Ego-Varianten eigenständig",w.HDInhalte.AUTORITAETEN["Ego (manifestiert)"].slice(0,80)!==w.HDInhalte.AUTORITAETEN["Ego (projiziert)"].slice(0,80));
+check("12 Profile vertieft (je über 400 Zeichen)",Object.values(w.HDInhalte.PROFILE).every(p=>p[1].length>400));
+check("Neue Texte ohne Gedankenstriche",![w.HDInhalte.TYPEN,w.HDInhalte.AUTORITAETEN,w.HDInhalte.PROFILE,KT].some(o=>JSON.stringify(o).includes("\u2013")));
+check("Tor-Sektion gerendert",$("tore").querySelectorAll("details").length>=8);
+check("Tor-Marken zeigen Herkunft",$("tore").querySelector(".tor-marke")!==null);
+check("Tore listen ihre Planeten",$("tore").querySelector(".kanal-ebene").textContent.includes("Aktiviert durch"));
+check("Profil-Linien aufgeschlüsselt",$("txt-profil").querySelectorAll(".pfeil-anwendung").length>=2&&$("txt-profil").textContent.includes("unbewusste Linie"));
+check("Wetterkacheln mit Tor-Deutung",w.document.querySelectorAll(".tk-satz").length===2);
+
+
+console.log("— Shareholder-Runde —");
+const KZm=w.HDKreuze;
+const kompA=KZm.komposition({persSonne:37,persErde:40,desSonne:5,desErde:26},"Linkswinkel-Kreuz",TT);
+const kompB=KZm.komposition({persSonne:41,persErde:31,desSonne:44,desErde:24},"Rechtswinkel-Kreuz",TT);
+check("Kreuz-Komposition individuell (2 Kreuze verschieden)",kompA.length>700&&kompB.length>700&&kompA!==kompB);
+check("Kreuz-Komposition nennt alle 4 Tore",["Tor 37","Tor 40","Tor 5","Tor 26"].every(x=>kompA.includes(x)));
+check("Kreuz-Text im Abschnitt gerendert",$("txt-kreuz").textContent.includes("Sein Motor ist Tor"));
+const ZT2=w.HDInhalte.ZENTREN_TEXTE;
+check("Zentren auf Tiefenniveau (jedes Feld über 130 Zeichen)",Object.values(ZT2).every(z=>["def","defWachstum","defSchatten","off","offWachstum","offSchatten"].every(f=>z[f].length>130)));
+check("Zentren-Felder paarweise verschieden",(function(){
+  const alle=[];Object.values(ZT2).forEach(z=>["def","off"].forEach(f=>alle.push(z[f].slice(0,40))));
+  return new Set(alle).size===alle.length;
+})());
+check("Wetter-Texte in neuer Stimme (umgang je über 60 Zeichen)",Object.values(w.HDInhalte.ZENTRUM_WETTER).every(z=>z.umgang.length>60));
+check("Planetentafel zeigt Linien-Grundton",w.document.querySelectorAll("#planeten .tor-linie").length===26);
+check("Tor-Sektion mit Liniensätzen",$("tore").textContent.includes("In Linie"));
+check("Rat mit 6 Varianten je Typ",Object.values(w.HDRat.TYP_RAT).every(v=>v.length===6));
+check("Essenz-Bausteine ohne Zentren-Dubletten",(function(){
+  const zt=JSON.stringify(ZT2);
+  return !Object.values(w.HDEssenz.ZENTRUM_STAERKE).concat(Object.values(w.HDEssenz.ZENTRUM_ACHTUNG)).some(v=>zt.includes(v.slice(0,25)));
+})());
+check("Neue Schichten ohne Gedankenstriche",![ZT2,w.HDInhalte.ZENTRUM_WETTER,w.HDRat.TYP_RAT,w.HDEssenz.PROFIL_KERN].some(o=>JSON.stringify(o).includes("\u2013")));
 
 console.log("— Nutzerfeedback-Runde 3 —");
 const her=APP.suche("Her");
@@ -396,7 +444,10 @@ check("Minuten-Satz ersetzt",htmlQ.includes("nur so genau wie deine Geburtszeit"
 check("Zentren-Intro definiert/offen",htmlQ.includes("fest in dir verdrahtet")&&htmlQ.includes("Wachstumspotenzial"));
 check("Anwendungsblöcke gerendert",$("pfeile").querySelectorAll(".pfeil-anwendung").length===4);
 check("Lernstil-Karte gefüllt",$("lernstil").textContent.includes("Lerntyp"));
-check("Kanäle aufklappbar mit Text",$("kanaele").querySelectorAll("details").length===APP.holeChart().definierteKanaele.length&&$("kanaele").querySelector(".kanal-erster"));
+check("Kanäle aufklappbar mit Dreischicht-Text",(function(){
+  const d=$("kanaele").querySelector("details");
+  return d&&d.querySelector(".kanal-erster")&&d.querySelectorAll(".kanal-ebene").length===2;
+})());
 check("Wachstum unabhängig vom Zustand",$("zentren").querySelectorAll(".z-wachstum").length===9);
 check("Sonnen-Dauer im Wetter",$("transit-kopf").textContent.includes("noch bis"));
 const tD=w.HDTransit.berechne(w.HDEngine,APP.holeChart(),new Date());

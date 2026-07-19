@@ -8,27 +8,48 @@
 "use strict";
 
 var TYP_RAT={
-"Generator":[
- "Als Generator darfst du heute auf das warten, was dich wirklich anzieht. Reagiere auf das, was zu dir kommt, statt Dinge zu erzwingen, dein Bauch weiß längst, was ein Ja ist.",
- "Deine Energie ist heute dein Kompass: Was dich auflädt, gehört zu dir. Was dich müde macht, darfst du liebevoll liegen lassen.",
- "Gib deiner sakralen Antwort heute Raum, bevor der Kopf übernimmt. Ein ehrliches Mhm-hm trägt weiter als ein durchdachtes Vielleicht."],
-"Manifestierender Generator":[
- "Als Manifestierender Generator darfst du heute deinen einzigartigen Rhythmus ehren. Erlaube dir zuerst zu reagieren, experimentiere, und verpflichte deine Energie erst dann ganz, so findest du Zufriedenheit statt Frustration.",
- "Dein Tempo ist heute dein Geschenk: Überspringe, was sich tot anfühlt, und informiere die Menschen um dich, bevor du abbiegst. Dann bleibt dein Schwung ohne Widerstand.",
- "Mehrere Dinge gleichzeitig sind für dich kein Chaos, sondern dein Design. Prüfe nur bei jedem Impuls kurz, ob dein Bauch noch antwortet."],
-"Projektor":[
- "Als Projektor darfst du heute dein Sehen wertschätzen, ohne es ungefragt zu verschenken. Warte auf die echte Einladung, sie erkennt dich, nicht umgekehrt.",
- "Deine Kraft liegt heute in der Tiefe, nicht in der Menge. Ein Gespräch, das dich wirklich meint, nährt dich mehr als zehn, in denen du dich beweisen musst.",
- "Ruhe ist für dich heute kein Rückzug, sondern Arbeit an deiner Klarheit. Wer dich einladen will, findet dich auch im Liegen."],
-"Manifestor":[
- "Als Manifestor darfst du heute anstoßen, was in dir drängt, und die Menschen um dich informieren, bevor du losgehst. Das ist kein Um-Erlaubnis-Fragen, sondern dein Weg zu Frieden.",
- "Dein Impuls ist heute echt. Folge ihm in deinem Takt, und lass niemanden dein Tempo verwalten.",
- "Zwischen deinen Schüben darfst du heute ganz bewusst ruhen. Deine Energie kommt in Wellen, das ist Design, kein Defekt."],
-"Reflektor":[
- "Als Reflektor darfst du dir heute Zeit lassen, dein Wissen reift mit dem Mond, nicht mit der Uhr. Was heute unklar ist, darf bis übermorgen unklar bleiben.",
- "Achte heute darauf, welche Orte und Menschen sich in deinem Körper gut anfühlen. Du spiegelst deine Umgebung, wähle sie deshalb mit Liebe.",
- "Überraschung ist deine Signatur: Lass dich heute von dem verblüffen, was der Tag dir zeigt, statt ihn festzulegen."]
+"Generator": [
+"Gib deiner sakralen Antwort heute Raum, bevor der Kopf übernimmt. Ein ehrliches Mhm-hm trägt weiter als ein durchdachtes Vielleicht.",
+"Heute ist ein guter Tag, um auf etwas zu warten, das dich wirklich anspringt, statt das Nächstbeste zu erledigen.",
+"Frag dich bei jedem Ja heute kurz: Kommt das aus dem Bauch oder aus der Pflicht? Nur das erste erneuert deine Kraft.",
+"Wenn dich heute Frustration besucht, nimm sie als Kompassnadel: Irgendwo läufst du gerade einem fremden Ziel hinterher.",
+"Erledige heute eine Sache, auf die dein Körper anspringt, und beobachte, wie anders sich diese Art Müdigkeit am Abend anfühlt.",
+"Lass dich heute fragen. Bitte jemanden, dir eine Ja-oder-Nein-Frage zu stellen, und hör auf den ersten Laut, der kommt."
+],
+"Manifestierender Generator": [
+"Du darfst heute Schritte überspringen. Sag nur kurz Bescheid, wen deine Abkürzung betrifft, dann bleibt der Weg frei.",
+"Wenn dich heute etwas langweilt, ist das Information: Dein System hat den nützlichen Teil schon mitgenommen. Weiterziehen ist erlaubt.",
+"Starte heute ruhig zwei Dinge parallel. Deine Energie ist für Mehrgleisigkeit gebaut, nur die Bauchantwort muss zuerst kommen.",
+"Ein fallengelassenes Projekt ist heute kein Scheitern, sondern Sortierung. Nicht alles Angefangene war zum Beenden gedacht.",
+"Prüfe heute vor dem Lossprinten einmal kurz nach innen, und informiere dann die Menschen in deiner Flugbahn. Beides zusammen macht dich unaufhaltsam.",
+"Wenn heute Ärger und Frustration gleichzeitig auftauchen, halte kurz an: Meist rennst du dann gerade schnell in die falsche Richtung."
+],
+"Projektor": [
+"Warte heute auf eine echte Frage, bevor du deinen Blick verschenkst. Eingeladen ist dein Rat Gold, ungefragt nur Luft.",
+"Drei fokussierte Stunden sind heute ein voller Erfolg. Der Rest des Tages darf Studieren, Ruhen und Beobachten sein.",
+"Achte heute darauf, wer dich wirklich sieht, und gib diesen Menschen den Vorrang. Anerkennung ist dein Betriebsklima.",
+"Wenn heute Bitterkeit aufsteigt, ist das kein Charakterfehler, sondern ein Zeichen: Du hast dich irgendwo ungefragt verausgabt.",
+"Beobachte heute mehr, als du eingreifst. Was du dabei über die Menschen lernst, ist die Währung, mit der du morgen eingeladen wirst.",
+"Sag heute einmal Nein zu einer Aufgabe, die nur Energie will und keinen Durchblick. Du bist für das Sehen da, nicht fürs Schleppen."
+],
+"Manifestor": [
+"Wenn dich heute ein Impuls anspringt, folge ihm, und lass die Betroffenen vorher kurz wissen, was du vorhast. Das ist keine Bitte um Erlaubnis, nur Wegfreiheit.",
+"Deine Energie kommt heute vielleicht in Schüben. Nutze die Welle, wenn sie da ist, und verteidige die Ruhe danach wie einen Termin.",
+"Widerstand heute ist oft nur eine fehlende Information: Prüfe, wen du vergessen hast einzuweihen, bevor du härter drückst.",
+"Du musst heute niemanden mitnehmen. Initiieren ist dein Job, das Vervollständigen dürfen andere übernehmen.",
+"Wenn heute Wut aufsteigt, frag sie, wo man dich aufgehalten hat. Sie zeigt zuverlässig auf die Stelle.",
+"Gönn dir heute eine Ankündigung statt einer Erklärung. Ich mache jetzt X ist ein vollständiger Satz."
+],
+"Reflektor": [
+"Nimm heute als Stichprobe, nicht als Urteil: Was du fühlst, erzählt viel über deine Umgebung und wenig über deinen Wert.",
+"Verschiebe heute anstehende große Entscheidungen ohne schlechtes Gewissen. Dein Verfahren heißt Mondzyklus, nicht Bauchgefühl im Moment.",
+"Achte heute auf die Orte: Derselbe Tag fühlt sich in verschiedenen Räumen verschieden an, und dieser Unterschied ist Information.",
+"Wenn dich heute etwas überrascht, ist das dein bestes Zeichen: Überraschung ist die Signatur eines Reflektors im Fluss.",
+"Sprich heute mit einem vertrauten Menschen über das, was dich beschäftigt. Nicht für Rat, sondern um dich selbst klarer zu hören.",
+"Prüfe heute einmal bewusst, wessen Stimmung du gerade trägst. Vieles, was sich wie deins anfühlt, ist nur zu Besuch."
+]
 };
+
 
 var LINIEN_TON={
 1:"Der Tag trägt eine Erste-Linie-Färbung: Es geht ums Fundament. Prüfe heute lieber einmal mehr, worauf du baust.",
